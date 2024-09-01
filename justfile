@@ -59,4 +59,5 @@ build:
 
 # Build and publish the package to test PyPI and prod PyPI
 publish:
+  uvx twine upload -r testpypi dist/*
   uvx twine upload dist/*
