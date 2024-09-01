@@ -1,7 +1,7 @@
 <p align="center">
-  <h1 align="center">dj-angles 🎧</h1>
+  <h1 align="center">dj-angles &lt;/&gt;</h1>
 </p>
-<p align="center">Add some more bracket angles to your Django templates 🎧</p>
+<p align="center">Add some more bracket angles to your Django templates</p>
 
 ![PyPI](https://img.shields.io/pypi/v/dj-angles?color=blue&style=flat-square)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/dj-angles?color=blue&style=flat-square)
@@ -13,10 +13,10 @@
 
 ## ⭐ Features
 
-- Use HTML-like elements in Django templates instead of `{% %}`
+- Use HTML-like elements in Django templates, e.g. `<dj-partial />` instead of `{% include 'partial.html' %}`
 - Can be sprinkled in as needed, but does not remove existing Django functionality
 - Pretend like you are writing React components, but without dealing with JavaScript at all
-- Tell all your friends how neat the Shadow DOM is
+- Lets you excitedly tell your friends about how neat the Shadow DOM is
 
 ## ⚡ Installation
 
