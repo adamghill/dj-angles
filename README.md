@@ -3,26 +3,26 @@
 </p>
 <p align="center">Add some more bracket angles to your Django templates 🎧</p>
 
-> This code is experimental -- use with caution! Or maybe not at all! 🤷
-
 ![PyPI](https://img.shields.io/pypi/v/dj-angles?color=blue&style=flat-square)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/dj-angles?color=blue&style=flat-square)
 ![GitHub Sponsors](https://img.shields.io/github/sponsors/adamghill?color=blue&style=flat-square)
+
+> This code is experimental -- use with caution! Or maybe not at all! 🤷
 
 📦 Package located at https://pypi.org/project/dj-angles/.
 
 ## ⭐ Features
 
 - Use HTML-like elements in Django templates instead of `{% %}`
-- Can be sprinkled in as needed
-- Pretend like you are writing React components, but without any JavaScript at all
+- Can be sprinkled in as needed, but does not remove existing Django functionality
+- Pretend like you are writing React components, but without dealing with JavaScript at all
 - Tell all your friends how neat the Shadow DOM is
 
 ## ⚡ Installation
 
 1. Create a new Django project or `cd` to an existing project
 1. `pip install dj-angles` to install the `dj-angles` package
-1. `Edit settings.py` `TEMPLATES` to add `"dj_angles.template_loader.Loader",` to your loaders.
+1. `Edit settings.py` `TEMPLATES` and add `"dj_angles.template_loader.Loader",` as the first loader. Note: you might need to add the `"loaders"` key since it is not there by default: https://docs.djangoproject.com/en/stable/ref/templates/api/#django.template.loaders.cached.Loader.
 
 ```python
 TEMPLATES = [
@@ -40,7 +40,7 @@ TEMPLATES = [
           (
               "django.template.loaders.cached.Loader",
               [
-                  "dj_angles.template_loader.Loader",
+                  "dj_angles.template_loader.Loader",  # this is required for `dj-angles`
                   "django.template.loaders.filesystem.Loader",
                   "django.template.loaders.app_directories.Loader",
               ],
@@ -50,7 +50,7 @@ TEMPLATES = [
 ]
 ```
 
-## Example
+## Example templates
 
 **`base.html`**
 
@@ -98,6 +98,7 @@ TEMPLATES = [
 ```
 
 **partial.html**
+
 ```html
 <div style="border: 1px solid red;">
   <p>
@@ -112,7 +113,7 @@ TEMPLATES = [
 </style>
 ```
 
-## Include Tags
+## Include tags
 
 ```html
 <p>These are all equivalent ways to include partials.</p>
@@ -158,7 +159,7 @@ They all compile to the following Django template syntax.
 - More details about declaratively creating shadow root: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template#shadowrootmode
 - More details about using the Shadow DOM: https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM
 
-## Other Tags
+## Other tags
 
 ### `extends`
 
