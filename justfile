@@ -1,0 +1,62 @@
+set quiet
+set dotenv-load
+set export
+
+# List commands
+_default:
+    just --list --unsorted --justfile {{justfile()}} --list-heading $'Available commands:\n'
+  
+# Install dependencies
+bootstrap:
+  uv install
+
+# Set up the project
+setup:
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+  uv tool install ruff
+  uv tool install build
+  uv tool install twine
+
+# Update the project
+update:
+  uv sync
+
+# Lock the dependencies
+lock:
+  uv sync
+
+# Lint the project
+lint *ARGS='.':
+  -uvx ruff check {{ ARGS }}
+
+# Check the types in the project
+type *ARGS='':
+  -uv run mypy {{ ARGS }}  # need to run through uv to see installed dependencies
+
+# Benchmark the project
+benchmark:
+  -uv run pytest tests/benchmarks/ --benchmark-only --benchmark-compare
+
+# Run the tests
+test *ARGS='':
+  -uv run pytest {{ ARGS }}
+
+alias t := test
+
+# Run coverage on the code
+coverage:
+  -uv run pytest --cov=refreshcss
+
+# Run all the dev things
+dev:
+  just lint
+  just type
+  just coverage
+
+# Build the package
+build:
+  uvx --from build pyproject-build --installer uv
+
+# Build and publish the package to test PyPI and prod PyPI
+publish:
+  uvx twine upload dist/*
