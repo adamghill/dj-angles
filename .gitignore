@@ -1,4 +1,6 @@
 dist/
+.venv/
+.pytest_cache/
 
 .DS_Store
 TODO
