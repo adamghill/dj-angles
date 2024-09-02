@@ -16,7 +16,8 @@
 - Use HTML-like elements in Django templates, e.g. `<dj-partial />` instead of `{% include 'partial.html' %}`
 - Can be sprinkled in as needed, but does not remove existing Django functionality
 - Pretend like you are writing React components, but without dealing with JavaScript at all
-- Lets you excitedly tell your friends about how neat the Shadow DOM is
+- Lets you excitedly tell your friends how neat the Shadow DOM is
+- Since it looks like HTML, syntax highlighting mostly "just works"
 
 ## ⚡ Installation
 
@@ -56,7 +57,11 @@ I have been interested in Django components and encapsulating functionality for 
 
 💡
 
-Since `<c-component />` was a high-powered wrapper around `{% include %}`, what if other Django templatetags could also be wrapped? This library is an experiment to see what that experience is like and how well it works.
+Since `<c-component />` is a high-powered wrapper around `{% include %}`, what if other Django templatetags could also be wrapped? This library is an experiment to see what that experience is like and how well it works.
+
+## 🤔 How does this work?
+
+Basically, Django template loaders are super powerful. The raw template content is passed through `dj_angles.template_loader.Loader` first, some transformations happen (via good ole' regex), and then the normal template loaders process the output like normal.
 
 ## 💥 Template example
 
@@ -145,9 +150,9 @@ Accessing templates in directories is supported even though technically forward-
 
 To encapsulate component styles, enable the Shadow DOM for the partial. This will ensure that any `style` element in the partial will be contained to that partial. The downside is that the Shadow DOM does not allow outside styles in, other than CSS variables.
 
-```html
-<p>These are all equivalent ways to include partials.</p>
+These are all equivalent ways to include partials.
 
+```html
 <dj-include 'partial.html' shadow />
 <dj-partial shadow />
 <dj-partial! />
@@ -160,9 +165,9 @@ They all compile to the following Django template syntax.
 <template shadowrootmode='open'>{% include 'partial.html' %}</template>
 ```
 
-- More details about declaratively creating shadow root: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template#shadowrootmode
-- More details about using the Shadow DOM: https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM
 - Shadow DOM styling: https://javascript.info/shadow-dom-style
+- Declaratively creating a shadow root: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template#shadowrootmode
+- Using the Shadow DOM: https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM
 
 ## 🛠️ Other tags
 
