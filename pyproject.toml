@@ -3,8 +3,8 @@ name = "dj-angles"
 authors = [
   {name = "Adam Hill", email = "adam@adamghill.com"}
 ]
-version = "0.1.0"
-description = "Add some more bracket angles to your Django templates"
+version = "0.1.1"
+description = "Adds more bracket angles to Django templates </>"
 readme = "README.md"
 license = {file = "LICENSE"}
 requires-python = ">=3.8"
@@ -17,22 +17,21 @@ classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
   "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
 ]
-
 dependencies = [
   "django"
 ]
-
-[project.optional-dependencies]
 
 [project.urls]
 Homepage = "https://github.com/adamghill/dj-angles"
 Documentation = "https://github.com/adamghill/dj-angles"
 Repository = "https://github.com/adamghill/dj-angles.git"
-Issues = "https://github.com/adamghill/dj-angles/issues"
+Issues = "https://github.com/adamghill/dj-angles/discussions"
 Changelog = "https://github.com/adamghill/dj-angles/blob/master/CHANGELOG.md"
 
 [tool.uv]
@@ -40,11 +39,6 @@ dev-dependencies = [
   "pytest<9",
   "mypy"
 ]
-
-[tool.black]
-target-version = ["py310"]
-line-length = 120
-extend-exclude = "migrations"
 
 [tool.ruff]
 src = ["src"]
@@ -101,7 +95,7 @@ unfixable = [
 convention = "google"
 
 [tool.ruff.isort]
-known-first-party = ["coltrane"]
+known-first-party = ["dj_angles"]
 
 [tool.ruff.flake8-tidy-imports]
 ban-relative-imports = "all"
