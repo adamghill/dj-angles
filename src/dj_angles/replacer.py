@@ -7,6 +7,24 @@ from django.conf import settings
 from dj_angles.mappers import HTML_TAG_TO_DJANGO_TEMPLATE_TAG_MAP
 
 
+def get_wrapping_element_name(template_name: str) -> str:
+    wrapping_element_name = (
+        template_name.replace("/", "-").replace("'", "").replace('"', "").replace("--", "-").replace(" ", "-")
+    )
+    wrapping_element_name = f"dj-{wrapping_element_name}"
+
+    # Remove extensions
+    if "." in wrapping_element_name:
+        extension_idx = wrapping_element_name.index(".")
+        wrapping_element_name = wrapping_element_name[0:extension_idx]
+
+    # Remove shadow bang
+    if wrapping_element_name.endswith("!"):
+        wrapping_element_name = wrapping_element_name[:-1]
+
+    return wrapping_element_name
+
+
 def get_include_replacement(template_name: str, *, is_shadow: bool = False, is_tag_self_closing: bool = False) -> str:
     template_file = template_name.strip()
     is_double_quoted = False
@@ -26,12 +44,18 @@ def get_include_replacement(template_name: str, *, is_shadow: bool = False, is_t
         template_file = f"'{template_file}'"
 
     replacement = f"{{% include {template_file} %}}"
+    wrapping_element_name = get_wrapping_element_name(template_file)
 
     if is_shadow:
-        replacement = f"<template shadowrootmode='open'>{{% include {template_file} %}}"
+        replacement = f"<{wrapping_element_name}><template shadowrootmode='open'>{{% include {template_file} %}}"
 
         if is_tag_self_closing:
-            replacement = f"{replacement}</template>"
+            replacement = f"{replacement}</template></{wrapping_element_name}>"
+    else:
+        replacement = f"<{wrapping_element_name}>{replacement}"
+
+        if is_tag_self_closing:
+            replacement = f"{replacement}</{wrapping_element_name}>"
 
     return replacement
 
@@ -121,7 +145,8 @@ def get_replacements(template_string: str) -> List[Tuple[str, Any]]:
             else:
                 replacement = f"{{% {django_template_tag} %}}"
         elif original.startswith("</"):
-            replacement = "</template>"
+            wrapping_element_name = get_wrapping_element_name(component_name)
+            replacement = f"</template></{wrapping_element_name}>"
         else:
             # Handle `include` shorthand, e.g. `<dj-partial />` or `<partial />`
             is_shadow = "shadow" in match.group("template_tag_args")
