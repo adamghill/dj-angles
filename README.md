@@ -50,7 +50,15 @@ TEMPLATES = [
 ]
 ```
 
-## Example templates
+## ✨ Inspiration
+
+I have been interested in Django components and encapsulating functionality for a long time (see [django-unicorn](https://www.django-unicorn.com), [dlitejs](https://dlitejs.com), etc), but had never thought of using HTML directly until I looked at [Cotton](https://django-cotton.com) by [wrabit](https://github.com/wrabit).
+
+💡
+
+Since `<c-component />` was a high-powered wrapper around `{% include %}`, what if other Django templatetags could also be wrapped? This library is an experiment to see what that experience is like and how well it works.
+
+## 💥 Template example
 
 **`base.html`**
 
@@ -65,13 +73,7 @@ TEMPLATES = [
 <dj-extends 'base.html' />  <!-- {% extends 'base.html' %} -->
 
 <dj-block 'content'>  <!-- {% block 'content' %} -->
-  <div>
-    <h2>Including partials</h2>
-
-    <div>
-      <dj-include 'partial.html' />  <!-- {% include 'partial.html' %} -->
-    </div>
-  </div>
+  <dj-include 'partial.html' />  <!-- {% include 'partial.html' %} -->
 
   <dj-verbatim>  <!-- {% verbatim %} -->
     This is verbatim: {% include %}
@@ -113,11 +115,11 @@ TEMPLATES = [
 </style>
 ```
 
-## Include tags
+## 🪄 Include tags
+
+These are all equivalent ways to include partial HTML files.
 
 ```html
-<p>These are all equivalent ways to include partials.</p>
-
 <dj-include 'partial.html' />
 <dj-partial />
 <$partial />
@@ -129,7 +131,9 @@ They all compile to the following Django template syntax.
 {% include 'partial.html' %}
 ```
 
-Directories are also supported.
+### ⤵️ Directories
+
+Accessing templates in directories is supported even though technically forward-slashes [aren't permitted in a custom element](https://html.spec.whatwg.org/multipage/custom-elements.html#valid-custom-element-name). It will definitely confound most HTML syntax highlighters.
 
 ```html
 <dj-include 'directory/partial.html' />
@@ -137,9 +141,9 @@ Directories are also supported.
 <$directory/partial />
 ```
 
-### CSS scoping
+### 🥷 CSS scoping
 
-To encapsulate component styles, enable the Shadow DOM for the partial. This will ensure that any `style` element in the partial will be contained to that partial.
+To encapsulate component styles, enable the Shadow DOM for the partial. This will ensure that any `style` element in the partial will be contained to that partial. The downside is that the Shadow DOM does not allow outside styles in, other than CSS variables.
 
 ```html
 <p>These are all equivalent ways to include partials.</p>
@@ -158,20 +162,47 @@ They all compile to the following Django template syntax.
 
 - More details about declaratively creating shadow root: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template#shadowrootmode
 - More details about using the Shadow DOM: https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM
+- Shadow DOM styling: https://javascript.info/shadow-dom-style
 
-## Other tags
+## 🛠️ Other tags
 
-### `extends`
+### [`#`](https://docs.djangoproject.com/en/stable/ref/templates/language/#comments)
 
 ```html
-<dj-extends 'base.html' />
+<dj-#>...</dj-#>
 ```
 
 ```html
-{% extends 'base.html' %}
+{# ... #}
 ```
 
-### `block`
+### [`autoescape-off`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#autoescape)
+
+```html
+<dj-autoescape-off>
+  ...
+</dj-autoescape-off>
+```
+
+```html
+{% autoescape off %}
+{% endautoescape %}
+```
+
+### [`autoescape-on`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#autoescape)
+
+```html
+<dj-autoescape-on>
+  ...
+</dj-autoescape-on>
+```
+
+```html
+{% autoescape on %}
+{% endautoescape %}
+```
+
+### [`block`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#block)
 
 ```html
 <dj-block 'content'>
@@ -185,21 +216,17 @@ They all compile to the following Django template syntax.
 {% endblock 'content' %}
 ```
 
-### `verbatim`
+### [`csrf`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#csrf-token), [`csrf-token`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#csrf-token), [`csrf-input`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#csrf-token)
 
 ```html
-<dj-verbatim>
-  ...
-</dj-verbatim>
+<dj-csrf />
 ```
 
 ```html
-{% verbatim %}
-  ...
-{% endverbatim %}
+{% csrf_token %}
 ```
 
-### `comment`
+### [`comment`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#comment)
 
 ```html
 <dj-comment>
@@ -213,63 +240,7 @@ They all compile to the following Django template syntax.
 {% endcomment %}
 ```
 
-### `#`
-
-```html
-<dj-#>...</dj-#>
-```
-
-```html
-{# ... #}
-```
-
-### `autoescape-on`
-
-```html
-<dj-autoescape-on>
-  ...
-</dj-autoescape-on>
-```
-
-```html
-{% autoescape on %}
-{% endautoescape %}
-```
-
-### `autoescape-off`
-
-```html
-<dj-autoescape-off>
-  ...
-</dj-autoescape-off>
-```
-
-```html
-{% autoescape off %}
-{% endautoescape %}
-```
-
-### `csrf`, `csrf-token`
-
-```html
-<dj-csrf />
-```
-
-```html
-{% csrf_token %}
-```
-
-### `csrf-input`
-
-```html
-<dj-csrf-input />
-```
-
-```html
-<input type='hidden' value='{% csrf_token %}'></input>
-```
-
-### `debug`
+### [`debug`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#debug)
 
 ```html
 <dj-debug />
@@ -279,7 +250,17 @@ They all compile to the following Django template syntax.
 {% debug %}
 ```
 
-### `filter`
+### [`extends`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#extends)
+
+```html
+<dj-extends 'base.html' />
+```
+
+```html
+{% extends 'base.html' %}
+```
+
+### [`filter`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#filter)
 
 ```html
 <dj-filter ... />
@@ -289,7 +270,7 @@ They all compile to the following Django template syntax.
 {% filter ... %}
 ```
 
-### `lorem`
+### [`lorem`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#lorem)
 
 ```html
 <dj-lorem />
@@ -299,7 +280,7 @@ They all compile to the following Django template syntax.
 {% lorem %}
 ```
 
-### `now`
+### [`now`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#now)
 
 ```html
 <dj-now />
@@ -309,7 +290,7 @@ They all compile to the following Django template syntax.
 {% now %}
 ```
 
-### `spaceless`
+### [`spaceless`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#spaceless)
 
 ```html
 <dj-spaceless>
@@ -323,7 +304,7 @@ They all compile to the following Django template syntax.
 {% endspaceless %}
 ```
 
-### `templatetag`
+### [`templatetag`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#templatetag)
 
 ```html
 <dj-templatetag ... />
@@ -331,4 +312,18 @@ They all compile to the following Django template syntax.
 
 ```html
 {% templatetag ... %}
+```
+
+### [`verbatim`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#verbatim)
+
+```html
+<dj-verbatim>
+  ...
+</dj-verbatim>
+```
+
+```html
+{% verbatim %}
+  ...
+{% endverbatim %}
 ```
