@@ -55,9 +55,12 @@ dev:
 
 # Build the package
 build:
+  rm dist/*
   uvx --from build pyproject-build --installer uv
 
 # Build and publish the package to test PyPI and prod PyPI
 publish:
+  just build
+  uvx twine check dist/*
   uvx twine upload -r testpypi dist/*
-  uvx twine upload dist/*
+  uvx twine upload -r pypi dist/*
