@@ -1,7 +1,3 @@
-def get_csrf_input(*args, **kwargs) -> str:
-    return "<input type='hidden'>{% csrf_token %}</input>"
-
-
 def get_autoescape(*, component_name: str, is_tag_closing: bool = False, **kwargs) -> str:
     django_template_tag = component_name
 
@@ -26,7 +22,7 @@ HTML_TAG_TO_DJANGO_TEMPLATE_TAG_MAP = {
     "autoescape-off": get_autoescape,
     "csrf-token": "csrf_token",
     "csrf": "csrf_token",
-    "csrf-input": get_csrf_input,
+    "csrf-input": "csrf_token",
     "debug": "debug",
     "filter": "filter",
     "lorem": "lorem",

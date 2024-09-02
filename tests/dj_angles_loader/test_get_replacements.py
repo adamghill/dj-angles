@@ -97,7 +97,7 @@ replacement_params = (
     ),
     ReplacementParams(
         template_string="<dj-csrf-input />",
-        replacement_string="<input type='hidden'>{% csrf_token %}</input>",
+        replacement_string="{% csrf_token %}",
     ),
     ReplacementParams(
         template_string="<dj-block>",
