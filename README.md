@@ -1,7 +1,7 @@
 <p align="center">
   <h1 align="center">dj-angles &lt;/&gt;</h1>
 </p>
-<p align="center">Add some more bracket angles to your Django templates</p>
+<p align="center">Adds more bracket angles to Django templates</p>
 
 ![PyPI](https://img.shields.io/pypi/v/dj-angles?color=blue&style=flat-square)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/dj-angles?color=blue&style=flat-square)
