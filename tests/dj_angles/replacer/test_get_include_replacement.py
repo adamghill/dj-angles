@@ -1,4 +1,4 @@
-from dj_angles.template_loader import get_include_replacement
+from dj_angles.replacer import get_include_replacement
 
 
 def test_typical():

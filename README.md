@@ -122,18 +122,23 @@ Basically, Django template loaders are super powerful. The raw template content 
 
 ## 🪄 Include tags
 
-These are all equivalent ways to include partial HTML files.
+These are equivalent ways to include partial HTML files.
 
 ```html
 <dj-include 'partial.html' />
 <dj-partial />
-<$partial />
 ```
 
-They all compile to the following Django template syntax.
+They both compile to the following Django template syntax.
 
 ```html
 {% include 'partial.html' %}
+```
+
+```{note}
+The [other tags](#️-other-tags) are considered reserved words. Template file names that conflict with the those words won't get loaded because reserved words take precedence.
+
+Those templates would need to use `<dj-include 'partial.html' />` to include the template.
 ```
 
 ### ⤵️ Directories
@@ -143,7 +148,6 @@ Accessing templates in directories is supported even though technically forward-
 ```html
 <dj-include 'directory/partial.html' />
 <dj-directory/partial />
-<$directory/partial />
 ```
 
 ### 🥷 CSS scoping
@@ -156,7 +160,6 @@ These are all equivalent ways to include partials.
 <dj-include 'partial.html' shadow />
 <dj-partial shadow />
 <dj-partial! />
-<$partial! />
 ```
 
 They all compile to the following Django template syntax.
@@ -331,4 +334,123 @@ They all compile to the following Django template syntax.
 {% verbatim %}
   ...
 {% endverbatim %}
+```
+
+## Settings
+
+Settings can be configured via an `ANGLES` dictionary in `settings.py`.
+
+```python
+ANGLES = {}
+```
+
+### `initial_tag_regex`
+
+Determines the characters that are used to indicate a `dj-angles` element. `String` which defaults to `r"(dj-)"`.
+
+#### Special character
+
+```python
+ANGLES = {
+  "initial_tag_regex": r"(dj-|\$)"
+}
+```
+
+```html
+<dj-partial />
+<$partial />
+```
+
+```html
+{% include 'partial.html' %}
+```
+
+#### Regular element
+
+```python
+ANGLES = {
+  "initial_tag_regex": ""
+}
+```
+
+```html
+<partial />
+```
+
+```html
+{% include 'partial.html' %}
+```
+
+#### React-like component
+
+```python
+ANGLES = {
+  "initial_tag_regex": "",
+  "lower_case_tag": True
+}
+```
+
+```html
+<Partial />
+```
+
+```html
+{% include 'partial.html' %}
+```
+
+### `lower_case_tag`
+
+Lower-cases the tag. `Boolean` which defaults to `False`.
+
+### `mappers`
+
+Provide additional mappers. `Dictionary` which defaults to `{}`.
+
+The key is always a string and is the regex match after the `initial_tag_regex`, i.e. for the default `initial_tag_regex` of `r"(dj-)"`, the key would match after "dj-" until a space or a `>`.
+
+#### string value
+
+When the dictionary value is a string, it replaces the `initial_tag_regex` + the key, and puts it into a template tag.
+
+```python
+# settings.py
+
+ANGLES = {
+    "mappers": {
+        "blob": "include",
+    },
+}
+```
+
+```html
+<dj-blob 'partial.html' />
+```
+
+```html
+{% include 'partial.html' %}
+```
+
+#### Callable
+
+When the dictionary value is a callable, the output can be completely controlled.
+
+```python
+# settings.py
+
+def map_blob(component_name, template_tag_args, is_tag_closing):
+    return "blob2"
+
+ANGLES = {
+    "mappers": {
+        "blob": map_blob,
+    },
+}
+```
+
+```html
+<dj-blob />
+```
+
+```html
+blob2
 ```

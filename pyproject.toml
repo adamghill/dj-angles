@@ -37,6 +37,7 @@ Changelog = "https://github.com/adamghill/dj-angles/blob/master/CHANGELOG.md"
 [tool.uv]
 dev-dependencies = [
   "pytest<9",
+  "pytest-django",
   "mypy"
 ]
 
