@@ -335,12 +335,15 @@ Determines the characters that are used to indicate a `dj-angles` element. `Stri
 #### Special character
 
 ```python
+# settings.py
+
 ANGLES = {
   "initial_tag_regex": r"(dj-|\$)"
 }
 ```
 
 ```html
+<dj-include 'partial.html' />
 <dj-partial />
 <$partial />
 ```
@@ -349,37 +352,25 @@ ANGLES = {
 {% include 'partial.html' %}
 ```
 
-#### Regular element
+#### React-style include
 
 ```python
+# settings.py
+
 ANGLES = {
-  "initial_tag_regex": ""
-}
-```
-
-```html
-<partial />
-```
-
-```html
-{% include 'partial.html' %}
-```
-
-#### React-like component
-
-```python
-ANGLES = {
-  "initial_tag_regex": "",
-  "lower_case_tag": True
+  "initial_tag_regex": r"(dj-|(?=[A-Z]))",  # regex matches "dj-" or upper-case letter lookahead
+  "lower_case_tag": True,  # without this the template `Partial.html` will be loaded
 }
 ```
 
 ```html
 <Partial />
+<dj-debug />
 ```
 
 ```html
 {% include 'partial.html' %}
+{% debug %}
 ```
 
 ### `lower_case_tag`
