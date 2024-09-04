@@ -123,11 +123,7 @@ They both compile to the following Django template syntax.
 {% include 'partial.html' %}
 ```
 
-```{note}
-The [other tags](#️-other-tags) are considered reserved words. Template file names that conflict with the those words won't get loaded because reserved words take precedence.
-
-Those templates would need to use `<dj-include 'partial.html' />` to include the template.
-```
+The [other tags](#️-other-tags) are considered reserved words. Template file names that conflict with the those words won't get loaded because reserved words take precedence. Those would need to use `<dj-include 'partial.html' />` to include the template.
 
 ### ⤵️ Directories
 
