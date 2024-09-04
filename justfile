@@ -30,7 +30,7 @@ lint *ARGS='.':
   -uvx ruff check {{ ARGS }}
 
 # Check the types in the project
-type *ARGS='':
+type *ARGS='.':
   -uv run mypy {{ ARGS }}  # need to run through uv to see installed dependencies
 
 # Benchmark the project
@@ -45,7 +45,7 @@ alias t := test
 
 # Run coverage on the code
 coverage:
-  -uv run pytest --cov=refreshcss
+  -uv run pytest --cov=src/dj_angles
 
 # Run all the dev things
 dev:
@@ -55,6 +55,7 @@ dev:
 
 # Build the package
 build:
+  just test
   rm dist/*
   uvx --from build pyproject-build --installer uv
 

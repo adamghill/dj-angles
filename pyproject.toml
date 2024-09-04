@@ -38,6 +38,7 @@ Changelog = "https://github.com/adamghill/dj-angles/blob/master/CHANGELOG.md"
 dev-dependencies = [
   "pytest<9",
   "pytest-django",
+  "pytest-cov",
   "mypy"
 ]
 
@@ -46,7 +47,7 @@ src = ["src"]
 exclude = []
 target-version = "py38"
 line-length = 120
-select = [
+lint.select = [
   "A",
   "ARG",
   "B",
@@ -73,7 +74,7 @@ select = [
   "W",
   "YTT",
 ]
-ignore = [
+lint.ignore = [
   # Allow non-abstract empty methods in abstract base classes
   "B027",
   # Allow boolean positional values in function calls, like `dict.get(... True)`
@@ -87,21 +88,21 @@ ignore = [
    # Ignore exception strings
   "EM101", "EM102",
 ]
-unfixable = [
+lint.unfixable = [
   # Don't touch unused imports
   "F401",
 ]
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = "google"
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["dj_angles"]
 
-[tool.ruff.flake8-tidy-imports]
+[tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "all"
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 # Tests can use magic values, assertions, and relative imports
 "tests/**/*" = ["PLR2004", "S101", "TID252", "ARG001"]
 
@@ -128,8 +129,6 @@ sort = "cover"
 python_version = "3.8"
 warn_return_any = true
 warn_unused_configs = true
-
-[[tool.mypy.overrides]]
 ignore_missing_imports = true
 
 [build-system]
