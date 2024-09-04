@@ -19,51 +19,7 @@
 - Lets you excitedly tell your friends how neat the Shadow DOM is
 - Since it looks like HTML, syntax highlighting mostly "just works"
 
-## ⚡ Installation
-
-1. Create a new Django project or `cd` to an existing project
-1. `pip install dj-angles` to install the `dj-angles` package
-1. `Edit settings.py` `TEMPLATES` and add `"dj_angles.template_loader.Loader",` as the first loader. Note: you might need to add the `"loaders"` key since it is not there by default: https://docs.djangoproject.com/en/stable/ref/templates/api/#django.template.loaders.cached.Loader.
-
-```python
-TEMPLATES = [
-  "BACKEND": "django.template.backends.django.DjangoTemplates",
-  # "APP_DIRS": True,  # this cannot be specified if loaders are explicitly set
-  "DIRS": [],
-  "OPTIONS": {
-      "builtins": builtins,
-      "context_processors": [
-          "django.template.context_processors.request",
-          "django.template.context_processors.debug",
-          "django.template.context_processors.static",
-      ],
-      "loaders": [
-          (
-              "django.template.loaders.cached.Loader",
-              [
-                  "dj_angles.template_loader.Loader",  # this is required for `dj-angles`
-                  "django.template.loaders.filesystem.Loader",
-                  "django.template.loaders.app_directories.Loader",
-              ],
-          )
-      ],
-  },
-]
-```
-
-## ✨ Inspiration
-
-I have been interested in Django components and encapsulating functionality for a long time (see [django-unicorn](https://www.django-unicorn.com), [dlitejs](https://dlitejs.com), etc), but had never thought of using HTML directly until I looked at [Cotton](https://django-cotton.com) by [wrabit](https://github.com/wrabit).
-
-💡
-
-Since `<c-component />` is a high-powered wrapper around `{% include %}`, what if other Django templatetags could also be wrapped? This library is an experiment to see what that experience is like and how well it works.
-
-## 🤔 How does this work?
-
-Basically, Django template loaders are super powerful. The raw template content is passed through `dj_angles.template_loader.Loader` first, some transformations happen (via good ole' regex), and then the normal template loaders process the output like normal.
-
-## 💥 Template example
+## 💥 Example
 
 **`base.html`**
 
@@ -118,6 +74,38 @@ Basically, Django template loaders are super powerful. The raw template content 
     color: green;
   }
 </style>
+```
+
+## ⚡ Installation
+
+1. Create a new Django project or `cd` to an existing project
+1. `pip install dj-angles` to install the `dj-angles` package
+1. `Edit settings.py` `TEMPLATES` and add `"dj_angles.template_loader.Loader",` as the first loader. Note: you might need to add the `"loaders"` key since it is not there by default: https://docs.djangoproject.com/en/stable/ref/templates/api/#django.template.loaders.cached.Loader.
+
+```python
+TEMPLATES = [
+  "BACKEND": "django.template.backends.django.DjangoTemplates",
+  # "APP_DIRS": True,  # this cannot be specified if loaders are explicitly set
+  "DIRS": [],
+  "OPTIONS": {
+      "builtins": builtins,
+      "context_processors": [
+          "django.template.context_processors.request",
+          "django.template.context_processors.debug",
+          "django.template.context_processors.static",
+      ],
+      "loaders": [
+          (
+              "django.template.loaders.cached.Loader",
+              [
+                  "dj_angles.template_loader.Loader",  # this is required for `dj-angles`
+                  "django.template.loaders.filesystem.Loader",
+                  "django.template.loaders.app_directories.Loader",
+              ],
+          )
+      ],
+  },
+]
 ```
 
 ## 🪄 Include tags
@@ -454,3 +442,15 @@ ANGLES = {
 ```html
 blob2
 ```
+
+## 🤔 How does this work?
+
+Basically, Django template loaders are super powerful. The raw template content is passed through `dj_angles.template_loader.Loader` first, some transformations happen (via good ole' regex), and then the normal template loaders process the output like normal.
+
+## ✨ Inspiration
+
+I have been interested in Django components and encapsulating functionality for a long time (see [django-unicorn](https://www.django-unicorn.com), [dlitejs](https://dlitejs.com), etc), but had never thought of using HTML directly until I looked at [Cotton](https://django-cotton.com) by [wrabit](https://github.com/wrabit).
+
+💡
+
+Since `<c-component />` is a high-powered wrapper around `{% include %}`, what if other Django templatetags could also be wrapped? This library is an experiment to see what that experience is like and how well it works.
