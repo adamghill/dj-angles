@@ -112,6 +112,24 @@ def test_typical(template_string, replacement_string):
     ReplacementParams._fields,
     (
         ReplacementParams(
+            template_string="<dj-include 'partial' />",
+            replacement_string="{% include 'partial.html' %}",
+        ),
+    ),
+)
+def test_no_extension(template_string, replacement_string):
+    expected = [
+        (template_string, replacement_string),
+    ]
+    actual = get_replacements(template_string)
+
+    assert actual == expected
+
+
+@pytest.mark.parametrize(
+    ReplacementParams._fields,
+    (
+        ReplacementParams(
             template_string="<$partial />",
             replacement_string="{% include 'partial.html' %}",
         ),
@@ -133,7 +151,7 @@ def test_typical(template_string, replacement_string):
         ),
     ),
 )
-def test_custom_initial_tag_regex(template_string, replacement_string, settings):
+def test_initial_tag_regex(template_string, replacement_string, settings):
     settings.ANGLES = {"initial_tag_regex": r"(dj-|\$)"}
 
     expected = [
@@ -148,33 +166,13 @@ def test_custom_initial_tag_regex(template_string, replacement_string, settings)
     ReplacementParams._fields,
     (
         ReplacementParams(
-            template_string="<partial />",
-            replacement_string="{% include 'partial.html' %}",
+            template_string="<Partial />",
+            replacement_string="{% include 'Partial.html' %}",
         ),
     ),
 )
-def test_initial_tag_regex_empty_string(template_string, replacement_string, settings):
-    settings.ANGLES = {"initial_tag_regex": ""}
-
-    expected = [
-        (template_string, replacement_string),
-    ]
-    actual = get_replacements(template_string)
-
-    assert actual == expected
-
-
-@pytest.mark.parametrize(
-    ReplacementParams._fields,
-    (
-        ReplacementParams(
-            template_string="<partial />",
-            replacement_string="{% include 'partial.html' %}",
-        ),
-    ),
-)
-def test_initial_tag_regex_none(template_string, replacement_string, settings):
-    settings.ANGLES = {"initial_tag_regex": None}
+def test_initial_tag_regex_for_react_style(template_string, replacement_string, settings):
+    settings.ANGLES = {"initial_tag_regex": r"(dj-|(?=[A-Z]))"}
 
     expected = [
         (template_string, replacement_string),
@@ -193,8 +191,8 @@ def test_initial_tag_regex_none(template_string, replacement_string, settings):
         ),
     ),
 )
-def test_initial_tag_regex_lower_case_tag(template_string, replacement_string, settings):
-    settings.ANGLES = {"initial_tag_regex": None, "lower_case_tag": True}
+def test_lower_case_tag(template_string, replacement_string, settings):
+    settings.ANGLES = {"initial_tag_regex": r"(dj-|(?=[A-Z]))", "lower_case_tag": True}
 
     expected = [
         (template_string, replacement_string),

@@ -7,17 +7,22 @@ from dj_angles.mappers import HTML_TAG_TO_DJANGO_TEMPLATE_TAG_MAP
 
 
 def get_include_replacement(template_name: str, *, is_shadow: bool = False, is_tag_self_closing: bool = False) -> str:
-    template_name = template_name.strip()
+    template_file = template_name.strip()
+    is_double_quoted = False
 
-    if "." in template_name:
-        template_file = f"'{template_name}'"
-    else:
-        template_file = f"'{template_name}.html'"
-
-    if (template_name.startswith("'") and template_name.endswith("'")) or (
-        template_name.startswith('"') and template_name.endswith('"')
-    ):
+    if template_file.startswith("'") and template_file.endswith("'"):
         template_file = template_file[1:-1]
+    elif template_file.startswith('"') and template_file.endswith('"'):
+        template_file = template_file[1:-1]
+        is_double_quoted = True
+
+    if "." not in template_file:
+        template_file = f"{template_file}.html"
+
+    if is_double_quoted:
+        template_file = f'"{template_file}"'
+    else:
+        template_file = f"'{template_file}'"
 
     replacement = f"{{% include {template_file} %}}"
 
@@ -116,7 +121,7 @@ def get_replacements(template_string: str) -> list[str]:
         elif original.startswith("</"):
             replacement = "</template>"
         else:
-            # Handle `include` shorthand, e.g. `<dj-partial />`
+            # Handle `include` shorthand, e.g. `<dj-partial />` or `<partial />`
             is_shadow = "shadow" in match.group("template_tag_args")
 
             if component_name.endswith("!"):
