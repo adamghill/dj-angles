@@ -1,4 +1,6 @@
 def get_autoescape(*, component_name: str, is_tag_closing: bool = False, **kwargs) -> str:
+    """Mapper function for the autoescape tags."""
+
     django_template_tag = component_name
 
     if is_tag_closing:
@@ -10,12 +12,12 @@ def get_autoescape(*, component_name: str, is_tag_closing: bool = False, **kwarg
     return f"{{% {django_template_tag} %}}"
 
 
+# Defaults mappings for tag names to Django template tags
 HTML_TAG_TO_DJANGO_TEMPLATE_TAG_MAP = {
     "extends": "extends",
     "block": "block",
     "verbatim": "verbatim",
     "include": "include",
-    "$": "include",  # technically not needed, but more explicit
     "comment": "comment",
     "#": "comment",
     "autoescape-on": get_autoescape,
