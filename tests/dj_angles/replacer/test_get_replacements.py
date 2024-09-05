@@ -239,7 +239,7 @@ def test_mappers_string(template_string, replacement_string, settings):
 def test_mappers_callable(template_string, replacement_string, settings):
     settings.ANGLES = {
         "initial_tag_regex": None,
-        "mappers": {"blob": lambda component_name, template_tag_args, is_tag_closing: "blob2"},
+        "mappers": {"blob": lambda component_name, template_tag_args, is_tag_closing: "blob2"},  # noqa: ARG005
     }
 
     expected = [

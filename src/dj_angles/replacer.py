@@ -1,5 +1,6 @@
 import re
 from functools import lru_cache
+from typing import Any, List, Tuple
 
 from django.conf import settings
 
@@ -56,7 +57,7 @@ def _get_tag_regex():
     return _compile_regex(tag_regex)
 
 
-def get_replacements(template_string: str) -> list[str]:
+def get_replacements(template_string: str) -> List[Tuple[str, Any]]:
     replacements = []
     last_open_component_name = None
 

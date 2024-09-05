@@ -1,4 +1,4 @@
-def get_autoescape(*, component_name: str, is_tag_closing: bool = False, **kwargs) -> str:
+def get_autoescape(*, component_name: str, is_tag_closing: bool = False, **kwargs) -> str:  # noqa: ARG001
     """Mapper function for the autoescape tags."""
 
     django_template_tag = component_name
