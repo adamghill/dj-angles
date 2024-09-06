@@ -1,10 +1,16 @@
 # Changelog
 
+## 0.3.0-dev
+
+- Wrap all includes in a custom element for easier debugging and targeted CSS styling.
+- Support ":" to append additional identifier to the custom wrapping element.
+- Fix: handle "shadow" being in the template name.
+
 ## 0.2.0
 
-- `initial_tag_regex` setting
-- `lower_case_tag` setting
-- `mappers` setting
+- Add `initial_tag_regex` setting.
+- Add `lower_case_tag` setting.
+- Add `mappers` setting.
 
 **Breaking changes**
 
