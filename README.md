@@ -18,6 +18,7 @@
 - Pretend like you are writing React components, but without dealing with JavaScript at all
 - Lets you excitedly tell your friends how neat the Shadow DOM is
 - Since it looks like HTML, syntax highlighting mostly "just works"
+- Wraps included templates in a custom element for easier debugging and targeted CSS styling
 
 ## 💥 Example
 
@@ -63,17 +64,9 @@
 **partial.html**
 
 ```html
-<div style="border: 1px solid red;">
-  <p>
-    This is a partial: {{ now|date:"c" }}
-  </p>
+<div>
+  This is a partial: {{ now|date:"c" }}
 </div>
-
-<style>
-  p {
-    color: green;
-  }
-</style>
 ```
 
 ## ⚡ Installation
@@ -115,31 +108,55 @@ These are equivalent ways to include partial HTML files.
 
 ```html
 <dj-include 'partial.html' />
+<dj-include 'partial' />
 <dj-partial />
 ```
 
-They both compile to the following Django template syntax.
+They all compile to the following Django template.
 
 ```html
-{% include 'partial.html' %}
+<dj-partial>{% include 'partial.html' %}</dj-partial>
 ```
 
-The [other tags](#️-other-tags) are considered reserved words. Template file names that conflict with the those words won't get loaded because reserved words take precedence. Those would need to use `<dj-include 'partial.html' />` to include the template.
+The wrapping `<dj-partial>` element allows for easier debugging when looking at the source code and also allows for targeted CSS styling.
+
+Note: The [other tags](#️-other-tags) are considered reserved words. Template file names that conflict will not get loaded because reserved words take precedence. For example, if there is a template named "extends.html" `<dj-extends />` could not be used to include it; `<dj-include 'extends.html' />` would need to be used instead.
+
+### Appending an identifier to the wrapping element
+
+Adding a colon and an identifier to the end of a template name allows for even more specific CSS styling.
+
+```html
+<dj-partial:1 />
+```
+
+Would get compiled to the following Django template.
+
+```html
+<dj-partial-1>{% include 'partial.html' }</dj-partial-1>
+```
 
 ### ⤵️ Directories
 
-Accessing templates in directories is supported even though technically forward-slashes [aren't permitted in a custom element](https://html.spec.whatwg.org/multipage/custom-elements.html#valid-custom-element-name). It will definitely confound most HTML syntax highlighters.
+Accessing templates in directories is supported even though technically forward-slashes [aren't permitted in a custom element](https://html.spec.whatwg.org/multipage/custom-elements.html#valid-custom-element-name). It might confound HTML syntax highlighters.
 
 ```html
 <dj-include 'directory/partial.html' />
+<dj-include 'directory/partial' />
 <dj-directory/partial />
+```
+
+They all compile to the following Django template.
+
+```html
+<dj-directory-partial>{% include 'directory/partial.html' %}</dj-directory-partial>
 ```
 
 ### 🥷 CSS scoping
 
-To encapsulate component styles, enable the Shadow DOM for the partial. This will ensure that any `style` element in the partial will be contained to that partial. The downside is that the Shadow DOM does not allow outside styles in, other than CSS variables.
+To encapsulate component styles, enable the Shadow DOM for the partial. This will ensure that any `style` element in the partial will be contained to that partial. The downside is that the Shadow DOM does not allow outside styles in (other than CSS variables).
 
-These are all equivalent ways to include partials.
+These are all equivalent ways to include a shadow partial.
 
 ```html
 <dj-include 'partial.html' shadow />
@@ -150,8 +167,10 @@ These are all equivalent ways to include partials.
 They all compile to the following Django template syntax.
 
 ```html
-<template shadowrootmode='open'>{% include 'partial.html' %}</template>
+<dj-partial><template shadowrootmode='open'>{% include 'partial.html' %}</template></dj-partial>
 ```
+
+**More information about the Shadow DOM**
 
 - Shadow DOM styling: https://javascript.info/shadow-dom-style
 - Declaratively creating a shadow root: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template#shadowrootmode
@@ -349,6 +368,8 @@ ANGLES = {
 <$partial />
 ```
 
+These would all compile to the following Django template.
+
 ```html
 {% include 'partial.html' %}
 ```
@@ -369,6 +390,8 @@ ANGLES = {
 <dj-debug />
 ```
 
+This would compile to the following Django template.
+
 ```html
 {% include 'partial.html' %}
 {% debug %}
@@ -376,7 +399,7 @@ ANGLES = {
 
 ### `lower_case_tag`
 
-Lower-cases the tag. `Boolean` which defaults to `False`.
+Lower-cases the tag. Useful when using [React-style includes](#react-style-include). `Boolean` which defaults to `False`.
 
 ### `mappers`
 
@@ -386,7 +409,7 @@ The key is always a string and is the regex match after the `initial_tag_regex`,
 
 #### string value
 
-When the dictionary value is a string, it replaces the `initial_tag_regex` + the key, and puts it into a template tag.
+When the dictionary value is a string, it replaces the `initial_tag_regex` plus the key, and puts it between "{%" and the arguments plus "%}".
 
 ```python
 # settings.py
@@ -408,7 +431,7 @@ ANGLES = {
 
 #### Callable
 
-When the dictionary value is a callable, the output can be completely controlled.
+When the dictionary value is a callable, the output is completely controlled by the output of the function.
 
 ```python
 # settings.py
