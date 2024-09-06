@@ -2,19 +2,42 @@
 
 <dj-block 'content'>
 
-  <pre>&lt;!-- www/include.html --&gt;
-
-&lt;dj-www/components/include /&gt;
-&lt;dj-include 'www/components/include' /&gt;
-&lt;dj-include 'www/components/include.html' /&gt;</pre>
-
   <pre>&lt;!-- www/components/include.html --&gt;
 
 &lt;div style='border: 1px solid red; margin: 5px;'&gt;
-  This is an included partial.
-&lt;/div&gt;</pre>
+  This is a regular include.
+&lt;/div&gt;
+</pre>
+
+  <pre>&lt;!-- www/components/shadow-include.html --&gt;
+
+&lt;div&gt;
+  This is a shadow include.
+&lt;/div&gt;
+
+&lt;style&gt;
+  div {
+    border: 1px solid blue;
+    margin: 5px;
+  }
+&lt;/style&gt;
+  </pre>
+
+  <pre>&lt;!-- www/include.html --&gt;
+
+&lt;!-- regular includes --&gt;
+&lt;dj-www/components/include /&gt;
+&lt;dj-include 'www/components/include' /&gt;
+&lt;dj-include 'www/components/include.html' /&gt;
+
+&lt;!-- shadow includes --&gt;
+&lt;dj-www/components/shadow-include! /&gt;
+&lt;dj-www/components/shadow-include shadow /&gt;</pre>
 
   <dj-www/components/include />
   <dj-include 'www/components/include' />
   <dj-include 'www/components/include.html' />
+
+  <dj-www/components/shadow-include! />
+  <dj-www/components/shadow-include shadow />
 </dj-block 'content'>

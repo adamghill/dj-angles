@@ -102,6 +102,7 @@ def get_replacements(template_string: str) -> List[Tuple[str, Any]]:
                     component_name=component_name, template_tag_args=template_tag_args, is_tag_closing=is_tag_closing
                 )
             elif django_template_tag == "include":
+                # TODO: Move this to a callable instead of being a one-off
                 is_shadow = False
 
                 if "shadow" in template_tag_args:
