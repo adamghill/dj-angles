@@ -1,6 +1,16 @@
 <dj-extends 'www/base.html' />
 
 <dj-block 'content'>
+  <style>
+    div {
+      border: 1px solid red;
+      margin: 5px;
+    }
+
+    dj-www-components-include-additional div {
+      border: 1px green solid;
+    }
+  </style>
 
   <pre>&lt;!-- www/components/include.html --&gt;
 
@@ -25,9 +35,21 @@
 
   <pre>&lt;!-- www/include.html --&gt;
 
+&lt;style&gt;
+  div {
+    border: 1px solid red;
+    margin: 5px;
+  }
+
+  dj-www-components-include-additional div {
+    border: 1px green solid;
+  }
+&lt;/style&gt;
+
 &lt;!-- regular includes --&gt;
 &lt;dj-www/components/include /&gt;
 &lt;dj-include 'www/components/include' /&gt;
+&lt;dj-include 'www/components/include:additional' /&gt;
 &lt;dj-include 'www/components/include.html' /&gt;
 
 &lt;!-- shadow includes --&gt;
@@ -35,9 +57,13 @@
 &lt;dj-www/components/shadow-include shadow /&gt;</pre>
 
   <dj-www/components/include />
+  <dj-www/components/include:additional />
   <dj-include 'www/components/include' />
+  <dj-include 'www/components/include:additional' />
   <dj-include 'www/components/include.html' />
 
   <dj-www/components/shadow-include! />
   <dj-www/components/shadow-include shadow />
+  <dj-include 'www/components/shadow-include.html' shadow />
+
 </dj-block 'content'>

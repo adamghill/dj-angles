@@ -9,7 +9,12 @@ from dj_angles.mappers import HTML_TAG_TO_DJANGO_TEMPLATE_TAG_MAP
 
 def get_wrapping_element_name(template_name: str) -> str:
     wrapping_element_name = (
-        template_name.replace("/", "-").replace("'", "").replace('"', "").replace("--", "-").replace(" ", "-")
+        template_name.replace("/", "-")
+        .replace("'", "")
+        .replace('"', "")
+        .replace("--", "-")
+        .replace(" ", "-")
+        .replace(":", "-")
     )
     wrapping_element_name = f"dj-{wrapping_element_name}"
 
@@ -43,8 +48,14 @@ def get_include_replacement(template_name: str, *, is_shadow: bool = False, is_t
     else:
         template_file = f"'{template_file}'"
 
-    replacement = f"{{% include {template_file} %}}"
     wrapping_element_name = get_wrapping_element_name(template_file)
+
+    if ":" in template_file:
+        colon_idx = template_file.index(":")
+        extension_idx = template_file.index(".")
+        template_file = template_file[0:colon_idx] + template_file[extension_idx:]
+
+    replacement = f"{{% include {template_file} %}}"
 
     if is_shadow:
         replacement = f"<{wrapping_element_name}><template shadowrootmode='open'>{{% include {template_file} %}}"
