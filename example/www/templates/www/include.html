@@ -1,0 +1,20 @@
+<dj-extends 'www/base.html' />
+
+<dj-block 'content'>
+
+  <pre>&lt;!-- www/include.html --&gt;
+
+&lt;dj-www/components/include /&gt;
+&lt;dj-include 'www/components/include' /&gt;
+&lt;dj-include 'www/components/include.html' /&gt;</pre>
+
+  <pre>&lt;!-- www/components/include.html --&gt;
+
+&lt;div style='border: 1px solid red; margin: 5px;'&gt;
+  This is an included partial.
+&lt;/div&gt;</pre>
+
+  <dj-www/components/include />
+  <dj-include 'www/components/include' />
+  <dj-include 'www/components/include.html' />
+</dj-block 'content'>

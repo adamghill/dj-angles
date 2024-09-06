@@ -1,0 +1,47 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>dj-angles examples</title>
+  <link rel="stylesheet" href="{% static 'css/simple.min.css' %}">
+</head>
+
+<body>
+  <header>
+    <h1>
+      <a href="/">dj-angles &lt;/&gt;</a>
+    </h1>
+    <p>
+      <a href="https://github.com/adamghill/dj-angles">https://github.com/adamghill/dj-angles</a>
+    </p>
+    <nav>
+      <ul>
+        <li>
+          <a class="{% if request.path == "/include" %}current{% endif %}" href="/include">Include</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <dj-block 'content'>
+    </dj-block 'content'>
+  </main>
+
+  <footer>
+    <ul style="list-style: none; padding: 0px; margin: 0px;">
+      <li>
+        <a href="https://djangoproject.org">Django</a>
+      </li>
+      <li>
+        <a href="https://simplecss.org">SimpleCSS</a>
+      </li>
+    </ul>
+  </footer>
+</body>
+
+</html>

@@ -53,6 +53,10 @@ dev:
   just type
   just coverage
 
+serve:
+  uv run python3 example/manage.py migrate
+  uv run python3 example/manage.py runserver 0:8789
+
 # Build the package
 build:
   just test
