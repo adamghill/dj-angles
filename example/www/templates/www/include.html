@@ -4,63 +4,118 @@
   <style>
     div {
       border: 1px solid red;
-      margin: 5px;
+      margin: 5px 0 5px 0;
     }
 
-    dj-www-components-include-additional div {
+    div p {
+      color: blue;
+      margin: 0;
+    }
+
+    dj-www-components-include-1 div {
       border: 1px green solid;
+    }
+
+    dj-www-components-include-2 div p {
+      color: green;
     }
   </style>
 
-  <pre>&lt;!-- www/components/include.html --&gt;
+  <p>
+    Demonstrate how <code>include</code> works and different ways to style components.
+  </p>
 
-&lt;div style='border: 1px solid red; margin: 5px;'&gt;
-  This is a regular include.
-&lt;/div&gt;
-</pre>
+  <h3>Page styles</h3>
 
-  <pre>&lt;!-- www/components/shadow-include.html --&gt;
-
-&lt;div&gt;
-  This is a shadow include.
-&lt;/div&gt;
-
-&lt;style&gt;
-  div {
-    border: 1px solid blue;
-    margin: 5px;
-  }
-&lt;/style&gt;
-  </pre>
-
-  <pre>&lt;!-- www/include.html --&gt;
-
+  <pre>
 &lt;style&gt;
   div {
     border: 1px solid red;
     margin: 5px;
   }
 
+  div p {
+    color: blue;
+    margin: 0;
+  }
+
   dj-www-components-include-additional div {
     border: 1px green solid;
   }
-&lt;/style&gt;
 
-&lt;!-- regular includes --&gt;
-&lt;dj-www/components/include /&gt;
+  dj-www-components-include-2 div p {
+    color: green;
+  }
+&lt;/style&gt;</pre>
+
+
+  <h3>www/components/include.html</h3>
+
+  <pre>&lt;div&gt;
+  This is a regular include.
+&lt;/div&gt;</pre>
+
+  <h4>Regular includes</h4>
+
+  <p>
+    Different ways to include <code>www/components/include.html</code>. They will all have a red border because of the
+    page style which targets <code>div</code> elements. They have blue text because of the page style which targets
+    <code>div p</code> elements.
+  </p>
+
+  <pre>&lt;dj-www/components/include /&gt;
 &lt;dj-include 'www/components/include' /&gt;
-&lt;dj-include 'www/components/include:additional' /&gt;
-&lt;dj-include 'www/components/include.html' /&gt;
-
-&lt;!-- shadow includes --&gt;
-&lt;dj-www/components/shadow-include! /&gt;
-&lt;dj-www/components/shadow-include shadow /&gt;</pre>
+&lt;dj-include 'www/components/include.html' /&gt;</pre>
 
   <dj-www/components/include />
-  <dj-www/components/include:additional />
   <dj-include 'www/components/include' />
-  <dj-include 'www/components/include:additional' />
   <dj-include 'www/components/include.html' />
+
+
+  <h4>Regular includes with an additional id</h4>
+
+  <p>
+    Add a differentiator to the wrapping element that gets created around each include. The first will have a green
+    border because of the page style which specifies <code>dj-www-components-include-1</code>. They all have blue text
+    because of the page style which targets <code>div p</code> elements.
+  </p>
+
+  <pre>&lt;dj-www/components/include:1 /&gt;
+&lt;dj-include 'www/components/include:2' /&gt;</pre>
+
+  <dj-www/components/include:1 />
+  <dj-include 'www/components/include:2' />
+
+
+  <h3>www/components/shadow-include.html</h3>
+
+  <pre>&lt;div&gt;
+  This is a shadow include.
+&lt;/div&gt;
+
+&lt;style&gt;
+  div {
+    border: 1px solid blue;
+    margin: 5px 0 5px 0;
+  }
+
+  p {
+    margin: 0;
+  }
+&lt;/style&gt;</pre>
+
+  <h4>Shadow includes</h4>
+
+  <p>
+    Different ways to include <code>www/components/shadow-include.html</code>. They will all have a blue border because
+    of the styles in the include which targets <code>div</code> elements. They will <strong>not</strong> have blue text
+    because the page style that target <code>div p</code> does not pierce the shadow DOM.
+  </p>
+
+  <pre>
+&lt;dj-www/components/shadow-include! /&gt;
+&lt;dj-www/components/shadow-include shadow /&gt;
+&lt;dj-include 'www/components/shadow-include' shadow /&gt;</pre>
 
   <dj-www/components/shadow-include! />
   <dj-www/components/shadow-include shadow />
