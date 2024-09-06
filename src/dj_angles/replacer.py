@@ -140,10 +140,15 @@ def get_replacements(template_string: str) -> List[Tuple[str, Any]]:
                 # TODO: Move this to a callable instead of being a one-off
                 is_shadow = False
 
-                if "shadow" in template_tag_args:
-                    # Remove shadow from the arg if necessary
-                    template_tag_args = template_tag_args.replace("shadow", "")
-                    is_shadow = True
+                _template_tag_args = ""
+
+                for template_tag_arg in template_tag_args.split(" "):
+                    if template_tag_arg.strip() == "shadow":
+                        is_shadow = True
+                    else:
+                        _template_tag_args += f"{template_tag_arg} "
+
+                template_tag_args = _template_tag_args
 
                 if not template_tag_args:
                     raise AssertionError("{% include %} must have an template name")
