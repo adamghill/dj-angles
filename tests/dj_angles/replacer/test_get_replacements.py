@@ -34,8 +34,16 @@ def _shadowify(s: str) -> str:
             replacement_string=_shadowify("{% include 'partial.html' %}"),
         ),
         ReplacementParams(
+            template_string="<dj-include 'shadow-partial.html' />",
+            replacement_string="<dj-shadow-partial>{% include 'shadow-partial.html' %}</dj-shadow-partial>",
+        ),
+        ReplacementParams(
             template_string="<dj-partial />",
             replacement_string="<dj-partial>{% include 'partial.html' %}</dj-partial>",
+        ),
+        ReplacementParams(
+            template_string="<dj-shadow-partial />",
+            replacement_string="<dj-shadow-partial>{% include 'shadow-partial.html' %}</dj-shadow-partial>",
         ),
         ReplacementParams(
             template_string="<dj-comment>",
