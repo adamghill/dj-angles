@@ -15,7 +15,7 @@ def get_wrapping_element_name(template_name: str) -> str:
         .replace("--", "-")
         .replace(" ", "-")
         .replace(":", "-")
-    )
+    ).lower()
     wrapping_element_name = f"dj-{wrapping_element_name}"
 
     # Remove extensions

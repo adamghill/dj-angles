@@ -7,9 +7,9 @@ def test_typical():
 {% block content %}
   <input />
 
-  {% include 'partial.html' %}
+  <dj-partial>{% include 'partial.html' %}</dj-partial>
 
-  {% include 'another-directory/another-partial.html' %}
+  <dj-another-directory-another-partial>{% include 'another-directory/another-partial.html' %}</dj-another-directory-another-partial>
 
   {% debug %}
 {% endblock content %}"""

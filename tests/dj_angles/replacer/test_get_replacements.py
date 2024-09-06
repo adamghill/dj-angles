@@ -15,7 +15,7 @@ ReplacementParams = namedtuple(
 
 
 def _shadowify(s: str) -> str:
-    return f"<template shadowrootmode='open'>{s}</template>"
+    return f"<dj-partial><template shadowrootmode='open'>{s}</template></dj-partial>"
 
 
 @pytest.mark.parametrize(
@@ -27,7 +27,7 @@ def _shadowify(s: str) -> str:
         ),
         ReplacementParams(
             template_string="<dj-include 'partial.html' />",
-            replacement_string="{% include 'partial.html' %}",
+            replacement_string="<dj-partial>{% include 'partial.html' %}</dj-partial>",
         ),
         ReplacementParams(
             template_string="<dj-include 'partial.html' shadow />",
@@ -35,7 +35,7 @@ def _shadowify(s: str) -> str:
         ),
         ReplacementParams(
             template_string="<dj-partial />",
-            replacement_string="{% include 'partial.html' %}",
+            replacement_string="<dj-partial>{% include 'partial.html' %}</dj-partial>",
         ),
         ReplacementParams(
             template_string="<dj-comment>",
@@ -113,7 +113,7 @@ def test_typical(template_string, replacement_string):
     (
         ReplacementParams(
             template_string="<dj-include 'partial' />",
-            replacement_string="{% include 'partial.html' %}",
+            replacement_string="<dj-partial>{% include 'partial.html' %}</dj-partial>",
         ),
     ),
 )
@@ -131,7 +131,7 @@ def test_no_extension(template_string, replacement_string):
     (
         ReplacementParams(
             template_string="<$partial />",
-            replacement_string="{% include 'partial.html' %}",
+            replacement_string="<dj-partial>{% include 'partial.html' %}</dj-partial>",
         ),
         ReplacementParams(
             template_string="<$partial! />",
@@ -139,15 +139,15 @@ def test_no_extension(template_string, replacement_string):
         ),
         ReplacementParams(
             template_string="<$partial!>",
-            replacement_string="<template shadowrootmode='open'>{% include 'partial.html' %}",
+            replacement_string="<dj-partial><template shadowrootmode='open'>{% include 'partial.html' %}",
         ),
         ReplacementParams(
             template_string="</$partial!>",
-            replacement_string="</template>",
+            replacement_string="</template></dj-partial>",
         ),
         ReplacementParams(
             template_string="<$directory/partial />",
-            replacement_string="{% include 'directory/partial.html' %}",
+            replacement_string="<dj-directory-partial>{% include 'directory/partial.html' %}</dj-directory-partial>",
         ),
     ),
 )
@@ -167,7 +167,7 @@ def test_initial_tag_regex(template_string, replacement_string, settings):
     (
         ReplacementParams(
             template_string="<Partial />",
-            replacement_string="{% include 'Partial.html' %}",
+            replacement_string="<dj-partial>{% include 'Partial.html' %}</dj-partial>",
         ),
     ),
 )
@@ -187,7 +187,7 @@ def test_initial_tag_regex_for_react_style(template_string, replacement_string, 
     (
         ReplacementParams(
             template_string="<Partial />",
-            replacement_string="{% include 'partial.html' %}",
+            replacement_string="<dj-partial>{% include 'partial.html' %}</dj-partial>",
         ),
     ),
 )
@@ -207,7 +207,7 @@ def test_lower_case_tag(template_string, replacement_string, settings):
     (
         ReplacementParams(
             template_string="<blob 'partial.html' />",
-            replacement_string="{% include 'partial.html' %}",
+            replacement_string="<dj-partial>{% include 'partial.html' %}</dj-partial>",
         ),
     ),
 )
