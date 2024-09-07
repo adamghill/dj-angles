@@ -60,7 +60,7 @@ serve:
 # Build the package
 build:
   just test
-  rm dist/*
+  rm -f dist/*
   uvx --from build pyproject-build --installer uv
 
 # Build and publish the package to test PyPI and prod PyPI
