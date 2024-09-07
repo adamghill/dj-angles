@@ -7,8 +7,6 @@
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/dj-angles?color=blue&style=flat-square)
 ![GitHub Sponsors](https://img.shields.io/github/sponsors/adamghill?color=blue&style=flat-square)
 
-> This code is experimental -- use with caution! Or maybe not at all! 🤷
-
 📦 Package located at https://pypi.org/project/dj-angles/.
 
 ## ⭐ Features

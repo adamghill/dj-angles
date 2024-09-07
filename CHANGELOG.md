@@ -1,10 +1,10 @@
 # Changelog
 
-## 0.3.0-dev
+## 0.3.0
 
 - Wrap all includes in a custom element for easier debugging and targeted CSS styling.
 - Support ":" to append additional identifier to the custom wrapping element.
-- Fix: handle "shadow" being in the template name.
+- Fix: support "shadow" being in the template name.
 
 ## 0.2.0
 
