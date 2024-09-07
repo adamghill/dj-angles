@@ -215,7 +215,7 @@ def test_lower_case_tag(template_string, replacement_string, settings):
     (
         ReplacementParams(
             template_string="<blob 'partial.html' />",
-            replacement_string="<dj-partial>{% include 'partial.html' %}</dj-partial>",
+            replacement_string="{% include 'partial.html' %}",
         ),
     ),
 )
@@ -247,7 +247,7 @@ def test_mappers_string(template_string, replacement_string, settings):
 def test_mappers_callable(template_string, replacement_string, settings):
     settings.ANGLES = {
         "initial_tag_regex": None,
-        "mappers": {"blob": lambda component_name, template_tag_args, is_tag_closing: "blob2"},  # noqa: ARG005
+        "mappers": {"blob": lambda component_name, template_tag_args, is_tag_self_closing, is_tag_closing: "blob2"},  # noqa: ARG005
     }
 
     expected = [
