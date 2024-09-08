@@ -1,4 +1,4 @@
-from dj_angles.replacer import replace_django_templatetags
+from dj_angles.replacer import replace_django_template_tags
 
 
 def test_typical():
@@ -14,7 +14,7 @@ def test_typical():
   {% debug %}
 {% endblock content %}"""
 
-    actual = replace_django_templatetags("""<dj-extends 'base.html' />
+    actual = replace_django_template_tags("""<dj-extends 'base.html' />
 
 <dj-block content>
   <input />
@@ -31,6 +31,6 @@ def test_typical():
 
 def test_extends():
     expected = "{% extends 'base.html' %}"
-    actual = replace_django_templatetags("<dj-extends 'base.html' />")
+    actual = replace_django_template_tags("<dj-extends 'base.html' />")
 
     assert actual == expected

@@ -4,7 +4,7 @@ from django.apps import apps
 from django.template import TemplateDoesNotExist
 from django.template.loaders.app_directories import Loader as AppDirectoriesLoader
 
-from dj_angles.replacer import replace_django_templatetags
+from dj_angles.replacer import replace_django_template_tags
 
 
 class Loader(AppDirectoriesLoader):
@@ -21,7 +21,7 @@ class Loader(AppDirectoriesLoader):
         """Gets the converted template contents."""
 
         template_string = self._get_template_string(origin.name)
-        converted_template_string = replace_django_templatetags(template_string)
+        converted_template_string = replace_django_template_tags(template_string)
 
         return converted_template_string
 

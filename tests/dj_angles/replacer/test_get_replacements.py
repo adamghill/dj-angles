@@ -34,12 +34,20 @@ def _shadowify(s: str) -> str:
             replacement_string=_shadowify("{% include 'partial.html' %}"),
         ),
         ReplacementParams(
+            template_string="<dj-include 'partial.html' test='hello' />",
+            replacement_string="<dj-partial>{% include 'partial.html' test='hello' %}</dj-partial>",
+        ),
+        ReplacementParams(
             template_string="<dj-include 'shadow-partial.html' />",
             replacement_string="<dj-shadow-partial>{% include 'shadow-partial.html' %}</dj-shadow-partial>",
         ),
         ReplacementParams(
             template_string="<dj-partial />",
             replacement_string="<dj-partial>{% include 'partial.html' %}</dj-partial>",
+        ),
+        ReplacementParams(
+            template_string="<dj-partial test='hello' />",
+            replacement_string="<dj-partial>{% include 'partial.html' test='hello' %}</dj-partial>",
         ),
         ReplacementParams(
             template_string="<dj-shadow-partial />",
@@ -247,7 +255,7 @@ def test_mappers_string(template_string, replacement_string, settings):
 def test_mappers_callable(template_string, replacement_string, settings):
     settings.ANGLES = {
         "initial_tag_regex": None,
-        "mappers": {"blob": lambda component_name, template_tag_args, is_tag_self_closing, is_tag_closing: "blob2"},  # noqa: ARG005
+        "mappers": {"blob": lambda tag: "blob2"},  # noqa: ARG005
     }
 
     expected = [

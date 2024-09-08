@@ -434,7 +434,9 @@ When the dictionary value is a callable, the output is completely controlled by 
 ```python
 # settings.py
 
-def map_blob(component_name, template_tag_args, is_tag_closing, is_tag_self_closing, **kwargs):
+from dj_angles import Tag
+
+def map_blob(tag: Tag):
     return "blob2"
 
 ANGLES = {
