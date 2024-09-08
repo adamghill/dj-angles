@@ -384,26 +384,26 @@ ANGLES = {
 ```
 
 ```html
+<dj-include 'partial.html' />
+<dj-partial />
 <Partial />
-<dj-debug />
 ```
 
-This would compile to the following Django template.
+These would all compile to the following Django template.
 
 ```html
 {% include 'partial.html' %}
-{% debug %}
 ```
 
 ### `lower_case_tag`
 
-Lower-cases the tag. Useful when using [React-style includes](#react-style-include). `Boolean` which defaults to `False`.
+Lower-cases the tag. Useful when using [React-style includes](#react-style-include) to convert something like "Partial" to "partial" for the name of the template. `Boolean` which defaults to `False`.
 
 ### `mappers`
 
 Provide additional mappers. `Dictionary` which defaults to `{}`.
 
-The key is always a string and is the regex match after the `initial_tag_regex`, i.e. for the default `initial_tag_regex` of `r"(dj-)"`, the key would match after "dj-" until a space or a `>`.
+The key of the dictionary is a string and is the text match of the regex after the `initial_tag_regex`, i.e. for the default `initial_tag_regex` of `r"(dj-)"`, the key would be the result after "dj-" until a space or a ">".
 
 #### string value
 
@@ -414,32 +414,34 @@ When the dictionary value is a string, it replaces the `initial_tag_regex` plus 
 
 ANGLES = {
     "mappers": {
-        "blob": "include",
+        "component": "include",
     },
 }
 ```
 
 ```html
-<dj-blob 'partial.html' />
+<dj-component 'partial.html' />
 ```
+
+Would compile to the following Django template.
 
 ```html
 {% include 'partial.html' %}
 ```
 
-#### Callable
+#### Callable value
 
-When the dictionary value is a callable, the matched tag is dictated by the output of the mapper. The callable has one argument, `Tag`, which encapsulates information about the matched tag that can be useful in building custom functionality, e.g. `component_name`, `is_end`, `is_self_closing`, etc.
+When the dictionary value is a callable, the string result is dictated by the output of the mapper function. The callable has one argument, `Tag`, which encapsulates information about the matched tag that can be useful in building custom functionality, e.g. `component_name`, `is_end`, `is_self_closing`, etc.
 
 ```python
 # settings.py
 
 from dj_angles import Tag
 
-def map_text(tag: Tag):
+def map_text(tag: Tag) -> str:
     return "This is some text."
 
-def map_hello(tag: Tag):
+def map_hello(tag: Tag) -> str:
     return f"<p>{tag.component_name.upper()}! {tag.template_tag_args}</p>"
 
 ANGLES = {
@@ -466,7 +468,7 @@ This is some text.
 
 ## 🤔 How does this work?
 
-Basically, Django template loaders are super powerful. The raw template content is passed through `dj_angles.template_loader.Loader` first, some transformations happen (via good ole' regex), and then the normal template loaders process the output like normal.
+The template HTML is passed through `dj_angles.template_loader.Loader` first, tags are matched (via good ole' regex), some transformations happen based on the mappers defined, and then the normal template loaders process the resulting output.
 
 ## ✨ Inspiration
 
