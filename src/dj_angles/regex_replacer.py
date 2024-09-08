@@ -26,7 +26,7 @@ def _get_tag_regex():
 def get_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> List[Tuple[str, Any]]:
     replacements = []
     tag_regex = _get_tag_regex()
-    tag_queue = deque()
+    tag_queue: deque = deque()
 
     tag_map = HTML_TAG_TO_DJANGO_TEMPLATE_TAG_MAP
     tag_map.update(get_setting("mappers", default={}))

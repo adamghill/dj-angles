@@ -15,7 +15,7 @@ def test_typical():
   <dj-another-directory-another-partial>{% include 'another-directory/another-partial.html' %}</dj-another-directory-another-partial>
 
   {% debug %}
-{% endblock content %}"""
+{% endblock content %}"""  # noqa: E501
 
     actual = replace_django_template_tags("""<dj-extends 'base.html' />
 

@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Optional
 
 from dj_angles.settings import get_setting
 
@@ -91,7 +92,7 @@ class Tag:
 
         return f"{{% {self.django_template_tag} %}}"
 
-    def get_wrapping_tag_name(self, name=None) -> str:
+    def get_wrapping_tag_name(self, name: Optional[str] = None) -> str:
         name = name or self.component_name
 
         wrapping_tag_name = (
