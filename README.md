@@ -71,7 +71,7 @@
 
 1. Create a new Django project or `cd` to an existing project
 1. `pip install dj-angles` to install the `dj-angles` package
-1. `Edit settings.py` `TEMPLATES` and add `"dj_angles.template_loader.Loader",` as the first loader. Note: you might need to add the `"loaders"` key since it is not there by default: https://docs.djangoproject.com/en/stable/ref/templates/api/#django.template.loaders.cached.Loader.
+1. `Edit settings.py` `TEMPLATES` and add `"dj_angles.template_loader.Loader",` as the first loader. Note: you might need to add the `"loaders"` key since it is not there by default (https://docs.djangoproject.com/en/stable/ref/templates/api/#django.template.loaders.cached.Loader) and you will need to remove the `APP_DIRS` setting.
 
 ```python
 # settings.py
@@ -429,29 +429,39 @@ ANGLES = {
 
 #### Callable
 
-When the dictionary value is a callable, the output is completely controlled by the output of the function.
+When the dictionary value is a callable, the matched tag is dictated by the output of the mapper. The callable has one argument, `Tag`, which encapsulates information about the matched tag that can be useful in building custom functionality, e.g. `component_name`, `is_end`, `is_self_closing`, etc.
 
 ```python
 # settings.py
 
 from dj_angles import Tag
 
-def map_blob(tag: Tag):
-    return "blob2"
+def map_text(tag: Tag):
+    return "This is some text."
+
+def map_hello(tag: Tag):
+    return f"<p>{tag.component_name.upper()}! {tag.template_tag_args}</p>"
 
 ANGLES = {
     "mappers": {
-        "blob": map_blob,
+        "text": map_text,
+        "hello": map_hello,
     },
 }
 ```
 
 ```html
-<dj-blob />
+<dj-text />
+
+<dj-hello 'Goodbye!' />
 ```
 
+Would compile to the following Django template.
+
 ```html
-blob2
+This is some text.
+
+<p>HELLO! Goodbye!</p>
 ```
 
 ## 🤔 How does this work?
@@ -460,8 +470,4 @@ Basically, Django template loaders are super powerful. The raw template content 
 
 ## ✨ Inspiration
 
-I have been interested in Django components and encapsulating functionality for a long time (see [django-unicorn](https://www.django-unicorn.com), [dlitejs](https://dlitejs.com), etc), but had never thought of using HTML directly until I looked at [Cotton](https://django-cotton.com) by [wrabit](https://github.com/wrabit).
-
-💡
-
-Since `<c-component />` is a high-powered wrapper around `{% include %}`, what if other Django templatetags could also be wrapped? This library is an experiment to see what that experience is like and how well it works.
+I have been interested in Django components and encapsulating functionality for a long time (see [django-unicorn](https://www.django-unicorn.com), [dlitejs](https://dlitejs.com), etc), but had never thought of using HTML directly until I looked at [Cotton](https://django-cotton.com) by [wrabit](https://github.com/wrabit). `dj-angles` takes that idea further to see how well it works.
