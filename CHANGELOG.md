@@ -2,6 +2,7 @@
 
 ## 0.4.0
 
+- Raise `InvalidEndTag` if a tag is not closed properly.
 - Fix: lots of edge-cases.
 
 **Breaking changes**
