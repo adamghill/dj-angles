@@ -1,7 +1,7 @@
 import re
 
 from dj_angles.mappers import HTML_TAG_TO_DJANGO_TEMPLATE_TAG_MAP, Tag, map_include
-from dj_angles.replacer import _get_tag_regex
+from dj_angles.regex_replacer import _get_tag_regex
 
 
 def _get_match(html: str):
@@ -11,8 +11,16 @@ def _get_match(html: str):
 
 def _get_tag(html: str):
     match = _get_match(html)
+    tag_html = html[match.start() : match.end()]
+    component_name = match.group("component_name").strip()
+    template_tag_args = match.group("template_tag_args").strip()
 
-    return Tag(HTML_TAG_TO_DJANGO_TEMPLATE_TAG_MAP, html, match=match)
+    return Tag(
+        HTML_TAG_TO_DJANGO_TEMPLATE_TAG_MAP,
+        html=tag_html,
+        component_name=component_name,
+        template_tag_args=template_tag_args,
+    )
 
 
 def test_not_self_closing():

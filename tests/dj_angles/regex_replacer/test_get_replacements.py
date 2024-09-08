@@ -2,7 +2,7 @@ from collections import namedtuple
 
 import pytest
 
-from dj_angles.replacer import get_replacements
+from dj_angles.regex_replacer import get_replacements
 
 # Structure to store parameterize data
 ReplacementParams = namedtuple(

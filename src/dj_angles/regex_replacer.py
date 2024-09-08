@@ -32,7 +32,11 @@ def get_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> 
     tag_map.update(get_setting("mappers", default={}))
 
     for match in re.finditer(tag_regex, html):
-        tag = Tag(tag_map=tag_map, html=html, match=match)
+        tag_html = html[match.start() : match.end()].strip()
+        component_name = match.group("component_name").strip()
+        template_tag_args = match.group("template_tag_args").strip()
+
+        tag = Tag(tag_map=tag_map, html=tag_html, component_name=component_name, template_tag_args=template_tag_args)
 
         if raise_for_missing_start_tag:
             if tag.is_end:
@@ -46,7 +50,7 @@ def get_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> 
         django_template_tag = tag.get_django_template_tag()
 
         if django_template_tag:
-            replacements.append((tag.element, django_template_tag))
+            replacements.append((tag.html, django_template_tag))
 
     return replacements
 

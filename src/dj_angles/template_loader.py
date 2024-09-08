@@ -4,7 +4,7 @@ from django.apps import apps
 from django.template import TemplateDoesNotExist
 from django.template.loaders.app_directories import Loader as AppDirectoriesLoader
 
-from dj_angles.replacer import replace_django_template_tags
+from dj_angles.regex_replacer import replace_django_template_tags
 
 
 class Loader(AppDirectoriesLoader):

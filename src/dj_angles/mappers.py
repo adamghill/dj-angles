@@ -1,23 +1,49 @@
 from dataclasses import dataclass
-from re import Match
 
 from dj_angles.settings import get_setting
 
 
 @dataclass
 class Tag:
-    element: str
+    """Encapsulates metadata and functionality for a tag that will be processed by `dj-angles`."""
+
+    """The tag name after the initial identifier (which defaults to 'dj-').
+
+    Examples:
+        - 'include' for '<dj-include />'
+        - 'partial' for '<dj-partial />'
+    """
     component_name: str
+
+    tag_html: str
+
+    """The arguments passed into the template tag.
+
+    Examples:
+        - '"partial.html"' for '<dj-include "partial.html" />'
+    """
     template_tag_args: str
+
+    """Whether or not the tag should use the Shadow DOM.
+    """
     is_shadow: bool = False
+
+    """Whether or not the tag is an end tag, i.e. starts with '</'.
+    """
     is_end: bool = False
+
+    """Whether or not the tag is self-closing, i.e. ends with '/>'.
+    """
     is_self_closing: bool = False
 
-    def __init__(self, tag_map: dict, html: str, match: Match):
-        self.element = html[match.start() : match.end()]
+    def __init__(self, tag_map: dict, html: str, component_name: str, template_tag_args: str):
+        """Constructor which takes in a dictionary of the available tags, the tag html,
+        the component name, and the template tag arguments.
+        """
 
-        self.component_name = match.group("component_name").strip()
-        self.template_tag_args = match.group("template_tag_args").strip()
+        self.html = html
+        self.component_name = component_name
+        self.template_tag_args = template_tag_args
 
         if self.component_name.endswith("!"):
             self.component_name = self.component_name[:-1]
@@ -36,16 +62,16 @@ class Tag:
         if get_setting("lower_case_tag", default=False):
             self.component_name = self.component_name.lower()
 
-        self.is_end = self.element.startswith("</")
-        self.is_self_closing = self.element.endswith("/>")
+        self.is_end = self.html.startswith("</")
+        self.is_self_closing = self.html.endswith("/>")
 
         self.django_template_tag = tag_map.get(self.component_name)
 
     def get_django_template_tag(self) -> str:
         if self.django_template_tag is None and self.is_end:
-            wrapping_element_name = self.get_wrapping_element_name()
+            wrapping_tag_name = self.get_wrapping_tag_name()
 
-            return f"</template></{wrapping_element_name}>"
+            return f"</template></{wrapping_tag_name}>"
 
         if self.django_template_tag is None:
             # Assume any missing template tag is an include
@@ -65,10 +91,10 @@ class Tag:
 
         return f"{{% {self.django_template_tag} %}}"
 
-    def get_wrapping_element_name(self, name=None) -> str:
+    def get_wrapping_tag_name(self, name=None) -> str:
         name = name or self.component_name
 
-        wrapping_element_name = (
+        wrapping_tag_name = (
             name.replace("/", "-")
             .replace("'", "")
             .replace('"', "")
@@ -76,18 +102,21 @@ class Tag:
             .replace(" ", "-")
             .replace(":", "-")
         ).lower()
-        wrapping_element_name = f"dj-{wrapping_element_name}"
+        wrapping_tag_name = f"dj-{wrapping_tag_name}"
 
         # Remove extensions
-        if "." in wrapping_element_name:
-            extension_idx = wrapping_element_name.index(".")
-            wrapping_element_name = wrapping_element_name[0:extension_idx]
+        if "." in wrapping_tag_name:
+            extension_idx = wrapping_tag_name.index(".")
+            wrapping_tag_name = wrapping_tag_name[0:extension_idx]
 
         # Remove shadow bang
-        if wrapping_element_name.endswith("!"):
-            wrapping_element_name = wrapping_element_name[:-1]
+        if wrapping_tag_name.endswith("!"):
+            wrapping_tag_name = wrapping_tag_name[:-1]
 
-        return wrapping_element_name
+        return wrapping_tag_name
+
+    def __str__(self):
+        return self.html
 
 
 def map_autoescape(tag: Tag) -> str:
@@ -127,7 +156,7 @@ def map_include(tag: Tag) -> str:
     else:
         template_file = f"'{template_file}'"
 
-    wrapping_element_name = tag.get_wrapping_element_name(name=template_file)
+    wrapping_tag_name = tag.get_wrapping_tag_name(name=template_file)
 
     if ":" in template_file:
         colon_idx = template_file.index(":")
@@ -142,15 +171,15 @@ def map_include(tag: Tag) -> str:
         replacement = f"{{% include {template_file} %}}"
 
     if tag.is_shadow:
-        replacement = f"<{wrapping_element_name}><template shadowrootmode='open'>{replacement}"
+        replacement = f"<{wrapping_tag_name}><template shadowrootmode='open'>{replacement}"
 
         if tag.is_self_closing:
-            replacement = f"{replacement}</template></{wrapping_element_name}>"
+            replacement = f"{replacement}</template></{wrapping_tag_name}>"
     else:
-        replacement = f"<{wrapping_element_name}>{replacement}"
+        replacement = f"<{wrapping_tag_name}>{replacement}"
 
         if tag.is_self_closing:
-            replacement = f"{replacement}</{wrapping_element_name}>"
+            replacement = f"{replacement}</{wrapping_tag_name}>"
 
     return replacement
 

@@ -1,7 +1,7 @@
 import pytest
 
 from dj_angles.exceptions import InvalidEndTagError
-from dj_angles.replacer import replace_django_template_tags
+from dj_angles.regex_replacer import replace_django_template_tags
 
 
 def test_typical():
