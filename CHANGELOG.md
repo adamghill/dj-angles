@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.0
+
+- Fix: lots of edge-cases.
+
+**Breaking changes**
+
+- Pass `Tag` object to mapper functions instead of arguments to better encapsulate functionality.
+
 ## 0.3.0
 
 - Wrap all includes in a custom element for easier debugging and targeted CSS styling.
