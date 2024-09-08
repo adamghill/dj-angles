@@ -10,8 +10,8 @@ class Tag:
     component_name: str
     template_tag_args: str
     is_shadow: bool = False
-    is_tag_closing: bool = False
-    is_tag_self_closing: bool = False
+    is_end: bool = False
+    is_self_closing: bool = False
 
     def __init__(self, tag_map: dict, html: str, match: Match):
         self.element = html[match.start() : match.end()]
@@ -36,13 +36,13 @@ class Tag:
         if get_setting("lower_case_tag", default=False):
             self.component_name = self.component_name.lower()
 
-        self.is_tag_closing = self.element.startswith("</")
-        self.is_tag_self_closing = self.element.endswith("/>")
+        self.is_end = self.element.startswith("</")
+        self.is_self_closing = self.element.endswith("/>")
 
         self.django_template_tag = tag_map.get(self.component_name)
 
     def get_django_template_tag(self) -> str:
-        if self.django_template_tag is None and self.is_tag_closing:
+        if self.django_template_tag is None and self.is_end:
             wrapping_element_name = self.get_wrapping_element_name()
 
             return f"</template></{wrapping_element_name}>"
@@ -57,7 +57,7 @@ class Tag:
                 tag=self,
             )
 
-        if self.is_tag_closing:
+        if self.is_end:
             self.django_template_tag = f"end{self.django_template_tag}"
 
         if self.template_tag_args:
@@ -95,7 +95,7 @@ def map_autoescape(tag: Tag) -> str:
 
     django_template_tag = tag.component_name
 
-    if tag.is_tag_closing:
+    if tag.is_end:
         django_template_tag = django_template_tag[0:10]
         django_template_tag = f"end{django_template_tag}"
     else:
@@ -144,12 +144,12 @@ def map_include(tag: Tag) -> str:
     if tag.is_shadow:
         replacement = f"<{wrapping_element_name}><template shadowrootmode='open'>{replacement}"
 
-        if tag.is_tag_self_closing:
+        if tag.is_self_closing:
             replacement = f"{replacement}</template></{wrapping_element_name}>"
     else:
         replacement = f"<{wrapping_element_name}>{replacement}"
 
-        if tag.is_tag_self_closing:
+        if tag.is_self_closing:
             replacement = f"{replacement}</{wrapping_element_name}>"
 
     return replacement

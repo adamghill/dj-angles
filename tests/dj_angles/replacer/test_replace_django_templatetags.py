@@ -1,3 +1,6 @@
+import pytest
+
+from dj_angles.exceptions import InvalidEndTagError
 from dj_angles.replacer import replace_django_template_tags
 
 
@@ -27,6 +30,20 @@ def test_typical():
 </dj-block content>""")
 
     assert actual == expected
+
+
+def test_invalid_tag():
+    with pytest.raises(InvalidEndTagError) as e:
+        replace_django_template_tags("""
+<dj-block content>
+<input>
+
+<dj-partial>
+</dj-block content>""")
+
+    assert e.exconly() == "dj_angles.exceptions.InvalidEndTagError"
+    assert e.value.tag.component_name == "block"
+    assert e.value.last_tag.component_name == "partial"
 
 
 def test_extends():

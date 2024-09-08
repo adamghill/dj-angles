@@ -119,7 +119,7 @@ def test_typical(template_string, replacement_string):
     expected = [
         (template_string, replacement_string),
     ]
-    actual = get_replacements(template_string)
+    actual = get_replacements(template_string, raise_for_missing_start_tag=False)
 
     assert actual == expected
 
@@ -137,7 +137,7 @@ def test_no_extension(template_string, replacement_string):
     expected = [
         (template_string, replacement_string),
     ]
-    actual = get_replacements(template_string)
+    actual = get_replacements(template_string, raise_for_missing_start_tag=False)
 
     assert actual == expected
 
@@ -173,7 +173,7 @@ def test_initial_tag_regex(template_string, replacement_string, settings):
     expected = [
         (template_string, replacement_string),
     ]
-    actual = get_replacements(template_string)
+    actual = get_replacements(template_string, raise_for_missing_start_tag=False)
 
     assert actual == expected
 
@@ -193,7 +193,7 @@ def test_initial_tag_regex_for_react_style(template_string, replacement_string, 
     expected = [
         (template_string, replacement_string),
     ]
-    actual = get_replacements(template_string)
+    actual = get_replacements(template_string, raise_for_missing_start_tag=False)
 
     assert actual == expected
 
@@ -213,7 +213,7 @@ def test_lower_case_tag(template_string, replacement_string, settings):
     expected = [
         (template_string, replacement_string),
     ]
-    actual = get_replacements(template_string)
+    actual = get_replacements(template_string, raise_for_missing_start_tag=False)
 
     assert actual == expected
 
@@ -238,7 +238,7 @@ def test_mappers_string(template_string, replacement_string, settings):
     expected = [
         (template_string, replacement_string),
     ]
-    actual = get_replacements(template_string)
+    actual = get_replacements(template_string, raise_for_missing_start_tag=False)
 
     assert actual == expected
 
@@ -261,6 +261,6 @@ def test_mappers_callable(template_string, replacement_string, settings):
     expected = [
         (template_string, replacement_string),
     ]
-    actual = get_replacements(template_string)
+    actual = get_replacements(template_string, raise_for_missing_start_tag=False)
 
     assert actual == expected
