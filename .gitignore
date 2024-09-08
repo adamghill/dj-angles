@@ -4,3 +4,5 @@ dist/
 
 .DS_Store
 TODO
+.coverage
+example/db.sqlite3
