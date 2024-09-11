@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.0
+
+- Add `dj-image` and `dj-css` which automatically uses the static template tag.
+
 ## 0.4.0
 
 - Raise `InvalidEndTag` if a tag is not closed properly.

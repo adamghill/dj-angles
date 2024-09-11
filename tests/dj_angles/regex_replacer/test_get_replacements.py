@@ -264,3 +264,43 @@ def test_mappers_callable(template_string, replacement_string, settings):
     actual = get_replacements(template_string, raise_for_missing_start_tag=False)
 
     assert actual == expected
+
+
+@pytest.mark.parametrize(
+    ReplacementParams._fields,
+    (
+        ReplacementParams(
+            template_string="<dj-image 'img/blob.png' />",
+            replacement_string="<img src=\"{% static 'img/blob.png' %}\" />",
+        ),
+        ReplacementParams(
+            template_string="<dj-image 'img/test.jpg' id=\"test\" />",
+            replacement_string='<img src="{% static \'img/test.jpg\' %}" id="test" />',
+        ),
+    ),
+)
+def test_image(template_string, replacement_string):
+    expected = [
+        (template_string, replacement_string),
+    ]
+    actual = get_replacements(template_string, raise_for_missing_start_tag=False)
+
+    assert actual == expected
+
+
+@pytest.mark.parametrize(
+    ReplacementParams._fields,
+    (
+        ReplacementParams(
+            template_string="<dj-css 'css/style.css' />",
+            replacement_string='<link href="{% static \'css/style.css\' %}" rel="stylesheet" />',
+        ),
+    ),
+)
+def test_css(template_string, replacement_string):
+    expected = [
+        (template_string, replacement_string),
+    ]
+    actual = get_replacements(template_string, raise_for_missing_start_tag=False)
+
+    assert actual == expected

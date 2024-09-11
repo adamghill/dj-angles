@@ -56,6 +56,9 @@
   <dj-csrf />  <!-- {% csrf_token %} -->
   
   <dj-debug />  <!-- {% debug %} -->
+
+  <dj-image 'img/django.jpg' />  <!-- <img src="{% static 'img/django.jpg' %}" /> -->
+  <dj-css 'css/styles.css' />  <!-- <link href="{% static 'css/styles.css' %}" rel="stylesheet" /> -->
 </dj-block 'content'>  <!-- {% endblock 'content' %} -->
 ```
 
@@ -250,6 +253,16 @@ They all compile to the following Django template syntax.
 {% endcomment %}
 ```
 
+### `css`
+
+```html
+<dj-css 'css/styles.css' />
+```
+
+```html
+<link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+```
+
 ### [`debug`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#debug)
 
 ```html
@@ -288,6 +301,16 @@ They all compile to the following Django template syntax.
 
 ```html
 {% lorem %}
+```
+
+### `image`
+
+```html
+<dj-image 'img/django.jpg' />
+```
+
+```html
+<img src="{% static 'img/django.jpg' %}" />
 ```
 
 ### [`now`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#now)

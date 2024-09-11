@@ -1,7 +1,8 @@
 import re
 
-from dj_angles.mappers import HTML_TAG_TO_DJANGO_TEMPLATE_TAG_MAP, Tag, map_include
-from dj_angles.regex_replacer import _get_tag_regex
+from dj_angles.mappers import map_include
+from dj_angles.regex_replacer import HTML_TAG_TO_DJANGO_TEMPLATE_TAG_MAP, _get_tag_regex
+from dj_angles.tags import Tag
 
 
 def _get_match(html: str):

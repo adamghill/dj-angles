@@ -1,0 +1,22 @@
+from typing import Generator
+
+
+def yield_tokens(s: str, breaking_character: str) -> Generator[str, None, None]:
+    in_double_quote = False
+    in_single_quote = False
+    token = ""
+
+    for c in s:
+        if c == "'":
+            in_single_quote = not in_single_quote
+        elif c == '"':
+            in_double_quote = not in_double_quote
+
+        if c == breaking_character and not in_single_quote and not in_double_quote:
+            yield token
+            token = ""
+        else:
+            token += c
+
+    if token:
+        yield token

@@ -4,8 +4,32 @@ from functools import lru_cache
 from typing import Any, List, Tuple
 
 from dj_angles.exceptions import InvalidEndTagError
-from dj_angles.mappers import HTML_TAG_TO_DJANGO_TEMPLATE_TAG_MAP, Tag
+from dj_angles.mappers import map_autoescape, map_css, map_image, map_include
 from dj_angles.settings import get_setting
+from dj_angles.tags import Tag
+
+# Default mappings for tag names to Django template tags
+HTML_TAG_TO_DJANGO_TEMPLATE_TAG_MAP = {
+    "extends": "extends",
+    "block": "block",
+    "verbatim": "verbatim",
+    "include": map_include,
+    "comment": "comment",
+    "#": "comment",
+    "autoescape-on": map_autoescape,
+    "autoescape-off": map_autoescape,
+    "csrf-token": "csrf_token",
+    "csrf": "csrf_token",
+    "csrf-input": "csrf_token",
+    "debug": "debug",
+    "filter": "filter",
+    "lorem": "lorem",
+    "now": "now",
+    "spaceless": "spaceless",
+    "templatetag": "templatetag",
+    "image": map_image,
+    "css": map_css,
+}
 
 
 def _get_tag_regex():
