@@ -1,14 +1,13 @@
 import re
 from collections import deque
 from functools import lru_cache
-from typing import Any, List, Tuple
+from typing import List, Tuple
 
 from dj_angles.exceptions import InvalidEndTagError
 from dj_angles.mappers import map_autoescape, map_css, map_image, map_include
 from dj_angles.settings import get_setting
 from dj_angles.tags import Tag
 
-# Default mappings for tag names to Django template tags
 HTML_TAG_TO_DJANGO_TEMPLATE_TAG_MAP = {
     "extends": "extends",
     "block": "block",
@@ -30,9 +29,12 @@ HTML_TAG_TO_DJANGO_TEMPLATE_TAG_MAP = {
     "image": map_image,
     "css": map_css,
 }
+"""Default mappings for tags to Django template tags."""
 
 
 def _get_tag_regex():
+    """Gets a compiled regex based on the `initial_tag_regex` setting or default of r'(dj-)'."""
+
     initial_tag_regex = get_setting("initial_tag_regex", default=r"(dj-)")
 
     if initial_tag_regex is None:
@@ -42,12 +44,25 @@ def _get_tag_regex():
 
     @lru_cache(maxsize=32)
     def _compile_regex(_tag_regex):
+        """Silly internal function to cache the compiled regex."""
+
         return re.compile(_tag_regex)
 
     return _compile_regex(tag_regex)
 
 
-def get_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> List[Tuple[str, Any]]:
+def get_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> List[Tuple[str, str]]:
+    """Get a list of replacements (tuples that consists of 2 strings) based on the template HTML.
+
+    Args:
+        param html: Template HTML.
+        param raise_for_missing_start_tag: Whether or not to raise an error if an invalid tag is discovered.
+
+    Returns:
+        A list of tuples where the first item in the tuple is the existing tag element, e.g. "<dj-csrf />"
+        and the second item is the replacement string, e.g. "{% csrf_token %}".
+    """
+
     replacements = []
     tag_regex = _get_tag_regex()
     tag_queue: deque = deque()
@@ -80,6 +95,15 @@ def get_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> 
 
 
 def replace_django_template_tags(html: str) -> str:
+    """Gets a list of replacements based on template HTML, replaces the necessary strings, and returns the new string.
+
+    Args:
+        param html: Template HTML.
+
+    Returns:
+        The converted template HTML.
+    """
+
     replacements = get_replacements(html=html)
 
     for r in replacements:

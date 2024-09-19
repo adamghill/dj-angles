@@ -5,7 +5,11 @@ if TYPE_CHECKING:
 
 
 def map_autoescape(tag: "Tag") -> str:
-    """Mapper function for the autoescape tags."""
+    """Mapper function for autoescape tags.
+
+    Args:
+        param tag: The tag to map.
+    """
 
     django_template_tag = tag.component_name
 
@@ -19,6 +23,12 @@ def map_autoescape(tag: "Tag") -> str:
 
 
 def map_include(tag: "Tag") -> str:
+    """Mapper function for include tags.
+
+    Args:
+        param tag: The tag to map.
+    """
+
     if not tag.attributes:
         raise AssertionError("{% include %} must have an template name")
 
@@ -70,7 +80,11 @@ def map_include(tag: "Tag") -> str:
 
 
 def map_image(tag: "Tag") -> str:
-    """Mapper function for the image tag."""
+    """Mapper function for image tags.
+
+    Args:
+        param tag: The tag to map.
+    """
 
     if not tag.attributes:
         raise Exception("Missing src")
@@ -84,7 +98,11 @@ def map_image(tag: "Tag") -> str:
 
 
 def map_css(tag: "Tag") -> str:
-    """Mapper function for the css tag."""
+    """Mapper function for css tags.
+
+    Args:
+        param tag: The tag to map.
+    """
 
     if not tag.attributes:
         raise Exception("Missing href")

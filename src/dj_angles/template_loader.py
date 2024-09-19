@@ -26,9 +26,9 @@ class Loader(AppDirectoriesLoader):
         return converted_template_string
 
     def get_dirs(self):
-        """This works like the file loader with APP_DIRS = True.
+        """Gets the template directories. This works like the file loader with `APP_DIRS = True`.
 
-        Swiped from https://github.com/wrabit/django-cotton/blob/ab1a98052de48266c62ff226ab0ec85b89d038b6/django_cotton/cotton_loader.py#L59.
+        From https://github.com/wrabit/django-cotton/blob/ab1a98052de48266c62ff226ab0ec85b89d038b6/django_cotton/cotton_loader.py#L59.
         """
 
         dirs = self.engine.dirs

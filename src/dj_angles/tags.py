@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from typing import Optional
 
 from dj_angles.attributes import Attributes
@@ -6,7 +5,6 @@ from dj_angles.mappers import map_include
 from dj_angles.settings import get_setting
 
 
-@dataclass
 class Tag:
     """Encapsulates metadata and functionality for a tag that will be processed by `dj-angles`."""
 
@@ -19,34 +17,26 @@ class Tag:
     """
 
     html: str
-    """The original HTML of the tag.
-    """
+    """The original HTML of the tag."""
 
     attributes: Attributes
-    """The parsed attributes of the template tag.
-    """
+    """The parsed attributes of the template tag."""
 
     is_shadow: bool = False
-    """Whether or not the tag should use the Shadow DOM.
-    """
+    """Whether or not the tag should use the Shadow DOM."""
 
     is_end: bool = False
-    """Whether or not the tag is an end tag, i.e. starts with '</'.
-    """
+    """Whether or not the tag is an end tag, i.e. starts with '</'."""
 
     is_self_closing: bool = False
-    """Whether or not the tag is self-closing, i.e. ends with '/>'.
-    """
+    """Whether or not the tag is self-closing, i.e. ends with '/>'."""
 
     def __init__(self, tag_map: dict, html: str, component_name: str, template_tag_args: str):
-        """Constructor which takes in a dictionary of the available tags, the tag html,
-        the component name, and the template tag arguments.
-        """
-
         self.html = html
         self.component_name = component_name
 
         self._template_tag_args = template_tag_args
+
         self.attributes = Attributes(self._template_tag_args)
 
         if self.component_name.endswith("!"):
@@ -68,6 +58,8 @@ class Tag:
         self.django_template_tag = tag_map.get(self.component_name)
 
     def get_django_template_tag(self) -> str:
+        """Generate the Django template tag."""
+
         if self.django_template_tag is None and self.is_end:
             wrapping_tag_name = self.get_wrapping_tag_name()
 
@@ -96,6 +88,12 @@ class Tag:
         return f"{{% {self.django_template_tag} %}}"
 
     def get_wrapping_tag_name(self, name: Optional[str] = None) -> str:
+        """Get the wrapping tag name.
+
+        Args:
+            param name: The name for the wrapping tag.
+        """
+
         name = name or self.component_name
 
         wrapping_tag_name = (
