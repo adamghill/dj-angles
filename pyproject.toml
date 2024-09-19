@@ -39,7 +39,18 @@ dev-dependencies = [
   "pytest<9",
   "pytest-django",
   "pytest-cov",
-  "mypy"
+  "mypy",
+  "types-toml",
+  "sphinx",
+  "linkify-it-py",
+  "myst-parser",
+  "sphinx-copybutton",
+  "furo",
+  "sphinx-autobuild",
+  "sphinx-inline-tabs",
+  "toml",
+  "sphinx-design",
+  "sphinx-autoapi"
 ]
 
 [tool.ruff]

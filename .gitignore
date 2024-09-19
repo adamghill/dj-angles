@@ -6,3 +6,4 @@ dist/
 TODO
 .coverage
 example/db.sqlite3
+docs/build

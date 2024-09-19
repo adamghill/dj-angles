@@ -60,6 +60,7 @@ serve:
 # Build the package
 build:
   just test
+  just docs-build
   rm -f dist/*
   uvx --from build pyproject-build --installer uv
 
@@ -69,3 +70,12 @@ publish:
   uvx twine check dist/*
   uvx twine upload -r testpypi dist/*
   uvx twine upload -r pypi dist/*
+
+# Run documentation site
+serve-docs:
+  uv run sphinx-autobuild -W docs/source docs/build
+
+# Build documentation site
+build-docs:
+  cp CHANGELOG.md docs/source/changelog.md
+  uv run sphinx-build -W docs/source docs/build
