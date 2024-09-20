@@ -16,7 +16,7 @@ They all compile to the following Django template.
 <dj-partial>{% include 'partial.html' %}</dj-partial>
 ```
 
-The wrapping `<dj-partial>` element allows for easier debugging when looking at the source code and also allows for targeted CSS styling.
+The wrapping element (in this example: `<dj-partial>`) allows for easier debugging when looking at the source code and also allows for targeted CSS styling.
 
 Note: The built-in [tags](tag-elements.md) are considered reserved words. Template file names that conflict will not get loaded because reserved words take precedence. For example, if there is a template named "extends.html" `<dj-extends />` could not be used to include it; `<dj-include 'extends.html' />` would need to be used instead.
 
