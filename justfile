@@ -60,7 +60,7 @@ serve:
 # Build the package
 build:
   just test
-  just docs-build
+  just build-docs
   rm -f dist/*
   uvx --from build pyproject-build --installer uv
 

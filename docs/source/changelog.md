@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.0
+
+- Raise more explicit exceptions in some edge cases.
+- Re-write all documentation and add missing docstrings.
+
 ## 0.5.0
 
 - Add `dj-image` and `dj-css` which automatically uses the static template tag.
