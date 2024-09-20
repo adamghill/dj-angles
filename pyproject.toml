@@ -34,13 +34,8 @@ Repository = "https://github.com/adamghill/dj-angles.git"
 Issues = "https://github.com/adamghill/dj-angles/discussions"
 Changelog = "https://github.com/adamghill/dj-angles/blob/master/CHANGELOG.md"
 
-[tool.uv]
-dev-dependencies = [
-  "pytest<9",
-  "pytest-django",
-  "pytest-cov",
-  "mypy",
-  "types-toml",
+[project.optional-dependencies]
+docs = [
   "sphinx",
   "linkify-it-py",
   "myst-parser",
@@ -48,9 +43,18 @@ dev-dependencies = [
   "furo",
   "sphinx-autobuild",
   "sphinx-inline-tabs",
-  "toml",
   "sphinx-design",
-  "sphinx-autoapi"
+  "sphinx-autoapi",
+  "toml",
+  "types-toml"
+]
+
+[tool.uv]
+dev-dependencies = [
+  "pytest<9",
+  "pytest-django",
+  "pytest-cov",
+  "mypy"
 ]
 
 [tool.ruff]

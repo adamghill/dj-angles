@@ -269,47 +269,51 @@ dependencies = [
     { name = "django" },
 ]
 
-[package.dev-dependencies]
-dev = [
+[package.optional-dependencies]
+docs = [
     { name = "furo" },
     { name = "linkify-it-py" },
-    { name = "mypy" },
     { name = "myst-parser" },
-    { name = "pytest" },
-    { name = "pytest-cov" },
-    { name = "pytest-django" },
     { name = "sphinx" },
     { name = "sphinx-autoapi" },
     { name = "sphinx-autobuild" },
     { name = "sphinx-copybutton" },
     { name = "sphinx-design" },
     { name = "sphinx-inline-tabs" },
-    { name = "sphinxext-opengraph" },
     { name = "toml" },
     { name = "types-toml" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "mypy" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+    { name = "pytest-django" },
+]
+
 [package.metadata]
-requires-dist = [{ name = "django" }]
+requires-dist = [
+    { name = "django" },
+    { name = "furo", marker = "extra == 'docs'" },
+    { name = "linkify-it-py", marker = "extra == 'docs'" },
+    { name = "myst-parser", marker = "extra == 'docs'" },
+    { name = "sphinx", marker = "extra == 'docs'" },
+    { name = "sphinx-autoapi", marker = "extra == 'docs'" },
+    { name = "sphinx-autobuild", marker = "extra == 'docs'" },
+    { name = "sphinx-copybutton", marker = "extra == 'docs'" },
+    { name = "sphinx-design", marker = "extra == 'docs'" },
+    { name = "sphinx-inline-tabs", marker = "extra == 'docs'" },
+    { name = "toml", marker = "extra == 'docs'" },
+    { name = "types-toml", marker = "extra == 'docs'" },
+]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "furo" },
-    { name = "linkify-it-py" },
     { name = "mypy" },
-    { name = "myst-parser" },
     { name = "pytest", specifier = "<9" },
     { name = "pytest-cov" },
     { name = "pytest-django" },
-    { name = "sphinx" },
-    { name = "sphinx-autoapi" },
-    { name = "sphinx-autobuild" },
-    { name = "sphinx-copybutton" },
-    { name = "sphinx-design" },
-    { name = "sphinx-inline-tabs" },
-    { name = "sphinxext-opengraph" },
-    { name = "toml" },
-    { name = "types-toml" },
 ]
 
 [[package]]
@@ -920,18 +924,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/b5/72/835d6fadb9e5d02304cf39b18f93d227cd93abd3c41ebf58e6853eeb1455/sphinxcontrib-serializinghtml-1.1.5.tar.gz", hash = "sha256:aa5f6de5dfdf809ef505c4895e51ef5c9eac17d0f287933eb49ec495280b6952", size = 21019 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c6/77/5464ec50dd0f1c1037e3c93249b040c8fc8078fdda97530eeb02424b6eea/sphinxcontrib_serializinghtml-1.1.5-py2.py3-none-any.whl", hash = "sha256:352a9a00ae864471d3a7ead8d7d79f5fc0b57e8b3f95e9867eb9eb28999b92fd", size = 94021 },
-]
-
-[[package]]
-name = "sphinxext-opengraph"
-version = "0.9.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "sphinx" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/1c/5b/4302fe33c88dbfb572e2c1cad26735164c23f16fb8dba94ddb1867d0ef06/sphinxext-opengraph-0.9.1.tar.gz", hash = "sha256:dd2868a1e7c9497977fbbf44cc0844a42af39ca65fe1bb0272518af225d06fc5", size = 1034511 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/92/0a/970b80b4fa1feeb6deb6f2e22d4cb14e388b27b315a1afdb9db930ff91a4/sphinxext_opengraph-0.9.1-py3-none-any.whl", hash = "sha256:b3b230cc6a5b5189139df937f0d9c7b23c7c204493b22646273687969dcb760e", size = 1005241 },
 ]
 
 [[package]]
