@@ -4,7 +4,7 @@ authors = [
   {name = "Adam Hill", email = "adam@adamghill.com"}
 ]
 version = "0.6.0"
-description = "Adds more bracket angles to Django templates </>"
+description = "Add more bracket angles to Django templates </>"
 readme = "README.md"
 license = {file = "LICENSE"}
 requires-python = ">=3.8"
