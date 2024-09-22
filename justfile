@@ -61,7 +61,7 @@ serve:
 build:
   just test
   just build-docs
-  rm -f dist/*
+  rm -rf dist/*
   uvx --from build pyproject-build --installer uv
 
 # Build and publish the package to test PyPI and prod PyPI

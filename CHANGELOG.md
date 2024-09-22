@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.1
+
+- Remove `uv.lock` from build.
+
 ## 0.6.0
 
 - Raise more explicit exceptions in some edge cases.
