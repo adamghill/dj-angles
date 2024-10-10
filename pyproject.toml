@@ -24,7 +24,9 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-  "django"
+  "django >= 0",
+  "minestrone >= 0",
+  "dj-app >= 0"
 ]
 
 [project.urls]
@@ -36,25 +38,25 @@ Changelog = "https://github.com/adamghill/dj-angles/blob/master/CHANGELOG.md"
 
 [project.optional-dependencies]
 docs = [
-  "sphinx",
-  "linkify-it-py",
-  "myst-parser",
-  "sphinx-copybutton",
-  "furo",
-  "sphinx-autobuild",
-  "sphinx-inline-tabs",
-  "sphinx-design",
-  "sphinx-autoapi",
-  "toml",
-  "types-toml"
+  "sphinx >= 0",
+  "linkify-it-py >= 0",
+  "myst-parser >= 0",
+  "sphinx-copybutton >= 0",
+  "furo >= 0",
+  "sphinx-autobuild >= 0",
+  "sphinx-inline-tabs >= 0",
+  "sphinx-design >= 0",
+  "sphinx-autoapi >= 0",
+  "toml >= 0",
+  "types-toml >= 0"
 ]
 
 [tool.uv]
 dev-dependencies = [
-  "pytest<9",
-  "pytest-django",
-  "pytest-cov",
-  "mypy"
+  "pytest < 9",
+  "pytest-django >= 0",
+  "pytest-cov >= 0",
+  "mypy >= 0"
 ]
 
 [tool.ruff]
