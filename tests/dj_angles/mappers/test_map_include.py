@@ -77,3 +77,14 @@ def test_shadow():
     actual = map_include(tag=tag)
 
     assert actual == expected
+
+
+def test_template_attribute():
+    expected = "<dj-partial>{% include 'partial.html' %}</dj-partial>"
+
+    html = "<dj-include template='partial.html' />"
+    tag = create_tag(html)
+
+    actual = map_include(tag=tag)
+
+    assert actual == expected
