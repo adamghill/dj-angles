@@ -189,4 +189,8 @@ def map_extends(tag: "Tag") -> str:
 
     parent = _get_attribute_value_or_first_key(tag, "parent")
 
+    if "." not in parent:
+        parent = dequotify(parent)
+        parent = f"'{parent}.html'"
+
     return f"{{% {django_template_tag} {parent} %}}"

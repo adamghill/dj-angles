@@ -27,6 +27,17 @@ def test_parent_attribute():
     assert actual == expected
 
 
+def test_no_extension():
+    expected = "{% extends 'base.html' %}"
+
+    html = "<dj-extends parent='base'>"
+    tag = create_tag(html)
+
+    actual = map_extends(tag=tag)
+
+    assert actual == expected
+
+
 def test_missing_parent_throws_exception():
     html = "<dj-extends invalid='base.html'>"
     tag = create_tag(html)
