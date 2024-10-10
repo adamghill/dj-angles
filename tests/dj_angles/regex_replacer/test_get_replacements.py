@@ -7,10 +7,7 @@ from dj_angles.regex_replacer import get_replacements
 # Structure to store parameterize data
 ReplacementParams = namedtuple(
     "ReplacementParams",
-    (
-        "template_string",
-        "replacement_string",
-    ),
+    ("template_string", "replacement_string"),
 )
 
 
@@ -23,6 +20,10 @@ def _shadowify(s: str) -> str:
     (
         ReplacementParams(
             template_string="<dj-extends 'base.html' />",
+            replacement_string="{% extends 'base.html' %}",
+        ),
+        ReplacementParams(
+            template_string="<dj-extends parent='base.html' />",
             replacement_string="{% extends 'base.html' %}",
         ),
         ReplacementParams(
@@ -98,16 +99,24 @@ def _shadowify(s: str) -> str:
             replacement_string="{% csrf_token %}",
         ),
         ReplacementParams(
-            template_string="<dj-block>",
-            replacement_string="{% block %}",
+            template_string="<dj-block name='content'>",
+            replacement_string="{% block content %}",
+        ),
+        ReplacementParams(
+            template_string="</dj-block name='content'>",
+            replacement_string="{% endblock content %}",
+        ),
+        ReplacementParams(
+            template_string="<dj-block 'content'>",
+            replacement_string="{% block content %}",
+        ),
+        ReplacementParams(
+            template_string="</dj-block 'content'>",
+            replacement_string="{% endblock content %}",
         ),
         ReplacementParams(
             template_string="<dj-block content>",
             replacement_string="{% block content %}",
-        ),
-        ReplacementParams(
-            template_string="</dj-block>",
-            replacement_string="{% endblock %}",
         ),
         ReplacementParams(
             template_string="</dj-block content>",

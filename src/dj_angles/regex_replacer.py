@@ -4,13 +4,13 @@ from functools import lru_cache
 from typing import List, Tuple
 
 from dj_angles.exceptions import InvalidEndTagError
-from dj_angles.mappers import map_autoescape, map_css, map_image, map_include
+from dj_angles.mappers import map_autoescape, map_block, map_css, map_extends, map_image, map_include
 from dj_angles.settings import get_setting
 from dj_angles.tags import Tag
 
 HTML_TAG_TO_DJANGO_TEMPLATE_TAG_MAP = {
-    "extends": "extends",
-    "block": "block",
+    "extends": map_extends,
+    "block": map_block,
     "verbatim": "verbatim",
     "include": map_include,
     "comment": "comment",

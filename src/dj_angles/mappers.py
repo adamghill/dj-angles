@@ -1,7 +1,40 @@
+import logging
 from typing import TYPE_CHECKING
+
+from dj_angles.exceptions import MissingAttributeError
+from dj_angles.strings import dequotify
 
 if TYPE_CHECKING:
     from dj_angles.tags import Tag
+
+
+logger = logging.getLogger(__name__)
+
+
+def _get_attribute_value_or_first_key(tag: "Tag", attribute_name: str) -> str:
+    """Gets the first attribute key or the first value for a particular attribute name.
+
+    Args:
+        param tag: The tag to get attributes from.
+        param attribute_name: The name of the attribute to get.
+    """
+
+    attr = tag.attributes.get(attribute_name)
+
+    if attr:
+        tag.attributes.remove(attribute_name)
+        return attr.value
+
+    attr = tag.attributes.pop(0)
+    val = None
+
+    if not attr.has_value:
+        val = attr.key
+
+    if not val:
+        raise MissingAttributeError(attribute_name)
+
+    return val
 
 
 def map_autoescape(tag: "Tag") -> str:
@@ -29,11 +62,21 @@ def map_include(tag: "Tag") -> str:
         param tag: The tag to map.
     """
 
+    if tag.is_end:
+        return ""
+
     if not tag.attributes:
         raise AssertionError("{% include %} must have an template name")
 
-    first_attribute = tag.attributes.pop(0)
-    template_file = first_attribute.key
+    template_file = ""
+    template_attr = tag.attributes.get("template")
+
+    if template_attr:
+        tag.attributes.remove(template_attr.key)
+        template_file = template_attr.value
+    else:
+        first_attribute = tag.attributes.pop(0)
+        template_file = first_attribute.key
 
     is_double_quoted = False
 
@@ -86,10 +129,7 @@ def map_image(tag: "Tag") -> str:
         param tag: The tag to map.
     """
 
-    if not tag.attributes:
-        raise Exception("Missing src")
-
-    src = tag.attributes.pop(0)
+    src = _get_attribute_value_or_first_key(tag, "src")
 
     if tag.attributes:
         return f'<img src="{{% static {src} %}}" {tag.attributes} />'
@@ -104,12 +144,49 @@ def map_css(tag: "Tag") -> str:
         param tag: The tag to map.
     """
 
-    if not tag.attributes:
-        raise Exception("Missing href")
-
-    href = tag.attributes.pop(0)
+    href = _get_attribute_value_or_first_key(tag, "href")
 
     if not tag.attributes.get("rel"):
         tag.attributes.append('rel="stylesheet"')
 
     return f'<link href="{{% static {href} %}}" {tag.attributes} />'
+
+
+def map_block(tag: "Tag") -> str:
+    """Mapper function for block tags.
+
+    Args:
+        param tag: The tag to map.
+    """
+
+    if not tag.attributes:
+        raise Exception("Missing block name")
+
+    django_template_tag = "block"
+
+    if tag.is_end:
+        django_template_tag = "endblock"
+
+    name = _get_attribute_value_or_first_key(tag, "name")
+
+    # The block tag doesn't actually want/need quoted strings per se, so remove them
+    name = dequotify(name)
+
+    return f"{{% {django_template_tag} {name} %}}"
+
+
+def map_extends(tag: "Tag") -> str:
+    """Mapper function for extends tags.
+
+    Args:
+        param tag: The tag to map.
+    """
+
+    if not tag.attributes:
+        raise MissingAttributeError("parent")
+
+    django_template_tag = "extends"
+
+    parent = _get_attribute_value_or_first_key(tag, "parent")
+
+    return f"{{% {django_template_tag} {parent} %}}"
