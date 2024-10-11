@@ -3,11 +3,11 @@ name = "dj-angles"
 authors = [
   {name = "Adam Hill", email = "adam@adamghill.com"}
 ]
-version = "0.6.1"
+version = "0.7.0"
 description = "Add more bracket angles to Django templates </>"
 readme = "README.md"
 license = {file = "LICENSE"}
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 keywords = [
   "django",
   "html",
@@ -25,8 +25,7 @@ classifiers = [
 ]
 dependencies = [
   "django >= 0",
-  "minestrone >= 0",
-  "dj-app >= 0"
+  "minestrone >= 0"
 ]
 
 [project.urls]
