@@ -39,15 +39,15 @@
 ## [`block`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#block)
 
 ```
-<dj-block 'content'>
+<dj-block name='content'>
   ...
-</dj-block 'content'>
+</dj-block name='content'>
 ```
 
 ```html
-{% block 'content' %}
+{% block content %}
   ...
-{% endblock 'content' %}
+{% endblock content %}
 ```
 
 ## [`csrf`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#csrf-token), [`csrf-token`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#csrf-token), [`csrf-input`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#csrf-token)
@@ -77,7 +77,7 @@
 ## `css`
 
 ```
-<dj-css 'css/styles.css' />
+<dj-css href='css/styles.css' />
 ```
 
 ```html
@@ -97,7 +97,8 @@
 ## [`extends`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#extends)
 
 ```
-<dj-extends 'base.html' />
+<dj-extends parent='base' />
+<dj-extends parent='base.html' />
 ```
 
 ```html
@@ -127,7 +128,7 @@
 ## `image`
 
 ```
-<dj-image 'img/django.jpg' />
+<dj-image src='img/django.jpg' />
 ```
 
 ```html

@@ -14,17 +14,17 @@
 **`base.html`**
 
 ```
-<dj-block 'content'>
-</dj-block 'content'>
+<dj-block name='content'>
+</dj-block name='content'>
 ```
 
 **`index.html`**
 
 ```
-<dj-extends 'base.html' />  <!-- {% extends 'base.html' %} -->
+<dj-extends parent='base.html' />  <!-- {% extends 'base.html' %} -->
 
-<dj-block 'content'>  <!-- {% block 'content' %} -->
-  <dj-include 'partial.html' />  <!-- {% include 'partial.html' %} -->
+<dj-block name='content'>  <!-- {% block content %} -->
+  <dj-include template='partial.html' />  <!-- {% include 'partial.html' %} -->
 
   <dj-verbatim>  <!-- {% verbatim %} -->
     This is verbatim: {% include %}
@@ -48,9 +48,9 @@
   
   <dj-debug />  <!-- {% debug %} -->
 
-  <dj-image 'img/django.jpg' />  <!-- <img src="{% static 'img/django.jpg' %}" /> -->
-  <dj-css 'css/styles.css' />  <!-- <link href="{% static 'css/styles.css' %}" rel="stylesheet" /> -->
-</dj-block 'content'>  <!-- {% endblock 'content' %} -->
+  <dj-image src='img/django.jpg' />  <!-- <img src="{% static 'img/django.jpg' %}" /> -->
+  <dj-css href='css/styles.css' />  <!-- <link href="{% static 'css/styles.css' %}" rel="stylesheet" /> -->
+</dj-block name='content'>  <!-- {% endblock content %} -->
 ```
 
 **partial.html**

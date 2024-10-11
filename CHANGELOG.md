@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.0
+
+- Add support for the following attributes and tags for better HTML lintability:
+    - `template` attribute for `include`
+    - `name` attribute for `block`
+    - `parent` attribute for `extends`
+    - `href` attribute for `css`
+    - `src` attribute for `image`
+
 ## 0.6.1
 
 - Remove `uv.lock` from build.

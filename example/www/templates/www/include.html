@@ -1,6 +1,6 @@
-<dj-extends 'www/base.html' />
+<dj-extends parent='www/base.html' />
 
-<dj-block 'content'>
+<dj-block name='content'>
   <style>
     div {
       border: 1px solid red;
@@ -65,11 +65,13 @@
 
   <pre>&lt;dj-www/components/include /&gt;
 &lt;dj-include 'www/components/include' /&gt;
-&lt;dj-include 'www/components/include.html' /&gt;</pre>
+&lt;dj-include 'www/components/include.html' /&gt;
+&lt;dj-include template='www/components/include.html' /&gt;</pre>
 
   <dj-www/components/include />
   <dj-include 'www/components/include' />
   <dj-include 'www/components/include.html' />
+  <dj-include template='www/components/include.html' />
 
 
   <h4>Regular includes with an additional id</h4>
@@ -81,10 +83,12 @@
   </p>
 
   <pre>&lt;dj-www/components/include:1 /&gt;
-&lt;dj-include 'www/components/include:2' /&gt;</pre>
+&lt;dj-include 'www/components/include:2' /&gt;
+&lt;dj-include template='www/components/include:2' /&gt;</pre>
 
   <dj-www/components/include:1 />
   <dj-include 'www/components/include:2' />
+  <dj-include template='www/components/include:2' />
 
 
   <h3>www/components/shadow-include.html</h3>
@@ -115,10 +119,12 @@
   <pre>
 &lt;dj-www/components/shadow-include! /&gt;
 &lt;dj-www/components/shadow-include shadow /&gt;
+&lt;dj-include template='www/components/shadow-include' shadow /&gt;
 &lt;dj-include 'www/components/shadow-include' shadow /&gt;</pre>
 
   <dj-www/components/shadow-include! />
   <dj-www/components/shadow-include shadow />
+  <dj-include template='www/components/shadow-include.html' shadow />
   <dj-include 'www/components/shadow-include.html' shadow />
 
-</dj-block 'content'>
+</dj-block name='content'>

@@ -9,7 +9,7 @@
 
 ## Custom mappers
 
-The key of the dictionary is a string and is the text match of the regex after the `initial_tag_regex`, i.e. for the default `initial_tag_regex` of `r"(dj-)"`, the key would be the result after "dj-" until a space or a ">". For example, if "<dj-include 'partial.html' />" was in the HTML, "include" would be looked up in the mapper dictionary to determine what to do with that tag. 
+The key of the dictionary is a string and is the text match of the regex after the `initial_tag_regex`, i.e. for the default `initial_tag_regex` of `r"(dj-)"`, the key would be the result after "dj-" until a space or a ">". For example, if `"<dj-include template='partial.html' />"` was in the HTML, `"include"` would be looked up in the mapper dictionary to determine what to do with that tag. 
 
 The value can either be a string or a callable.
 

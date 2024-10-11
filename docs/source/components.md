@@ -5,9 +5,11 @@
 These are equivalent ways to include partial HTML files.
 
 ```text
+<dj-partial />
+<dj-include template='partial.html' />
+<dj-include template='partial' />
 <dj-include 'partial.html' />
 <dj-include 'partial' />
-<dj-partial />
 ```
 
 They all compile to the following Django template.
@@ -39,9 +41,12 @@ Would get compiled to the following Django template.
 Accessing templates in directories is supported even though technically forward-slashes [aren't permitted in a custom element](https://html.spec.whatwg.org/multipage/custom-elements.html#valid-custom-element-name). It might confound HTML syntax highlighters.
 
 ```text
+<dj-directory/partial />
+<dj-include template='directory/partial.html' />
+<dj-include template='directory/partial' />
 <dj-include 'directory/partial.html' />
 <dj-include 'directory/partial' />
-<dj-directory/partial />
+
 ```
 
 They all compile to the following Django template.
@@ -57,9 +62,12 @@ To encapsulate component styles, enable the Shadow DOM for the partial. This wil
 These are all equivalent ways to include a shadow partial.
 
 ```text
-<dj-include 'partial.html' shadow />
-<dj-partial shadow />
 <dj-partial! />
+<dj-partial shadow />
+<dj-include template='partial.html' shadow />
+<dj-include template='partial' shadow />
+<dj-include 'partial.html' shadow />
+<dj-include 'partial' shadow />
 ```
 
 They all compile to the following Django template syntax.
