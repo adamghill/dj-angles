@@ -105,6 +105,8 @@ def get_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> 
         component_name = match.group("component_name").strip()
         template_tag_args = match.group("template_tag_args").strip()
 
+        # print("tag_html", tag_html)
+
         tag = Tag(tag_map=tag_map, html=tag_html, component_name=component_name, template_tag_args=template_tag_args)
 
         if raise_for_missing_start_tag:
@@ -115,6 +117,29 @@ def get_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> 
                     raise InvalidEndTagError(tag=tag, last_tag=_last_tag)
             elif not tag.is_self_closing:
                 tag_queue.append(tag)
+
+        # Try to parse the inner HTML for includes to handle slots
+        if (
+            not tag.is_self_closing
+            and not tag.is_end
+            and (
+                tag.django_template_tag is None
+                or (callable(tag.django_template_tag) and tag.django_template_tag.__name__ == "map_include")
+            )
+        ):
+            end_of_include_tag = match.end()
+
+            try:
+                next_ending_tag_idx = html.index("</dj-", end_of_include_tag)  # handle custom tag
+                inner_html = html[end_of_include_tag:next_ending_tag_idx].strip()
+
+                from minestrone import HTML
+
+                h = HTML(inner_html)  # TODO: cache this result?
+                print("h", h)
+            except ValueError:
+                # Ending tag could not be found, so skip getting the inner html
+                pass
 
         django_template_tag = tag.get_django_template_tag()
 
