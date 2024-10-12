@@ -3,23 +3,21 @@
 </p>
 <p align="center">Add more bracket angles to Django templates</p>
 
-https://dj-angles.adamghill.com/
-
 ![PyPI](https://img.shields.io/pypi/v/dj-angles?color=blue&style=flat-square)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/dj-angles?color=blue&style=flat-square)
 ![GitHub Sponsors](https://img.shields.io/github/sponsors/adamghill?color=blue&style=flat-square)
 
-📖 Documentation located at https://dj-angles.adamghill.com/.
-📦 Package located at https://pypi.org/project/dj-angles/.
+- 📖 Full documentation: https://dj-angles.adamghill.com/
+- 📦 Package is on PyPI: https://pypi.org/project/dj-angles/
 
 ## ⭐ Features
 
 - Use HTML-like elements in Django templates, e.g. `<dj-partial />` instead of `{% include 'partial.html' %}`
-- Can be sprinkled in as needed, but does not remove existing Django functionality
-- Pretend like you are writing React components, but without dealing with JavaScript at all
-- Lets you excitedly tell your friends how neat the Shadow DOM is
+- Can be sprinkled in as needed and only enhances existing Django functionality
 - Since it looks like HTML, syntax highlighting mostly "just works"
 - Wraps included templates in a custom element for easier debugging and targeted CSS styling
+- Lets you excitedly tell your friends how neat the Shadow DOM is
+- Pretend like you are writing React components, but without dealing with JavaScript at all
 
 ## 💥 Example
 
@@ -45,8 +43,6 @@ https://dj-angles.adamghill.com/
   <dj-comment>  <!-- {% comment %} -->
     this is a comment
   </dj-comment>  <!-- {% endcomment %} -->
-
-  <dj-#>this is another comment</dj-#>    <!-- {# this is another comment #} -->
 
   <dj-autoescape-on>  <!-- {% autoescape-on %} -->
     This is escaped
@@ -79,4 +75,4 @@ To learn more about how to install and use `dj-angles` go to https://dj-angles.a
 
 ## ✨ Inspiration
 
-I have been interested in Django components and encapsulating functionality for a long time (see [django-unicorn](https://www.django-unicorn.com), [dlitejs](https://dlitejs.com), etc), but had never thought of using HTML directly until I looked at [Cotton](https://django-cotton.com) by [wrabit](https://github.com/wrabit). `dj-angles` takes that idea further to see how well it works.
+I have been interested in Django components and encapsulating functionality for a long time (see [django-unicorn](https://www.django-unicorn.com), [dlitejs](https://dlitejs.com), etc), but had never thought of using HTML directly until I looked at [Cotton](https://django-cotton.com) by [wrabit](https://github.com/wrabit). `dj-angles` takes the initial idea further to see how well it works.
