@@ -27,7 +27,7 @@ SECRET_KEY = "django-insecure-x#vt_3aic#cyvkwell%zb$wfr5yx-^2=mq-_ei2qo!g1$s#_1t
 DEBUG = True
 
 ALLOWED_HOSTS: List[str] = [
-    "0.0.0.0",
+    "0.0.0.0",  # noqa: S104
     "localhost",
 ]
 
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "www",
+    "django_bird",
 ]
 
 MIDDLEWARE = [
@@ -56,11 +57,18 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "project.urls"
 
+DJANGO_BIRD = {"ENABLE_AUTO_CONFIG": False}
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            BASE_DIR / "templates",
+        ],
         "OPTIONS": {
+            "builtins": [
+                "django_bird.templatetags.django_bird",
+            ],
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
@@ -72,6 +80,7 @@ TEMPLATES = [
                     "django.template.loaders.cached.Loader",
                     [
                         "dj_angles.template_loader.Loader",  # this is required for `dj-angles`
+                        "django_bird.loader.BirdLoader",
                         "django.template.loaders.filesystem.Loader",
                         "django.template.loaders.app_directories.Loader",
                     ],

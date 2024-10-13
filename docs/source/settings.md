@@ -2,10 +2,6 @@
 
 Settings can be configured via an `ANGLES` dictionary in `settings.py`.
 
-```python
-ANGLES = {}
-```
-
 ## `initial_tag_regex`
 
 Determines the characters that are used to indicate a `dj-angles` element. `String` which defaults to `r"(dj-)"`.

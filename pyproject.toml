@@ -17,7 +17,6 @@ classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
   "License :: OSI Approved :: MIT License",
-  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
@@ -49,6 +48,9 @@ docs = [
   "toml >= 0",
   "types-toml >= 0"
 ]
+bird = [
+  "django-bird >= 0"
+]
 
 [tool.uv]
 dev-dependencies = [
@@ -61,7 +63,7 @@ dev-dependencies = [
 [tool.ruff]
 src = ["src"]
 exclude = []
-target-version = "py38"
+target-version = "py39"
 line-length = 120
 lint.select = [
   "A",
@@ -142,7 +144,7 @@ skip_empty = true
 sort = "cover"
 
 [tool.mypy]
-python_version = "3.8"
+python_version = "3.9"
 warn_return_any = true
 warn_unused_configs = true
 ignore_missing_imports = true

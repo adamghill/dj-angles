@@ -1,21 +1,31 @@
 # Mappers
 
+```{tip}
+Understanding the concept of mappers is not required for basic uses of `dj-angles`. It is only needed to support additional HTML tags or for custom implementations.
+```
+
+## Basic flow
+
 `dj-angle` is built on the basic flow of:
 1. parse template HTML with regex
 2. look up a mapper for any matches found
-3. handle string or callables mapper values appropriately
+3. call mapper appropriately
 
 `dj-angles` includes a dictionary of built-in mappers. However, custom mappers can be added to handle other use cases.
 
 ## Custom mappers
 
-The key of the dictionary is a string and is the text match of the regex after the `initial_tag_regex`, i.e. for the default `initial_tag_regex` of `r"(dj-)"`, the key would be the result after "dj-" until a space or a ">". For example, if `"<dj-include template='partial.html' />"` was in the HTML, `"include"` would be looked up in the mapper dictionary to determine what to do with that tag. 
+All of the mappers are stored in a dictionary.
 
-The value can either be a string or a callable.
+The key of the mapper dictionary is a string and is the text match of the regex after the `initial_tag_regex`, i.e. for the default `initial_tag_regex` of `r"(dj-)"`, the key would be the result after "dj-" until a space or a ">".
+
+For example, if `"<dj-include template='partial.html' />"` was in the HTML, `"include"` would be looked up in the mapper dictionary to determine what to do with that tag. 
+
+The value of the mapper dictionary can either be a string or a callable.
 
 ### string value
 
-When the dictionary value is a string, it replaces the `initial_tag_regex` plus the key, and puts it between "{%" and the arguments plus "%}".
+When the dictionary value is a string, it replaces the `initial_tag_regex` plus the key, and puts it between "{%", arguments, and then "%}".
 
 ```python
 # settings.py

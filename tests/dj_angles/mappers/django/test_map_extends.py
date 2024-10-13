@@ -1,7 +1,7 @@
 import pytest
 
 from dj_angles.exceptions import MissingAttributeError
-from dj_angles.mappers import map_extends
+from dj_angles.mappers.django import map_extends
 from tests.dj_angles.tags import create_tag
 
 

@@ -2,6 +2,7 @@ import logging
 from typing import TYPE_CHECKING
 
 from dj_angles.exceptions import MissingAttributeError
+from dj_angles.mappers.utils import get_attribute_value_or_first_key
 from dj_angles.strings import dequotify
 
 if TYPE_CHECKING:
@@ -9,32 +10,6 @@ if TYPE_CHECKING:
 
 
 logger = logging.getLogger(__name__)
-
-
-def _get_attribute_value_or_first_key(tag: "Tag", attribute_name: str) -> str:
-    """Gets the first attribute key or the first value for a particular attribute name.
-
-    Args:
-        param tag: The tag to get attributes from.
-        param attribute_name: The name of the attribute to get.
-    """
-
-    attr = tag.attributes.get(attribute_name)
-
-    if attr:
-        tag.attributes.remove(attribute_name)
-        return attr.value
-
-    attr = tag.attributes.pop(0)
-    val = None
-
-    if not attr.has_value:
-        val = attr.key
-
-    if not val:
-        raise MissingAttributeError(attribute_name)
-
-    return val
 
 
 def map_autoescape(tag: "Tag") -> str:
@@ -129,7 +104,7 @@ def map_image(tag: "Tag") -> str:
         param tag: The tag to map.
     """
 
-    src = _get_attribute_value_or_first_key(tag, "src")
+    src = get_attribute_value_or_first_key(tag, "src")
 
     if tag.attributes:
         return f'<img src="{{% static {src} %}}" {tag.attributes} />'
@@ -144,7 +119,7 @@ def map_css(tag: "Tag") -> str:
         param tag: The tag to map.
     """
 
-    href = _get_attribute_value_or_first_key(tag, "href")
+    href = get_attribute_value_or_first_key(tag, "href")
 
     if not tag.attributes.get("rel"):
         tag.attributes.append('rel="stylesheet"')
@@ -167,7 +142,7 @@ def map_block(tag: "Tag") -> str:
     if tag.is_end:
         django_template_tag = "endblock"
 
-    name = _get_attribute_value_or_first_key(tag, "name")
+    name = get_attribute_value_or_first_key(tag, "name")
 
     # The block tag doesn't actually want/need quoted strings per se, so remove them
     name = dequotify(name)
@@ -187,7 +162,7 @@ def map_extends(tag: "Tag") -> str:
 
     django_template_tag = "extends"
 
-    parent = _get_attribute_value_or_first_key(tag, "parent")
+    parent = get_attribute_value_or_first_key(tag, "parent")
 
     if "." not in parent:
         parent = dequotify(parent)

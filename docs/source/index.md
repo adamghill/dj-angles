@@ -77,8 +77,23 @@ self
 installation
 components
 tag-elements
-mappers
+```
+
+```{toctree}
+:caption: Integrations
+:maxdepth: 2
+:hidden:
+
+integrations/django-bird
+```
+
+```{toctree}
+:caption: Advanced
+:maxdepth: 2
+:hidden:
+
 settings
+mappers
 ```
 
 ```{toctree}

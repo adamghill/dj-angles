@@ -1,7 +1,7 @@
 from typing import Optional
 
 from dj_angles.attributes import Attributes
-from dj_angles.mappers import map_include
+from dj_angles.mappers.django import map_include
 from dj_angles.settings import get_setting
 
 

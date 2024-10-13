@@ -1,0 +1,13 @@
+<dj-bird template='button' class='btn'>
+  Click me!
+</dj-bird>
+
+<dj-bird template='button' />
+
+{% bird button class="btn" %}
+Click me!
+{% endbird %}
+
+{% bird button class="btn btn-primary" id="submit-btn" disabled %}
+Submit
+{% endbird %}

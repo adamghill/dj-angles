@@ -1,10 +1,12 @@
 import re
 from collections import deque
 from functools import lru_cache
+from importlib.util import find_spec
 from typing import List, Tuple
 
 from dj_angles.exceptions import InvalidEndTagError
-from dj_angles.mappers import map_autoescape, map_block, map_css, map_extends, map_image, map_include
+from dj_angles.mappers.django import map_autoescape, map_block, map_css, map_extends, map_image, map_include
+from dj_angles.mappers.thirdparty import map_bird
 from dj_angles.settings import get_setting
 from dj_angles.tags import Tag
 
@@ -30,6 +32,10 @@ HTML_TAG_TO_DJANGO_TEMPLATE_TAG_MAP = {
     "css": map_css,
 }
 """Default mappings for tags to Django template tags."""
+
+
+def _is_module_available(module_name):
+    return find_spec(module_name) is not None
 
 
 def _get_tag_regex():
@@ -68,6 +74,10 @@ def get_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> 
     tag_queue: deque = deque()
 
     tag_map = HTML_TAG_TO_DJANGO_TEMPLATE_TAG_MAP
+
+    if _is_module_available("django_bird"):
+        tag_map.update({"bird": map_bird})
+
     tag_map.update(get_setting("mappers", default={}))
 
     for match in re.finditer(tag_regex, html):

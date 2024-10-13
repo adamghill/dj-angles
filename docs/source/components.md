@@ -1,6 +1,8 @@
 # Components
 
-`dj-angles` provides component-like functionality by using Django's built-in `include` template tag. And, of course, it provides some syntactic sugar on top to make the developer experience a little bit better.
+`dj-angles` provides component-like functionality by using Django's built-in `include` template tag. It also provides some syntactic sugar on top to make the developer experience a little bit better.
+
+## Partials
 
 These are equivalent ways to include partial HTML files.
 
@@ -12,6 +14,10 @@ These are equivalent ways to include partial HTML files.
 <dj-include 'partial' />
 ```
 
+```{note}
+The self-closing element is used in most examples, but explicit closing elements for all examples, e.g. `<dj-partial></dj-partial>`, also works.
+```
+
 They all compile to the following Django template.
 
 ```html
@@ -20,7 +26,9 @@ They all compile to the following Django template.
 
 The wrapping element (in this example: `<dj-partial>`) allows for easier debugging when looking at the source code and also allows for targeted CSS styling.
 
-Note: The built-in [tags](tag-elements.md) are considered reserved words. Template file names that conflict will not get loaded because reserved words take precedence. For example, if there is a template named "extends.html" `<dj-extends />` could not be used to include it; `<dj-include 'extends.html' />` would need to be used instead.
+```{note}
+The built-in [tags](tag-elements.md) are considered reserved words. Template file names that conflict will not get loaded because reserved words take precedence. For example, if there is a template named "extends.html" `<dj-extends />` could not be used to include it; `<dj-include 'extends.html' />` would need to be used instead.
+```
 
 ## Appending an identifier to the wrapping element
 
@@ -82,3 +90,8 @@ They all compile to the following Django template syntax.
 - Declaratively creating a shadow root: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template#shadowrootmode
 - Using the Shadow DOM: https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM
 
+## Integrations
+
+For other approaches to components in Django, `dj-angles` integrates with other Django component libraries. The currently supported external libraries include:
+
+- [`django-bird`](integrations/django-bird.md)
