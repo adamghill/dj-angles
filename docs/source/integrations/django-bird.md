@@ -61,7 +61,7 @@ TEMPLATES = [
 
 **templates/bird/button.html**
 
-```html
+```
 <button {{ attrs }}>
   {{ slot }}
 </button>
