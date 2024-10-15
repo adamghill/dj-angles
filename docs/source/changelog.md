@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.8.1
+
+- Create tag mappers once and cache it.
+
+## 0.8.0
+
+- Add integration with [`django-bird`](https://django-bird.readthedocs.io/).
+
+**Breaking changes**
+
+- Dropped support for Python 3.8.
+
 ## 0.7.0
 
 - Add support for the following attributes and tags for better HTML lintability:
