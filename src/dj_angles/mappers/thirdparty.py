@@ -23,6 +23,4 @@ def map_bird(tag: "Tag") -> str:
     if tag.is_self_closing:
         django_template_tag = f"{django_template_tag} /"
 
-    print("django_template_tag", django_template_tag)
-
     return f"{django_template_tag} %}}"
