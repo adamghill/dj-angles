@@ -2,7 +2,6 @@ import re
 from collections import deque
 from functools import lru_cache
 from importlib.util import find_spec
-from typing import Dict, List, Tuple
 
 from dj_angles.exceptions import InvalidEndTagError
 from dj_angles.mappers.django import map_autoescape, map_block, map_css, map_extends, map_image, map_include
@@ -33,7 +32,7 @@ HTML_TAG_TO_DJANGO_TEMPLATE_TAG_MAP = {
 }
 """Default mappings for tags to Django template tags."""
 
-tag_map: Dict = None
+tag_map: dict = None
 
 
 def _is_module_available(module_name):
@@ -59,7 +58,7 @@ def _get_tag_regex():
     return _compile_regex(tag_regex)
 
 
-def get_tag_map() -> Dict:
+def get_tag_map() -> dict:
     """Get the complete tag map based on the default, dynamic, and settings mappers."""
 
     global tag_map  # noqa: PLW0603
@@ -82,7 +81,7 @@ def clear_tag_map() -> None:
     tag_map = None
 
 
-def get_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> List[Tuple[str, str]]:
+def get_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> list[tuple[str, str]]:
     """Get a list of replacements (tuples that consists of 2 strings) based on the template HTML.
 
     Args:

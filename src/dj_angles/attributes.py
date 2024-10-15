@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from typing import List, Optional, SupportsIndex
+from typing import Optional, SupportsIndex
 
 from dj_angles.exceptions import DuplicateAttributeError, MissingAttributeError
 from dj_angles.tokenizer import yield_tokens
@@ -57,7 +57,7 @@ class Attributes(Sequence):
     """The original attributes as an unparsed string."""
 
     def __init__(self, template_tag_args: str):
-        self._attributes: List[Attribute] = []
+        self._attributes: list[Attribute] = []
 
         self.template_tag_args = template_tag_args
         self.parse()
