@@ -1,13 +1,17 @@
-<dj-bird template='button' class='btn'>
+<dj-extends parent='www/base.html' />
+
+<dj-block name='content'>
+  <dj-bird template='button' class='btn'>
+    Click me!
+  </dj-bird>
+
+  <dj-bird template='button' />
+
+  {% bird button class="btn" %}
   Click me!
-</dj-bird>
+  {% endbird %}
 
-<dj-bird template='button' />
-
-{% bird button class="btn" %}
-Click me!
-{% endbird %}
-
-{% bird button class="btn btn-primary" id="submit-btn" disabled %}
-Submit
-{% endbird %}
+  {% bird button class="btn btn-primary" id="submit-btn" disabled %}
+  Submit
+  {% endbird %}
+</dj-block name='content'>

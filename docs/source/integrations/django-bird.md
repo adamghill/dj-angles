@@ -8,7 +8,7 @@
 
 ## Installation
 
-Using the auto settings will unfortunately make the two package conflict, so the settings must done manually. Here is an example, but see https://django-bird.readthedocs.io/en/latest/configuration.html#manual-setup for more details.
+Using the auto settings in `django-bird` will unfortunately create a conflict with the two packages, so the settings must done manually. Here is an example, but see https://django-bird.readthedocs.io/en/latest/configuration.html#manual-setup for more details.
 
 ```python
 # settings.py

@@ -91,7 +91,7 @@
   <dj-include template='www/components/include:2' />
 
 
-  <h3>www/components/shadow-include.html</h3>
+  <h3>www/components/include-shadow.html</h3>
 
   <pre>&lt;div&gt;
   This is a shadow include.
@@ -111,20 +111,20 @@
   <h4>Shadow includes</h4>
 
   <p>
-    Different ways to include <code>www/components/shadow-include.html</code>. They will all have a blue border because
+    Different ways to include <code>www/components/include-shadow.html</code>. They will all have a blue border because
     of the styles in the include which targets <code>div</code> elements. They will <strong>not</strong> have blue text
     because the page style that target <code>div p</code> does not pierce the shadow DOM.
   </p>
 
   <pre>
-&lt;dj-www/components/shadow-include! /&gt;
-&lt;dj-www/components/shadow-include shadow /&gt;
-&lt;dj-include template='www/components/shadow-include' shadow /&gt;
-&lt;dj-include 'www/components/shadow-include' shadow /&gt;</pre>
+&lt;dj-www/components/include-shadow! /&gt;
+&lt;dj-www/components/include-shadow shadow /&gt;
+&lt;dj-include template='www/components/include-shadow' shadow /&gt;
+&lt;dj-include 'www/components/include-shadow' shadow /&gt;</pre>
 
-  <dj-www/components/shadow-include! />
-  <dj-www/components/shadow-include shadow />
-  <dj-include template='www/components/shadow-include.html' shadow />
-  <dj-include 'www/components/shadow-include.html' shadow />
+  <dj-www/components/include-shadow! />
+  <dj-www/components/include-shadow shadow />
+  <dj-include template='www/components/include-shadow.html' shadow />
+  <dj-include 'www/components/include-shadow.html' shadow />
 
 </dj-block name='content'>
