@@ -2,7 +2,7 @@ from collections import namedtuple
 
 import pytest
 
-from dj_angles.regex_replacer import get_replacements
+from dj_angles.regex_replacer import clear_tag_map, get_replacements
 
 # Structure to store parameterize data
 ReplacementParams = namedtuple(
@@ -243,6 +243,7 @@ def test_mappers_string(template_string, replacement_string, settings):
             "blob": "include",
         },
     }
+    clear_tag_map()
 
     expected = [
         (template_string, replacement_string),
@@ -266,6 +267,7 @@ def test_mappers_callable(template_string, replacement_string, settings):
         "initial_tag_regex": None,
         "mappers": {"blob": lambda tag: "blob2"},  # noqa: ARG005
     }
+    clear_tag_map()
 
     expected = [
         (template_string, replacement_string),
