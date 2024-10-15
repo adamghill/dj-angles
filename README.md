@@ -13,9 +13,10 @@
 ## ⭐ Features
 
 - Use HTML-like elements in Django templates, e.g. `<dj-partial />` instead of `{% include 'partial.html' %}`
-- Can be sprinkled in as needed and only enhances existing Django functionality
+- Wraps `include` templates in a custom element for easier debugging and targeted CSS styling
+- Can be sprinkled in as needed to enhance existing Django functionality
 - Since it looks like HTML, syntax highlighting mostly "just works"
-- Wraps included templates in a custom element for easier debugging and targeted CSS styling
+- Integrates with Django component libraries like [django-bird](https://django-bird.readthedocs.io)
 - Lets you excitedly tell your friends how neat the Shadow DOM is
 - Pretend like you are writing React components, but without dealing with JavaScript at all
 
