@@ -1,4 +1,4 @@
-from typing import Generator
+from collections.abc import Generator
 
 
 def yield_tokens(s: str, breaking_character: str) -> Generator[str, None, None]:
