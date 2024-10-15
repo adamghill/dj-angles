@@ -56,6 +56,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "project.urls"
 
+ANGLES = {"SLOTS_ENABLED": True}
 DJANGO_BIRD = {"ENABLE_AUTO_CONFIG": False}
 
 TEMPLATES = [

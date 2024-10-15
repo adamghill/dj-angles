@@ -57,8 +57,15 @@ class Tag:
 
         self.django_template_tag = tag_map.get(self.component_name)
 
-    def get_django_template_tag(self) -> str:
-        """Generate the Django template tag."""
+    def get_django_template_tag(self, slots: Optional[list[tuple[str, str]]] = None) -> str:
+        """Generate the Django template tag.
+
+        Args:
+            param slots: List of slots which is a tuple of slot name and inner html.
+        """
+
+        if slots is None:
+            slots = []
 
         if self.django_template_tag is None and self.is_end:
             wrapping_tag_name = self.get_wrapping_tag_name()

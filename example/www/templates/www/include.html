@@ -21,6 +21,7 @@
     }
   </style>
 
+  {% comment %}
   <p>
     Demonstrate how <code>include</code> works and different ways to style components.
   </p>
@@ -126,5 +127,12 @@
   <dj-www/components/include-shadow shadow />
   <dj-include template='www/components/include-shadow.html' shadow />
   <dj-include 'www/components/include-shadow.html' shadow />
+
+  <h4>Slots</h4>
+  {% endcomment %}
+
+  <dj-include template='www/components/include-slot.html'>
+    <span slot="test1">slot1</span>
+  </dj-include>
 
 </dj-block name='content'>

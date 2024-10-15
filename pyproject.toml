@@ -23,7 +23,8 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-  "django >= 0"
+  "django >= 0",
+  "minestrone >= 0"
 ]
 
 [project.urls]

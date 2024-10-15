@@ -3,6 +3,8 @@ from collections import deque
 from functools import lru_cache
 from importlib.util import find_spec
 
+from minestrone import HTML
+
 from dj_angles.exceptions import InvalidEndTagError
 from dj_angles.mappers.django import map_autoescape, map_block, map_css, map_extends, map_image, map_include
 from dj_angles.mappers.thirdparty import map_bird
@@ -104,8 +106,6 @@ def get_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> 
         component_name = match.group("component_name").strip()
         template_tag_args = match.group("template_tag_args").strip()
 
-        # print("tag_html", tag_html)
-
         tag = Tag(tag_map=tag_map, html=tag_html, component_name=component_name, template_tag_args=template_tag_args)
 
         if raise_for_missing_start_tag:
@@ -117,9 +117,13 @@ def get_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> 
             elif not tag.is_self_closing:
                 tag_queue.append(tag)
 
-        # Try to parse the inner HTML for includes to handle slots
+        slots = []
+
+        # Parse the inner HTML for includes to handle slots
+        # TODO: Check settings to see if slots are enabled
         if (
-            not tag.is_self_closing
+            get_setting("SLOTS_ENABLED", default=False)
+            and not tag.is_self_closing
             and not tag.is_end
             and (
                 tag.django_template_tag is None
@@ -129,18 +133,22 @@ def get_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> 
             end_of_include_tag = match.end()
 
             try:
-                next_ending_tag_idx = html.index("</dj-", end_of_include_tag)  # handle custom tag
+                # TODO: handle custom tag, not just /dj-
+                next_ending_tag_idx = html.index("</dj-", end_of_include_tag)
                 inner_html = html[end_of_include_tag:next_ending_tag_idx].strip()
 
-                from minestrone import HTML
+                if inner_html:
+                    for element in HTML(inner_html).elements:
+                        if slot_name := element.attributes.get("slot"):
+                            slots.append((slot_name, element))
 
-                h = HTML(inner_html)  # TODO: cache this result?
-                print("h", h)
+                            # Remove slot from the current HTML because it will be injected into the include component
+                            replacements.append((inner_html, ""))
             except ValueError:
                 # Ending tag could not be found, so skip getting the inner html
                 pass
 
-        django_template_tag = tag.get_django_template_tag()
+        django_template_tag = tag.get_django_template_tag(slots=slots)
 
         if django_template_tag:
             replacements.append((tag.html, django_template_tag))
