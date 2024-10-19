@@ -1,4 +1,4 @@
-from dj_angles.mappers.django import map_include
+from dj_angles.mappers.include import map_include
 from tests.dj_angles.tags import create_tag
 
 

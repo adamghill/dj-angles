@@ -6,7 +6,8 @@ from importlib.util import find_spec
 from minestrone import HTML
 
 from dj_angles.exceptions import InvalidEndTagError
-from dj_angles.mappers.django import map_autoescape, map_block, map_css, map_extends, map_image, map_include
+from dj_angles.mappers.django import map_autoescape, map_block, map_css, map_extends, map_image
+from dj_angles.mappers.include import map_include
 from dj_angles.mappers.thirdparty import map_bird
 from dj_angles.settings import get_setting
 from dj_angles.tags import Tag
@@ -106,14 +107,20 @@ def get_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> 
         component_name = match.group("component_name").strip()
         template_tag_args = match.group("template_tag_args").strip()
 
-        tag = Tag(tag_map=tag_map, html=tag_html, component_name=component_name, template_tag_args=template_tag_args)
+        tag = Tag(
+            tag_map=tag_map,
+            html=tag_html,
+            component_name=component_name,
+            template_tag_args=template_tag_args,
+            tag_queue=tag_queue,
+        )
 
         if raise_for_missing_start_tag:
             if tag.is_end:
-                _last_tag: Tag = tag_queue.pop()
+                last_tag: Tag = tag_queue.pop()
 
-                if _last_tag.component_name != tag.component_name:
-                    raise InvalidEndTagError(tag=tag, last_tag=_last_tag)
+                if last_tag.component_name != tag.component_name:
+                    raise InvalidEndTagError(tag=tag, last_tag=last_tag)
             elif not tag.is_self_closing:
                 tag_queue.append(tag)
 
