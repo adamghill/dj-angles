@@ -4,7 +4,7 @@ Settings can be configured via an `ANGLES` dictionary in `settings.py`.
 
 ## `slots_enabled`
 
-Enables [slots](components.md#slots) functionality for [components](components.md). `Boolean` which defaults to `False`.
+Enables [slots](components.md#slots) functionality for components. `Boolean` which defaults to `False`.
 
 ## `initial_tag_regex`
 

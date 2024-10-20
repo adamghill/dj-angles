@@ -30,7 +30,7 @@ The wrapping element, e.g. `dj-partial`, is a custom element which browsers will
 The built-in [tags](tag-elements.md) are considered reserved words. Template file names that conflict will not get loaded because reserved words take precedence. For example, if there is a template named "extends.html" `<dj-extends />` could not be used to include it; `<dj-include 'extends.html' />` would need to be used instead.
 ```
 
-### Wrapping element identifier
+### Wrapping element key
 
 Adding a colon and an identifier to the end of a template name allows for even more specific CSS styling.
 
@@ -93,14 +93,14 @@ They all compile to the following Django template syntax.
 ## Slots
 
 ```{note}
-Currently in beta and disabled by default. Can be enabled by [setting](settings.md#slots_enabled) `slots_enabled` to `True`.
+Currently in beta and disabled by default. Can be enabled by [setting `slots_enabled` to `True`](settings.md#slots_enabled).
 ```
 
 Slots allow a component to designate certain sections which can be set when the component is used.
 
 ```html
 <!-- index.html -->
-<dj-include template='profile.html'>
+<dj-include template="profile.html">
     <span slot="username">User One</span>
 </dj-include>
 ```
@@ -112,6 +112,18 @@ Slots allow a component to designate certain sections which can be set when the 
 
     <ul>
         <li>Username: <slot name="username">n/a</slot></li>
+    </ul>
+</div>
+```
+
+Would be rendered as the following.
+
+```html
+<div>
+    <h1>Profile</h1>
+
+    <ul>
+        <li>Username: <slot name="username"><span slot="username">User One</span></slot></li>
     </ul>
 </div>
 ```
