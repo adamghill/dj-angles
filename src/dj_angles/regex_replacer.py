@@ -175,6 +175,7 @@ def replace_django_template_tags(html: str) -> str:
         html = html.replace(
             r[0],
             r[1],
+            1,
         )
 
     return html
