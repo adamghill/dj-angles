@@ -1,10 +1,10 @@
 # Components
 
-`dj-angles` provides component-like functionality by using Django's built-in `include` template tag. It also provides some syntactic sugar on top to make the developer experience a little bit better.
+`dj-angles` provides component-like functionality by enhancing Django's built-in `include` template tag.
 
-## Partials
+## Includes
 
-These are equivalent ways to include partial HTML files.
+These are equivalent ways to include HTML files.
 
 ```text
 <dj-partial />
@@ -24,13 +24,13 @@ They all compile to the following Django template.
 <dj-partial>{% include 'partial.html' %}</dj-partial>
 ```
 
-The wrapping element (in this example: `<dj-partial>`) allows for easier debugging when looking at the source code and also allows for targeted CSS styling.
+The wrapping element, e.g. `dj-partial`, is a custom element which browsers will ignore. It allows for easier debugging when looking at the source code and also allows for targeted CSS styling.
 
-```{note}
+```{warning}
 The built-in [tags](tag-elements.md) are considered reserved words. Template file names that conflict will not get loaded because reserved words take precedence. For example, if there is a template named "extends.html" `<dj-extends />` could not be used to include it; `<dj-include 'extends.html' />` would need to be used instead.
 ```
 
-## Appending an identifier to the wrapping element
+### Wrapping element identifier
 
 Adding a colon and an identifier to the end of a template name allows for even more specific CSS styling.
 
@@ -44,7 +44,7 @@ Would get compiled to the following Django template.
 <dj-partial-1>{% include 'partial.html' }</dj-partial-1>
 ```
 
-## ⤵️ Directories
+### Directories
 
 Accessing templates in directories is supported even though technically forward-slashes [aren't permitted in a custom element](https://html.spec.whatwg.org/multipage/custom-elements.html#valid-custom-element-name). It might confound HTML syntax highlighters.
 
@@ -63,11 +63,11 @@ They all compile to the following Django template.
 <dj-directory-partial>{% include 'directory/partial.html' %}</dj-directory-partial>
 ```
 
-## 🥷 CSS scoping
+## CSS scoping
 
-To encapsulate component styles, enable the Shadow DOM for the partial. This will ensure that any `style` element in the partial will be contained to that partial. The downside is that the Shadow DOM does not allow outside styles in (other than CSS variables).
+To encapsulate component styles, the `dj-angles` can use the Shadow DOM. This will ensure that any `style` element in the include will be contained. The downside is that the Shadow DOM does not allow outside styles in (other than CSS variables).
 
-These are all equivalent ways to include a shadow partial.
+These are all equivalent ways to use the Shadow DOM with an include.
 
 ```text
 <dj-partial! />
@@ -89,6 +89,32 @@ They all compile to the following Django template syntax.
 - Shadow DOM styling: https://javascript.info/shadow-dom-style
 - Declaratively creating a shadow root: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template#shadowrootmode
 - Using the Shadow DOM: https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_shadow_DOM
+
+## Slots
+
+```{note}
+Currently in beta and disabled by default. Can be enabled by [setting](settings.md#slots_enabled) `slots_enabled` to `True`.
+```
+
+Slots allow a component to designate certain sections which can be set when the component is used.
+
+```html
+<!-- index.html -->
+<dj-include template='profile.html'>
+    <span slot="username">User One</span>
+</dj-include>
+```
+
+```html
+<!-- profile.html -->
+<div>
+    <h1>Profile</h1>
+
+    <ul>
+        <li>Username: <slot name="username">n/a</slot></li>
+    </ul>
+</div>
+```
 
 ## Integrations
 

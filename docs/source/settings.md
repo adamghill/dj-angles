@@ -2,6 +2,10 @@
 
 Settings can be configured via an `ANGLES` dictionary in `settings.py`.
 
+## `slots_enabled`
+
+Enables [slots](components.md#slots) functionality for [components](components.md). `Boolean` which defaults to `False`.
+
 ## `initial_tag_regex`
 
 Determines the characters that are used to indicate a `dj-angles` element. `String` which defaults to `r"(dj-)"`.

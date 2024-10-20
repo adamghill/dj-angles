@@ -24,6 +24,8 @@
 <dj-extends parent='base.html' />  <!-- {% extends 'base.html' %} -->
 
 <dj-block name='content'>  <!-- {% block content %} -->
+  <dj-partial />  <!-- {% include 'partial.html' %} -->
+
   <dj-include template='partial.html' />  <!-- {% include 'partial.html' %} -->
 
   <dj-verbatim>  <!-- {% verbatim %} -->
@@ -61,13 +63,9 @@
 </div>
 ```
 
-## 🤔 How does this work?
-
-The template HTML is passed through `dj_angles.template_loader.Loader` first, tags are matched (via good ole' regex), some transformations happen based on the mappers defined, and then the normal template loaders process the resulting output.
-
 ## ✨ Inspiration
 
-I have been interested in Django components and encapsulating functionality for a long time (see [django-unicorn](https://www.django-unicorn.com), [dlitejs](https://dlitejs.com), etc), but had never thought of using HTML directly until I looked at [Cotton](https://django-cotton.com) by [wrabit](https://github.com/wrabit). `dj-angles` takes that basic idea further than just components to encompass more of the Django template tags.
+I have been interested in Django components for a long time (see [django-unicorn](https://www.django-unicorn.com), [dlitejs](https://dlitejs.com), etc), but had never thought of using HTML tags in Django templates until I looked at [Cotton](https://django-cotton.com) by [wrabit](https://github.com/wrabit). `dj-angles` takes that basic idea further than just components to encompass even more of the Django template tags.
 
 ```{toctree}
 :maxdepth: 2
