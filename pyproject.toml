@@ -3,7 +3,7 @@ name = "dj-angles"
 authors = [
   {name = "Adam Hill", email = "adam@adamghill.com"}
 ]
-version = "0.8.1"
+version = "0.9.0"
 description = "Add more bracket angles to Django templates </>"
 readme = "README.md"
 license = {file = "LICENSE"}

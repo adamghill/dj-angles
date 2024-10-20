@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.9.0
+
+- Add (beta) named slots implementation. Enable with `ANGLES={"enable_slots": True}` in settings.
+- Fix: End wrapping tag was sometimes incorrect for some includes.
+
 ## 0.8.1
 
 - Create tag mappers once and cache it.
