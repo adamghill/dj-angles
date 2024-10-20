@@ -24,7 +24,7 @@ classifiers = [
 ]
 dependencies = [
   "django >= 0",
-  "minestrone >= 0"
+  "minestrone >= 0.8.0",
 ]
 
 [project.urls]
@@ -46,10 +46,10 @@ docs = [
   "sphinx-design >= 0",
   "sphinx-autoapi >= 0",
   "toml >= 0",
-  "types-toml >= 0"
+  "types-toml >= 0",
 ]
 bird = [
-  "django-bird >= 0"
+  "django-bird >= 0",
 ]
 
 [tool.uv]
@@ -57,7 +57,7 @@ dev-dependencies = [
   "pytest < 9",
   "pytest-django >= 0",
   "pytest-cov >= 0",
-  "mypy >= 0"
+  "mypy >= 0",
 ]
 
 [tool.ruff]

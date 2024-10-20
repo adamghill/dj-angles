@@ -1,5 +1,7 @@
 from typing import TYPE_CHECKING, Optional
 
+from minestrone import Element
+
 from dj_angles.attributes import Attributes
 from dj_angles.mappers.angles import map_angles_include
 from dj_angles.mappers.include import map_include
@@ -72,15 +74,12 @@ class Tag:
     def parse_attributes(self):
         self.attributes = Attributes(self._template_tag_args)
 
-    def get_django_template_tag(self, slots: Optional[list[tuple[str, str]]] = None) -> str:
+    def get_django_template_tag(self, slots: Optional[list[tuple[str, Element]]] = None) -> str:
         """Generate the Django template tag.
 
         Args:
             param slots: List of slots which is a tuple of slot name and inner html.
         """
-
-        if slots is None:
-            slots = []
 
         if self.django_template_tag is None and self.is_end:
             wrapping_tag_name = self.get_wrapping_tag_name()

@@ -177,3 +177,20 @@ def test_extends():
     actual = replace_django_template_tags("<dj-extends 'base.html' />")
 
     assert actual == expected
+
+
+def test_slot():
+    expected = "something"
+
+    template = """
+<dj-include template='www/components/include-slot.html'>
+    <span slot="test1">This is the new slot.</span>
+</dj-include>
+
+<dj-include template='www/components/include-slot.html'>
+    <span slot="test2">This is the new slot.</span>
+</dj-include>
+"""
+    actual = replace_django_template_tags(template)
+
+    assert actual == expected

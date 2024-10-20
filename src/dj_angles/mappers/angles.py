@@ -31,9 +31,12 @@ def map_angles_include(tag: "Tag") -> str:
     for element in html.query("slot"):
         slot_name = element.attributes.get("name")
 
-        for slots_slot_name, slots_slot_tag in tag.slots:
+        for slots_slot_name, slot_element in tag.slots:
             if slot_name == slots_slot_name:
-                rendered_template = rendered_template.replace(str(element), str(slots_slot_tag))
+                element.remove_children()
+                element.insert(slot_element)
+
+    rendered_template = str(html)
 
     # Wrap the template
     wrapping_tag_name = tag.get_wrapping_tag_name(name=template_file)
