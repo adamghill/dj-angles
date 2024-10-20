@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from dj_angles.tags import Tag
 
 
-def _get_include_template_file(tag: "Tag") -> str:
+def get_include_template_file(tag: "Tag") -> str:
     try:
         template_file = get_attribute_value_or_first_key(tag, "template")
     except MissingAttributeError:
@@ -15,7 +15,7 @@ def _get_include_template_file(tag: "Tag") -> str:
 
         if tag.is_end and tag.start_tag:
             tag.start_tag.parse_attributes()
-            template_file = _get_include_template_file(tag.start_tag)
+            template_file = get_include_template_file(tag.start_tag)
 
     is_double_quoted = False
 
@@ -46,7 +46,7 @@ def map_include(tag: "Tag") -> str:
     if not tag.attributes and not tag.is_end:
         raise AssertionError("{% include %} must have an template name")
 
-    template_file = _get_include_template_file(tag)
+    template_file = get_include_template_file(tag)
 
     wrapping_tag_name = tag.get_wrapping_tag_name(name=template_file)
 

@@ -101,6 +101,7 @@ class Tag:
 
         if slots and self.is_include:
             self.django_template_tag = map_angles_include
+            self.slots = slots
 
         if callable(self.django_template_tag):
             return str(

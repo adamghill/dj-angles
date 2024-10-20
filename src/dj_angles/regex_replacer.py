@@ -127,15 +127,11 @@ def get_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> 
         slots = []
 
         # Parse the inner HTML for includes to handle slots
-        # TODO: Check settings to see if slots are enabled
         if (
             get_setting("SLOTS_ENABLED", default=False)
             and not tag.is_self_closing
             and not tag.is_end
-            and (
-                tag.django_template_tag is None
-                or (callable(tag.django_template_tag) and tag.django_template_tag.__name__ == "map_include")
-            )
+            and (tag.django_template_tag is None or tag.is_include)
         ):
             end_of_include_tag = match.end()
 
