@@ -179,16 +179,59 @@ def test_extends():
     assert actual == expected
 
 
-def test_slot():
-    expected = "something"
+def test_slot(settings):
+    settings.ANGLES["slots_enabled"] = True
+
+    expected = """
+<dj-slot><div>
+<slot name="test1"><span slot="test1">new slot1</span></slot>
+<slot name="test2">slot2</slot>
+</div>
+
+</dj-slot>
+
+<dj-slot><div>
+<slot name="test1">slot1</slot>
+<slot name="test2"><span slot="test2">new slot2</span></slot>
+</div>
+
+</dj-slot>
+"""
 
     template = """
-<dj-include template='www/components/include-slot.html'>
-    <span slot="test1">This is the new slot.</span>
+<dj-include template='slot.html'>
+<span slot="test1">new slot1</span>
 </dj-include>
 
-<dj-include template='www/components/include-slot.html'>
-    <span slot="test2">This is the new slot.</span>
+<dj-include template='slot.html'>
+<span slot="test2">new slot2</span>
+</dj-include>
+"""
+    actual = replace_django_template_tags(template)
+
+    assert actual == expected
+
+
+def test_slot_missing_template(settings):
+    settings.ANGLES["slots_enabled"] = True
+
+    expected = """
+<dj-test_slot_missing_template>
+
+</dj-test_slot_missing_template>
+
+<dj-test_slot_missing_template>
+
+</dj-test_slot_missing_template>
+"""
+
+    template = """
+<dj-include template='test_slot_missing_template.html'>
+<span slot="test1">This is the new slot.</span>
+</dj-include>
+
+<dj-include template='test_slot_missing_template.html'>
+<span slot="test2">This is the new slot.</span>
 </dj-include>
 """
     actual = replace_django_template_tags(template)

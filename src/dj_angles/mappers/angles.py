@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 
 from django.template import engines
 from django.template.exceptions import TemplateDoesNotExist
-from minestrone import HTML
+from minestrone import HTML, Element
 
 from dj_angles.mappers.include import get_include_template_file
 from dj_angles.strings import dequotify
@@ -13,20 +13,23 @@ if TYPE_CHECKING:
 
 def map_angles_include(tag: "Tag") -> str:
     template_file = dequotify(get_include_template_file(tag))
+    wrapping_tag_name = tag.get_wrapping_tag_name(name=template_file)
     template = None
 
     for engine in engines.all():
         try:
             template = engine.get_template(template_file)
-            break
-        except TemplateDoesNotExist as e:
-            return ""
+
+            if template:
+                break
+        except TemplateDoesNotExist:
+            pass
+
+    if template is None:
+        return f"<{wrapping_tag_name}>"
 
     rendered_template = template.render()
     html = HTML(rendered_template)
-
-    # Use the minestrone HTML for the later replace to work correctly
-    rendered_template = str(html)
 
     for element in html.query("slot"):
         slot_name = element.attributes.get("name")
@@ -38,8 +41,7 @@ def map_angles_include(tag: "Tag") -> str:
 
     rendered_template = str(html)
 
-    # Wrap the template
-    wrapping_tag_name = tag.get_wrapping_tag_name(name=template_file)
-    rendered_template = f"<{wrapping_tag_name}>{rendered_template}</{wrapping_tag_name}>"
+    # Prepend the wrapping tag name on to the template; the end tag happens later
+    rendered_template = f"<{wrapping_tag_name}>{rendered_template}"
 
     return rendered_template
