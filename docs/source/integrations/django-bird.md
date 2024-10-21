@@ -13,6 +13,9 @@ Using the auto settings in `django-bird` will unfortunately create a conflict wi
 ```python
 # settings.py
 
+from dj_angles.mappers.thirdparty import map_bird
+
+
 DJANGO_BIRD = {
     "ENABLE_AUTO_CONFIG": False
 }  # this is required for `django-bird`
@@ -47,6 +50,10 @@ TEMPLATES = [
         },
     },
 ]
+
+ANGLE = {
+    "mapper": map_bird
+}
 ```
 
 ## Example
@@ -57,6 +64,31 @@ TEMPLATES = [
 <dj-bird template='button' class='btn'>
   Click me!
 </dj-bird>
+```
+
+**templates/bird/button.html**
+
+```
+<button {{ attrs }}>
+  {{ slot }}
+</button>
+```
+
+### Using `default_component_mapper`
+
+```python
+# settings.py
+ANGLES = {
+    "default_component_mapper": "dj_angles.mappers.thirdparty.map_bird_component",
+}
+```
+
+**templates/index.html**
+
+```html
+<dj-button class='btn'>
+  Click me!
+</dj-button>
 ```
 
 **templates/bird/button.html**

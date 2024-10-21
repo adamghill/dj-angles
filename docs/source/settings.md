@@ -62,3 +62,7 @@ Lower-cases the tag. Useful when using [React-style includes](#react-style-inclu
 ## `mappers`
 
 Provide additional mappers. `Dictionary` which defaults to `{}`. More details about [mappers](mappers.md).
+
+## `default_component_mapper`
+
+Provide a default mapper. This defaults to `dj_angles.mappers.include.map_include`

@@ -6,7 +6,6 @@ from django.utils.module_loading import import_string
 
 from dj_angles.attributes import Attributes
 from dj_angles.mappers.angles import map_angles_include
-from dj_angles.mappers.include import map_include
 from dj_angles.settings import get_setting
 
 if TYPE_CHECKING:
@@ -96,7 +95,7 @@ class Tag:
         if self.django_template_tag is None:
             # Assume any missing template tag should use the fallback mapper
             self.django_template_tag = import_string(
-                get_setting("fallback_mapper", "dj_angles.mappers.include.map_include")
+                get_setting("default_component_mapper", "dj_angles.mappers.include.map_include")
             )
 
             # Add component name to the template tags
