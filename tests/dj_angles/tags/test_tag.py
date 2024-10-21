@@ -19,6 +19,7 @@ def test_get_wrapping_tag_name_with_name():
     assert expected == actual
 
 
+
 def test_get_wrapping_tag_name_component():
     expected = "dj-partial"
 
@@ -33,5 +34,16 @@ def test_get_wrapping_tag_name_component_with_key():
 
     tag = create_tag("<dj-partial:1 />")
     actual = tag.get_wrapping_tag_name()
+
+    assert expected == actual
+
+
+def test_default_mapping(settings):
+    expected = "<dj-partial>{% include 'partial.html' %}</dj-partial>"
+
+    html = "<dj-partial />"
+
+    tag = create_tag(html)
+    actual = tag.get_django_template_tag()
 
     assert expected == actual
