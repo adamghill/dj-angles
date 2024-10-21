@@ -103,29 +103,37 @@ Slots designate certain sections of an include template as placeholders. Those p
 <dj-include template="profile.html">
     <span slot="username">User One</span>
 </dj-include>
+
+<dj-include template="profile.html"></dj-include>
 ```
 
 ```html
 <!-- profile.html -->
-<div>
-    <h1>Profile</h1>
+<h1>Profile</h1>
 
-    <ul>
-        <li>Username: <slot name="username">n/a</slot></li>
-    </ul>
-</div>
+<ul>
+    <li>Username: <slot name="username">n/a</slot></li>
+</ul>
 ```
 
 Would be rendered as the following.
 
 ```html
-<div>
+<dj-profile>
     <h1>Profile</h1>
 
     <ul>
         <li>Username: <slot name="username"><span slot="username">User One</span></slot></li>
     </ul>
-</div>
+</dj-profile>
+
+<dj-profile>
+    <h1>Profile</h1>
+
+    <ul>
+        <li>Username: <slot name="username">n/a</slot></li>
+    </ul>
+</dj-profile>
 ```
 
 ## Integrations
