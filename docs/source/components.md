@@ -96,7 +96,7 @@ They all compile to the following Django template syntax.
 Currently in beta and disabled by default. Can be enabled by [setting `slots_enabled` to `True`](settings.md#slots_enabled).
 ```
 
-Slots allow a component to designate certain sections which can be set when the component is used.
+Slots designate certain sections of an include template as placeholders. Those placeholders can then be "filled-in" with HTML when the component is rendered.
 
 ```html
 <!-- index.html -->
