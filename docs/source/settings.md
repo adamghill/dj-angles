@@ -65,4 +65,4 @@ Provide additional mappers. `Dictionary` which defaults to `{}`. More details ab
 
 ## `default_component_mapper`
 
-Provide a default mapper. This defaults to `dj_angles.mappers.include.map_include`
+Provide a default mapper. This defaults to `dj_angles.mappers.angle.map_include_when_no_tag`

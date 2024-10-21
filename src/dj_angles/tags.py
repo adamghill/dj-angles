@@ -82,24 +82,11 @@ class Tag:
             param slots: List of slots which is a tuple of slot name and inner html.
         """
 
-        if self.django_template_tag is None and self.is_end:
-            wrapping_tag_name = self.get_wrapping_tag_name()
-
-            django_template_tag = ""
-
-            if self.is_shadow or (self.start_tag and self.start_tag.is_shadow):
-                django_template_tag = "</template>"
-
-            return f"{django_template_tag}</{wrapping_tag_name}>"
-
         if self.django_template_tag is None:
             # Assume any missing template tag should use the fallback mapper
             self.django_template_tag = import_string(
-                get_setting("default_component_mapper", "dj_angles.mappers.include.map_include")
+                get_setting("default_component_mapper", "dj_angles.mappers.angles.map_include_when_no_tag")
             )
-
-            # Add component name to the template tags
-            self.attributes.prepend(self.component_name)
 
         if slots and self.is_include:
             self.django_template_tag = map_angles_include
