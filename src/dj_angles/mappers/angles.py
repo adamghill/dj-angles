@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from dj_angles.tags import Tag
 
 
-def map_include_when_no_tag(tag: "Tag") -> str:
+def default_component_mapper(tag: "Tag") -> str:
     tag.attributes.prepend(tag.component_name)
     django_template_tag = map_include(tag)
 

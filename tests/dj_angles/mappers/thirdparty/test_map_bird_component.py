@@ -1,4 +1,4 @@
-from dj_angles.mappers.thirdparty import map_bird_component
+from dj_angles.mappers.thirdparty import map_bird
 from tests.dj_angles.tags import create_tag
 
 
@@ -8,7 +8,7 @@ def test_not_self_closing():
     html = "<dj-partial>"
     tag = create_tag(html)
 
-    actual = map_bird_component(tag=tag)
+    actual = map_bird(tag=tag)
 
     assert actual == expected
 
@@ -19,7 +19,7 @@ def test_is_closing():
     html = "</dj-partial>"
     tag = create_tag(html)
 
-    actual = map_bird_component(tag=tag)
+    actual = map_bird(tag=tag)
 
     assert actual == expected
 
@@ -30,13 +30,13 @@ def test_self_closing():
     html = "<dj-partial />"
     tag = create_tag(html)
 
-    actual = map_bird_component(tag=tag)
+    actual = map_bird(tag=tag)
 
     assert actual == expected
 
 
 def test_not_self_closing_from_settings(settings):
-    settings.ANGLES["default_component_mapper"] = "dj_angles.mappers.thirdparty.map_bird_component"
+    settings.ANGLES["default_component_mapper"] = "dj_angles.mappers.thirdparty.map_bird"
 
     expected = "{% bird partial %}"
 
@@ -49,7 +49,7 @@ def test_not_self_closing_from_settings(settings):
 
 
 def test_self_closing_from_settings(settings):
-    settings.ANGLES["default_component_mapper"] = "dj_angles.mappers.thirdparty.map_bird_component"
+    settings.ANGLES["default_component_mapper"] = "dj_angles.mappers.thirdparty.map_bird"
 
     expected = "{% bird partial / %}"
 
@@ -62,7 +62,7 @@ def test_self_closing_from_settings(settings):
 
 
 def test_closing_from_settings(settings):
-    settings.ANGLES["default_component_mapper"] = "dj_angles.mappers.thirdparty.map_bird_component"
+    settings.ANGLES["default_component_mapper"] = "dj_angles.mappers.thirdparty.map_bird"
 
     expected = "{% endbird %}"
 

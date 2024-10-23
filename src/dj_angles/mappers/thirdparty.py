@@ -1,7 +1,7 @@
-from collections.abc import Callable
 import logging
 from typing import TYPE_CHECKING
 
+from dj_angles.exceptions import MissingAttributeError
 from dj_angles.mappers.utils import get_attribute_value_or_first_key
 
 if TYPE_CHECKING:
@@ -12,19 +12,17 @@ logger = logging.getLogger(__name__)
 
 
 def map_bird(tag: "Tag") -> str:
-    return _stub_map_bird(tag, lambda tag: get_attribute_value_or_first_key(tag, "template"))
-
-
-def map_bird_component(tag: "Tag") -> str:
-    return _stub_map_bird(tag, lambda tag: tag.component_name)
-
-
-def _stub_map_bird(tag: "Tag", get_template_for_tag: Callable[["Tag"], str]) -> str:
     if tag.is_end:
         return "{% endbird %}"
 
-    template = get_template_for_tag(tag)
-    django_template_tag = f"{{% bird {template}"
+    template_file = tag.component_name
+
+    try:
+        template_file = get_attribute_value_or_first_key(tag, "template")
+    except MissingAttributeError:
+        pass
+
+    django_template_tag = f"{{% bird {template_file}"
 
     if tag.attributes:
         django_template_tag = f"{django_template_tag} {tag.attributes}"
