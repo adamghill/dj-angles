@@ -1,7 +1,9 @@
 import re
 from collections import deque
+from collections.abc import Callable
 from functools import lru_cache
 from importlib.util import find_spec
+from typing import Optional, Union
 
 from django.utils.module_loading import import_string
 from minestrone import HTML
@@ -13,7 +15,7 @@ from dj_angles.mappers.thirdparty import map_bird
 from dj_angles.settings import get_setting
 from dj_angles.tags import Tag
 
-TAG_NAME_TO_DJANGO_TEMPLATE_TAG_MAP = {
+TAG_NAME_TO_DJANGO_TEMPLATE_TAG_MAP: Optional[dict[Optional[str], Union[Callable, str]]] = {
     "extends": map_extends,
     "block": map_block,
     "verbatim": "verbatim",
@@ -36,7 +38,7 @@ TAG_NAME_TO_DJANGO_TEMPLATE_TAG_MAP = {
 }
 """Default mappings for tag names to Django template tags."""
 
-tag_map: dict = None
+tag_map: Optional[dict[Optional[str], Union[Callable, str]]] = None
 
 
 def _is_module_available(module_name):
@@ -64,13 +66,16 @@ def _get_tag_regex():
     return _compile_regex(tag_regex)
 
 
-def get_tag_map() -> dict:
+def get_tag_map() -> Optional[dict[Optional[str], Union[Callable, str]]]:
     """Get the complete tag map based on the default, dynamic, and settings mappers."""
 
     global tag_map  # noqa: PLW0603
 
     if tag_map is None:
         tag_map = TAG_NAME_TO_DJANGO_TEMPLATE_TAG_MAP
+
+        if tag_map is None:
+            raise AssertionError("Invalid tag_map")
 
         # Add bird if installed
         if _is_module_available("django_bird"):

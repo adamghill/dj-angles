@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING, Optional
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Optional, Union
 
 from minestrone import Element
 
@@ -36,11 +37,16 @@ class Tag:
     is_self_closing: bool = False
     """Whether or not the tag is self-closing, i.e. ends with '/>'."""
 
-    start_tag: "Tag" = None
+    start_tag: Optional["Tag"] = None
     """The associated start tag. Only set for end tags."""
 
     def __init__(
-        self, tag_map: dict, html: str, tag_name: str, template_tag_args: str, tag_queue: Optional["deque"] = None
+        self,
+        tag_map: Optional[dict[Optional[str], Union[Callable, str]]],
+        html: str,
+        tag_name: str,
+        template_tag_args: str,
+        tag_queue: Optional["deque"] = None,
     ):
         self.html = html
         self.tag_name = tag_name
@@ -60,6 +66,9 @@ class Tag:
 
         if get_setting("lower_case_tag", default=False):
             self.tag_name = self.tag_name.lower()
+
+        if tag_map is None:
+            raise AssertionError("Invalid tag_map")
 
         # Get the Django template tag based on the tag name or get the fallback with magic `None`
         self.django_template_tag = tag_map.get(self.tag_name) or tag_map.get(None)

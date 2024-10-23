@@ -148,7 +148,7 @@ class Attributes(Sequence):
 
         self._attributes.append(_attribute)
 
-    def __getitem__(self, index: int):
+    def __getitem__(self, index):
         return self._attributes.__getitem__(index)
 
     def __iter__(self):

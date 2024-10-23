@@ -18,7 +18,8 @@ def get_attribute_value_or_first_key(tag: "Tag", attribute_name: str) -> str:
 
     if attr:
         tag.attributes.remove(attribute_name)
-        return attr.value
+
+        return attr.value or ""
 
     try:
         attr = tag.attributes.pop(0)
