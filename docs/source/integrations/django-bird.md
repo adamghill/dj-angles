@@ -70,7 +70,7 @@ TEMPLATES = [
 
 ### Default mapper
 
-Setting [`default_mapper`](settings.md#default_mapper) provides even tighter integration with `django-bird`. `dj-angles` will use `django-bird` for any tag name that it does not have a mapper for (instead of the default `include` template tag.
+Setting [`default_mapper`](../settings.md#default_mapper) provides even tighter integration with `django-bird`. `dj-angles` will use `django-bird` for any tag name that it does not have a mapper for (instead of the default `include` template tag.
 
 ```python
 # settings.py

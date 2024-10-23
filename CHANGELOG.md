@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.0
+
+- Add `default_mapper` based on [#7](https://github.com/adamghill/dj-angles/pull/7) from [nanuxbe](https://github.com/nanuxbe).
+
 ## 0.9.0
 
 - Add (beta) named slots implementation. Enable with `ANGLES={"enable_slots": True}` in settings.

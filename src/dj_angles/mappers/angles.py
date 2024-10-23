@@ -17,7 +17,10 @@ def default_mapper(tag: "Tag") -> str:
     Basically works like `map_include` except the element's name is used for the template file.
 
     Examples:
-        - `<dj-partial />` is equivalent to `<dj-include 'partial' />
+        - `<dj-partial />` is equivalent to `<dj-include 'partial' />`
+
+    Args:
+        param tag: The tag to map.
     """
 
     # Assume the tag name should be the first attribute (as expected for includes)
@@ -32,6 +35,12 @@ def default_mapper(tag: "Tag") -> str:
 
 
 def map_angles_include(tag: "Tag") -> str:
+    """Mapper function for the angles include tag which is custom to handle slots.
+
+    Args:
+        param tag: The tag to map.
+    """
+
     template_file = dequotify(get_include_template_file(tag))
     wrapping_tag_name = tag.get_wrapping_tag_name(name=template_file)
     template = None
