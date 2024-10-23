@@ -19,7 +19,7 @@ def map_autoescape(tag: "Tag") -> str:
         param tag: The tag to map.
     """
 
-    django_template_tag = tag.component_name
+    django_template_tag = tag.tag_name
 
     if tag.is_end:
         django_template_tag = django_template_tag[0:10]

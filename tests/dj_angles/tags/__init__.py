@@ -1,6 +1,6 @@
 import re
 
-from dj_angles.regex_replacer import HTML_TAG_TO_DJANGO_TEMPLATE_TAG_MAP, _get_tag_regex
+from dj_angles.regex_replacer import _get_tag_regex, get_tag_map
 from dj_angles.tags import Tag
 
 
@@ -9,12 +9,14 @@ def create_tag(html):
     match = re.match(tag_regex, html)
 
     tag_html = html[match.start() : match.end()]
-    component_name = match.group("component_name").strip()
+    tag_name = match.group("tag_name").strip()
     template_tag_args = match.group("template_tag_args").strip()
 
+    tag_map = get_tag_map()
+
     return Tag(
-        HTML_TAG_TO_DJANGO_TEMPLATE_TAG_MAP,
+        tag_map,
         html=tag_html,
-        component_name=component_name,
+        tag_name=tag_name,
         template_tag_args=template_tag_args,
     )

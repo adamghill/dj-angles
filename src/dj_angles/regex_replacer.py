@@ -3,6 +3,7 @@ from collections import deque
 from functools import lru_cache
 from importlib.util import find_spec
 
+from django.utils.module_loading import import_string
 from minestrone import HTML
 
 from dj_angles.exceptions import InvalidEndTagError
@@ -12,7 +13,7 @@ from dj_angles.mappers.thirdparty import map_bird
 from dj_angles.settings import get_setting
 from dj_angles.tags import Tag
 
-HTML_TAG_TO_DJANGO_TEMPLATE_TAG_MAP = {
+TAG_NAME_TO_DJANGO_TEMPLATE_TAG_MAP = {
     "extends": map_extends,
     "block": map_block,
     "verbatim": "verbatim",
@@ -33,12 +34,14 @@ HTML_TAG_TO_DJANGO_TEMPLATE_TAG_MAP = {
     "image": map_image,
     "css": map_css,
 }
-"""Default mappings for tags to Django template tags."""
+"""Default mappings for tag names to Django template tags."""
 
 tag_map: dict = None
 
 
 def _is_module_available(module_name):
+    """Helper method to check if a module is available."""
+
     return find_spec(module_name) is not None
 
 
@@ -50,7 +53,7 @@ def _get_tag_regex():
     if initial_tag_regex is None:
         initial_tag_regex = ""
 
-    tag_regex = rf"</?({initial_tag_regex}(?P<component_name>[^\s>]+))\s*(?P<template_tag_args>.*?)\s*/?>"
+    tag_regex = rf"</?({initial_tag_regex}(?P<tag_name>[^\s>]+))\s*(?P<template_tag_args>.*?)\s*/?>"
 
     @lru_cache(maxsize=32)
     def _compile_regex(_tag_regex):
@@ -67,12 +70,25 @@ def get_tag_map() -> dict:
     global tag_map  # noqa: PLW0603
 
     if tag_map is None:
-        tag_map = HTML_TAG_TO_DJANGO_TEMPLATE_TAG_MAP
+        tag_map = TAG_NAME_TO_DJANGO_TEMPLATE_TAG_MAP
 
+        # Add bird if installed
         if _is_module_available("django_bird"):
             tag_map.update({"bird": map_bird})
 
-        tag_map.update(get_setting("mappers", default={}))
+        # Add dynamic mappers if in settings
+        mappers = get_setting("mappers", default={})
+
+        if not isinstance(mappers, dict):
+            raise AssertionError("ANGLES.mappers must be a dictionary")
+
+        tag_map.update(mappers)
+
+        # Add default mapper if in settings, or fallback to the default mapper
+        default_mapper = get_setting("default_mapper", "dj_angles.mappers.angles.default_mapper")
+
+        # Add the default with a magic key of `None`
+        tag_map.update({None: import_string(default_mapper)})
 
     return tag_map
 
@@ -104,13 +120,13 @@ def get_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> 
 
     for match in re.finditer(tag_regex, html):
         tag_html = html[match.start() : match.end()].strip()
-        component_name = match.group("component_name").strip()
+        tag_name = match.group("tag_name").strip()
         template_tag_args = match.group("template_tag_args").strip()
 
         tag = Tag(
             tag_map=tag_map,
             html=tag_html,
-            component_name=component_name,
+            tag_name=tag_name,
             template_tag_args=template_tag_args,
             tag_queue=tag_queue,
         )
@@ -119,7 +135,7 @@ def get_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> 
             if tag.is_end:
                 last_tag: Tag = tag_queue.pop()
 
-                if last_tag.component_name != tag.component_name:
+                if last_tag.tag_name != tag.tag_name:
                     raise InvalidEndTagError(tag=tag, last_tag=last_tag)
             elif not tag.is_self_closing:
                 tag_queue.append(tag)

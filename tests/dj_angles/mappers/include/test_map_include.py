@@ -1,5 +1,6 @@
-from dj_angles.mappers.include import map_include
 from tests.dj_angles.tags import create_tag
+
+from dj_angles.mappers.include import map_include
 
 
 def test_not_self_closing():

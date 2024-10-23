@@ -29,7 +29,7 @@ ANGLES = {
 These would all compile to the following Django template.
 
 ```text
-{% include 'partial.html' %}
+<dj-partial>{% include 'partial.html' %}</dj-partial>
 ```
 
 ### React-style include
@@ -63,6 +63,40 @@ Lower-cases the tag. Useful when using [React-style includes](#react-style-inclu
 
 Provide additional mappers. `Dictionary` which defaults to `{}`. More details about [mappers](mappers.md).
 
-## `default_component_mapper`
+## `default_mapper`
 
-Provide a default mapper. This defaults to `dj_angles.mappers.angle.map_include_when_no_tag`
+A default mapper. Useful for tighter integration with other component libraries. `String` which defaults to `"dj_angles.mappers.angles.default_mapper"` which is basically the same as the normal mapper for the `include` template tag.
+
+Example settings:
+
+```python
+# settings.py
+
+ANGLES = {
+  "default_mapper": "dj_angles.mappers.angles.default_mapper"
+}
+```
+
+### `"dj_angles.mappers.angles.default_mapper"` (the default)
+
+```html
+<dj-partial />
+```
+
+Would be translated to the following.
+
+```html
+<dj-partial>{% include 'partial.html' %}</dj-partial>
+```
+
+### `"dj_angles.mappers.thirdparty.map_bird"`
+
+```html
+<dj-partial />
+```
+
+Would be translated to the following.
+
+```html
+<dj-partial>{% bird partial / %}</dj-partial>
+```

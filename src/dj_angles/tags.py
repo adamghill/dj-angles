@@ -1,6 +1,5 @@
 from typing import TYPE_CHECKING, Optional
 
-from django.utils.module_loading import import_string
 from minestrone import Element
 
 from dj_angles.attributes import Attributes
@@ -14,8 +13,8 @@ if TYPE_CHECKING:
 class Tag:
     """Encapsulates metadata and functionality for a tag that will be processed by `dj-angles`."""
 
-    component_name: str
-    """The tag name after the initial identifier (which defaults to 'dj-').
+    tag_name: str
+    """The portion of the tag's element name after the initial identifier (which defaults to 'dj-').
 
     Examples:
         - 'include' for '<dj-include />'
@@ -41,16 +40,16 @@ class Tag:
     """The associated start tag. Only set for end tags."""
 
     def __init__(
-        self, tag_map: dict, html: str, component_name: str, template_tag_args: str, tag_queue: Optional["deque"] = None
+        self, tag_map: dict, html: str, tag_name: str, template_tag_args: str, tag_queue: Optional["deque"] = None
     ):
         self.html = html
-        self.component_name = component_name
+        self.tag_name = tag_name
 
         self._template_tag_args = template_tag_args
         self.parse_attributes()
 
-        if self.component_name.endswith("!"):
-            self.component_name = self.component_name[:-1]
+        if self.tag_name.endswith("!"):
+            self.tag_name = self.tag_name[:-1]
             self.is_shadow = True
         else:
             shadow_attribute = self.attributes.get("shadow")
@@ -60,9 +59,10 @@ class Tag:
                 self.attributes.remove(shadow_attribute.key)
 
         if get_setting("lower_case_tag", default=False):
-            self.component_name = self.component_name.lower()
+            self.tag_name = self.tag_name.lower()
 
-        self.django_template_tag = tag_map.get(self.component_name)
+        # Get the Django template tag based on the tag name or get the fallback with magic `None`
+        self.django_template_tag = tag_map.get(self.tag_name) or tag_map.get(None)
 
         self.is_self_closing = self.html.endswith("/>")
         self.is_end = self.html.startswith("</")
@@ -72,6 +72,8 @@ class Tag:
             self.start_tag = tag_queue[-1]
 
     def parse_attributes(self):
+        """Creates `Attributes` based on the template tag arguments."""
+
         self.attributes = Attributes(self._template_tag_args)
 
     def get_django_template_tag(self, slots: Optional[list[tuple[str, Element]]] = None) -> str:
@@ -80,12 +82,6 @@ class Tag:
         Args:
             param slots: List of slots which is a tuple of slot name and inner html.
         """
-
-        if self.django_template_tag is None:
-            # Assume any missing template tag should use the fallback mapper
-            self.django_template_tag = import_string(
-                get_setting("default_component_mapper", "dj_angles.mappers.angles.default_component_mapper")
-            )
 
         if slots and self.is_include:
             self.django_template_tag = map_angles_include
@@ -113,7 +109,7 @@ class Tag:
             param name: The name for the wrapping tag.
         """
 
-        name = name or self.component_name
+        name = name or self.tag_name
 
         wrapping_tag_name = (
             name.replace("/", "-")
@@ -138,7 +134,15 @@ class Tag:
 
     @property
     def is_include(self):
+        """Whether the Django template tag is `include`."""
+
         return callable(self.django_template_tag) and self.django_template_tag.__name__ == "map_include"
+
+    @property
+    def component_name(self):
+        """Legacy property for `tag_name`. Deprecated."""
+
+        return self.tag_name
 
     def __str__(self):
         return self.html

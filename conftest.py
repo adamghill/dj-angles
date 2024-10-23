@@ -1,6 +1,8 @@
 import pytest
 from django.conf import settings
 
+from dj_angles.regex_replacer import clear_tag_map
+
 
 def pytest_configure():
     settings.configure(
@@ -43,6 +45,9 @@ def pytest_configure():
 def reset_settings(settings):
     # Make sure that ANGLES is empty before every test
     settings.ANGLES = {}
+
+    # Clear the tag map before every test
+    clear_tag_map()
 
     # Run test
     yield

@@ -8,10 +8,16 @@ if TYPE_CHECKING:
 
 
 def get_include_template_file(tag: "Tag") -> str:
+    """Get the template file based for include-like tags.
+
+    Tries to use a template attribute, but falls back to `Tag.tag_name`. Also attempts to handle
+    retrieving the correct ending tag based on the start tag (if possible).
+    """
+
     try:
         template_file = get_attribute_value_or_first_key(tag, "template")
     except MissingAttributeError:
-        template_file = tag.component_name
+        template_file = tag.tag_name
 
         if tag.is_end and tag.start_tag:
             tag.start_tag.parse_attributes()

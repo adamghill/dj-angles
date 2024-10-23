@@ -13,8 +13,6 @@ Using the auto settings in `django-bird` will unfortunately create a conflict wi
 ```python
 # settings.py
 
-from dj_angles.mappers.thirdparty import map_bird
-
 
 DJANGO_BIRD = {
     "ENABLE_AUTO_CONFIG": False
@@ -40,7 +38,7 @@ TEMPLATES = [
                 (
                     "django.template.loaders.cached.Loader",
                     [
-                        "dj_angles.template_loader.Loader",  # this is required for `dj-angles`
+                        "dj_angles.template_loader.Loader",  # this is required for to be first for `dj-angles`
                         "django_bird.loader.BirdLoader",  # this is required for `django-bird`
                         "django.template.loaders.filesystem.Loader",
                         "django.template.loaders.app_directories.Loader",
@@ -50,10 +48,6 @@ TEMPLATES = [
         },
     },
 ]
-
-ANGLE = {
-    "mapper": map_bird
-}
 ```
 
 ## Example
@@ -74,12 +68,14 @@ ANGLE = {
 </button>
 ```
 
-### Using `default_component_mapper`
+### Default mapper
+
+Setting [`default_mapper`](settings.md#default_mapper) provides even tighter integration with `django-bird`. `dj-angles` will use `django-bird` for any tag name that it does not have a mapper for (instead of the default `include` template tag.
 
 ```python
 # settings.py
 ANGLES = {
-    "default_component_mapper": "dj_angles.mappers.thirdparty.map_bird_component",
+    "default_mapper": "dj_angles.mappers.thirdparty.map_bird",
 }
 ```
 

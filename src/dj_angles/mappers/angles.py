@@ -11,8 +11,18 @@ if TYPE_CHECKING:
     from dj_angles.tags import Tag
 
 
-def default_component_mapper(tag: "Tag") -> str:
-    tag.attributes.prepend(tag.component_name)
+def default_mapper(tag: "Tag") -> str:
+    """The default mapper which gets used when no other mapper matches a key in the `tag_map`.
+
+    Basically works like `map_include` except the element's name is used for the template file.
+
+    Examples:
+        - `<dj-partial />` is equivalent to `<dj-include 'partial' />
+    """
+
+    # Assume the tag name should be the first attribute (as expected for includes)
+    tag.attributes.prepend(tag.tag_name)
+
     django_template_tag = map_include(tag)
 
     if tag.is_end and tag.is_shadow or (tag.start_tag and tag.start_tag.is_shadow):

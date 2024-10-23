@@ -15,7 +15,7 @@ def map_bird(tag: "Tag") -> str:
     if tag.is_end:
         return "{% endbird %}"
 
-    template_file = tag.component_name
+    template_file = tag.tag_name
 
     try:
         template_file = get_attribute_value_or_first_key(tag, "template")

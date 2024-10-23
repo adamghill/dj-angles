@@ -168,8 +168,8 @@ def test_invalid_tag():
 </dj-block content>""")
 
     assert e.exconly() == "dj_angles.exceptions.InvalidEndTagError"
-    assert e.value.tag.component_name == "block"
-    assert e.value.last_tag.component_name == "partial"
+    assert e.value.tag.tag_name == "block"
+    assert e.value.last_tag.tag_name == "partial"
 
 
 def test_extends():
