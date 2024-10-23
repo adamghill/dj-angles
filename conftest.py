@@ -1,3 +1,4 @@
+import pytest
 from django.conf import settings
 
 
@@ -36,3 +37,12 @@ def pytest_configure():
         SECRET_KEY="this-is-a-secret",
         ANGLES={},
     )
+
+
+@pytest.fixture(autouse=True)
+def reset_settings(settings):
+    # Make sure that ANGLES is empty before every test
+    settings.ANGLES = {}
+
+    # Run test
+    yield

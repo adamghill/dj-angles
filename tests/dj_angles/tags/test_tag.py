@@ -19,7 +19,6 @@ def test_get_wrapping_tag_name_with_name():
     assert expected == actual
 
 
-
 def test_get_wrapping_tag_name_component():
     expected = "dj-partial"
 
