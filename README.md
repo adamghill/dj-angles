@@ -6,6 +6,7 @@
 ![PyPI](https://img.shields.io/pypi/v/dj-angles?color=blue&style=flat-square)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/dj-angles?color=blue&style=flat-square)
 ![GitHub Sponsors](https://img.shields.io/github/sponsors/adamghill?color=blue&style=flat-square)
+[![All Contributors](https://img.shields.io/github/all-contributors/adamghill/dj-angles?color=ee8449&style=flat-square)](#contributors)
 
 - 📖 Full documentation: https://dj-angles.adamghill.com/
 - 📦 Package is on PyPI: https://pypi.org/project/dj-angles/
@@ -77,3 +78,14 @@ To learn more about how to install and use `dj-angles` go to https://dj-angles.a
 ## ✨ Inspiration
 
 I have been interested in Django components and encapsulating functionality for a long time (see [django-unicorn](https://www.django-unicorn.com), [dlitejs](https://dlitejs.com), etc), but had never thought of using HTML directly until I looked at [Cotton](https://django-cotton.com) by [wrabit](https://github.com/wrabit). `dj-angles` takes the initial idea further to see how well it works.
+
+## Contributors
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
