@@ -1,15 +1,14 @@
 <p align="center">
   <h1 align="center">dj-angles &lt;/&gt;</h1>
 </p>
-<p align="center">Add more bracket angles to Django templates</p>
 
 ![PyPI](https://img.shields.io/pypi/v/dj-angles?color=blue&style=flat-square)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/dj-angles?color=blue&style=flat-square)
 ![GitHub Sponsors](https://img.shields.io/github/sponsors/adamghill?color=blue&style=flat-square)
 [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
 
-- 📖 Full documentation: https://dj-angles.adamghill.com/
-- 📦 Package is on PyPI: https://pypi.org/project/dj-angles/
+- 📖 Complete documentation: https://dj-angles.adamghill.com/
+- 📦 Package: https://pypi.org/project/dj-angles/
 
 ## ⭐ Features
 
@@ -19,7 +18,7 @@
 - Since it looks like HTML, syntax highlighting mostly "just works"
 - Integrates with Django component libraries like [django-bird](https://django-bird.readthedocs.io)
 - Lets you excitedly tell your friends how neat the Shadow DOM is
-- Pretend like you are writing React components, but without dealing with JavaScript at all
+- Pretend like you are writing React components, but without dealing with a JavaScript build process
 
 ## 💥 Example
 
@@ -73,11 +72,12 @@
 
 ## 📖 Documentation
 
-To learn more about how to install and use `dj-angles` go to https://dj-angles.adamghill.com/.
+To learn how to install and use `dj-angles` see the complete documentation at https://dj-angles.adamghill.com/.
 
 ## ✨ Inspiration
 
-I have been interested in Django components and encapsulating functionality for a long time (see [django-unicorn](https://www.django-unicorn.com), [dlitejs](https://dlitejs.com), etc), but had never thought of using HTML directly until I looked at [Cotton](https://django-cotton.com) by [wrabit](https://github.com/wrabit). `dj-angles` takes the initial idea further to see how well it works.
+- [Web Components](https://web.dev/learn/html/template)
+- [Cotton](https://django-cotton.com) by [wrabit](https://github.com/wrabit)
 
 ## Contributors
 
