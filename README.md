@@ -79,7 +79,7 @@ To learn how to install and use `dj-angles` see the complete documentation at ht
 - [Web Components](https://web.dev/learn/html/template)
 - [Cotton](https://django-cotton.com) by [wrabit](https://github.com/wrabit)
 
-## Contributors
+## 🙌 Contributors
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
