@@ -1,7 +1,4 @@
 <p align="center">
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
   <h1 align="center">dj-angles &lt;/&gt;</h1>
 </p>
 <p align="center">Add more bracket angles to Django templates</p>
@@ -9,7 +6,7 @@
 ![PyPI](https://img.shields.io/pypi/v/dj-angles?color=blue&style=flat-square)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/dj-angles?color=blue&style=flat-square)
 ![GitHub Sponsors](https://img.shields.io/github/sponsors/adamghill?color=blue&style=flat-square)
-[![All Contributors](https://img.shields.io/github/all-contributors/adamghill/dj-angles?color=ee8449&style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
 
 - 📖 Full documentation: https://dj-angles.adamghill.com/
 - 📦 Package is on PyPI: https://pypi.org/project/dj-angles/
