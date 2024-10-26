@@ -33,8 +33,5 @@ jobs:
       - name: Build
         run: uv build
 
-      # - name: Publish
-      #   run: uv publish -t ${{ secrets.PYPI_TOKEN }}
-
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
