@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.11.0
+
+- Use the start tag's `name` for `</dj-block>` if possible.
+
 ## 0.10.0
 
 - Add `default_mapper` based on [#7](https://github.com/adamghill/dj-angles/pull/7) from [nanuxbe](https://github.com/nanuxbe).

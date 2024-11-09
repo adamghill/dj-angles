@@ -28,11 +28,11 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/adamghill/dj-angles"
-Documentation = "https://github.com/adamghill/dj-angles"
+Homepage = "https://dj-angles.adamghill.com"
+Documentation = "https://dj-angles.adamghill.com"
 Repository = "https://github.com/adamghill/dj-angles.git"
 Issues = "https://github.com/adamghill/dj-angles/discussions"
-Changelog = "https://github.com/adamghill/dj-angles/blob/master/CHANGELOG.md"
+Changelog = "https://dj-angles.adamghill.com/en/latest/changelog.html"
 
 [project.optional-dependencies]
 docs = [
