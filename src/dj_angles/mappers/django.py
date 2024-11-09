@@ -1,7 +1,7 @@
 import logging
 from typing import TYPE_CHECKING
 
-from dj_angles.exceptions import MissingAttributeError
+from dj_angles.exceptions import InvalidEndTagError, MissingAttributeError
 from dj_angles.mappers.utils import get_attribute_value_or_first_key
 from dj_angles.strings import dequotify
 
@@ -60,6 +60,51 @@ def map_css(tag: "Tag") -> str:
     return f'<link href="{{% static {href} %}}" {tag.attributes} />'
 
 
+def map_endblock(tag: "Tag") -> str:
+    """Mapper function for endblock tags. Not included in the default mappers and only called by `map_block`.
+
+    Args:
+        param tag: The tag to map.
+    """
+
+    name = None
+
+    try:
+        name = get_attribute_value_or_first_key(tag, "name")
+
+        # Check that the end tag name is the same as the start tag's name
+        if tag.start_tag:
+            tag.start_tag.parse_attributes()
+
+            try:
+                start_name = get_attribute_value_or_first_key(tag.start_tag, "name")
+
+                if name != start_name:
+                    raise InvalidEndTagError(tag, tag.start_tag)
+            except MissingAttributeError:
+                pass
+
+    except MissingAttributeError:
+        pass
+
+    if not name and tag.start_tag:
+        # Re-parse start tag attributes since it can empty from the previous parsing
+        tag.start_tag.parse_attributes()
+
+        try:
+            name = get_attribute_value_or_first_key(tag.start_tag, "name")
+        except MissingAttributeError:
+            pass
+
+    if name:
+        # The block tag doesn't actually want/need quoted strings per se, so remove them
+        name = dequotify(name)
+
+        return f"{{% endblock {name} %}}"
+
+    return "{% endblock %}"
+
+
 def map_block(tag: "Tag") -> str:
     """Mapper function for block tags.
 
@@ -67,20 +112,18 @@ def map_block(tag: "Tag") -> str:
         param tag: The tag to map.
     """
 
+    if tag.is_end:
+        return map_endblock(tag)
+
     if not tag.attributes:
         raise Exception("Missing block name")
-
-    django_template_tag = "block"
-
-    if tag.is_end:
-        django_template_tag = "endblock"
 
     name = get_attribute_value_or_first_key(tag, "name")
 
     # The block tag doesn't actually want/need quoted strings per se, so remove them
     name = dequotify(name)
 
-    return f"{{% {django_template_tag} {name} %}}"
+    return f"{{% block {name} %}}"
 
 
 def map_extends(tag: "Tag") -> str:

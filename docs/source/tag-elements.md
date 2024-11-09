@@ -38,10 +38,14 @@
 
 ## [`block`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#block)
 
+```{note}
+The end tag can optionally have a name attribute. If it is missing, the `endblock` will use the name attribute from the start tag.
+```
+
 ```
 <dj-block name='content'>
   ...
-</dj-block name='content'>
+</dj-block>
 ```
 
 ```html

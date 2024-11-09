@@ -16,6 +16,17 @@ def test_string():
     assert actual == expected
 
 
+def test_is_end():
+    expected = "{% endblock %}"
+
+    html = "</dj-block>"
+    tag = create_tag(html)
+
+    actual = map_block(tag=tag)
+
+    assert actual == expected
+
+
 def test_name_attribute():
     expected = "{% block content %}"
 

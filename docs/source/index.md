@@ -14,8 +14,8 @@
 **`base.html`**
 
 ```
-<dj-block name='content'>
-</dj-block name='content'>
+<dj-block name='content'>  <!-- {% block content %} -->
+</dj-block>  <!-- {% endblock content %} -->
 ```
 
 **`index.html`**
@@ -52,7 +52,7 @@
 
   <dj-image src='img/django.jpg' />  <!-- <img src="{% static 'img/django.jpg' %}" /> -->
   <dj-css href='css/styles.css' />  <!-- <link href="{% static 'css/styles.css' %}" rel="stylesheet" /> -->
-</dj-block name='content'>  <!-- {% endblock content %} -->
+</dj-block>  <!-- {% endblock content %} -->
 ```
 
 **partial.html**

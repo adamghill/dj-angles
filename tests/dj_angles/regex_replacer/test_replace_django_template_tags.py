@@ -41,6 +41,41 @@ def test_typical():
     assert actual == expected
 
 
+def test_block():
+    expected = """
+{% block content %}
+{% endblock content %}"""
+
+    template = """
+<dj-block name="content">
+</dj-block  name="content">"""
+    actual = replace_django_template_tags(template)
+
+    assert actual == expected
+
+
+def test_block_different_name():
+    template = """
+<dj-block name="content1">
+</dj-block  name="content2">"""
+
+    with pytest.raises(InvalidEndTagError):
+        replace_django_template_tags(template)
+
+
+def test_block_missing_end_name():
+    expected = """
+{% block content %}
+{% endblock content %}"""
+
+    template = """
+<dj-block name="content">
+</dj-block>"""
+    actual = replace_django_template_tags(template)
+
+    assert actual == expected
+
+
 def test_short_include():
     expected = "<dj-partial>{% include 'partial.html' %}</dj-partial>"
 
