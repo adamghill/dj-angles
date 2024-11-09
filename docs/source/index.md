@@ -11,14 +11,14 @@
 
 ## 💥 Example
 
-**`base.html`**
+**base.html**
 
 ```
 <dj-block name='content'>  <!-- {% block content %} -->
 </dj-block>  <!-- {% endblock content %} -->
 ```
 
-**`index.html`**
+**index.html**
 
 ```
 <dj-extends parent='base.html' />  <!-- {% extends 'base.html' %} -->
