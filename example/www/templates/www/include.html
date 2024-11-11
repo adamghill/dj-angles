@@ -49,6 +49,7 @@
 &lt;/style&gt;</pre>
 
 
+  <!-- include -->
   <h3>www/components/include.html</h3>
 
   <pre>&lt;div&gt;
@@ -74,6 +75,7 @@
   <dj-include template='www/components/include.html' />
 
 
+  <!-- include with id -->
   <h4>Regular includes with an additional id</h4>
 
   <p>
@@ -91,6 +93,21 @@
   <dj-include template='www/components/include:2' />
 
 
+  <!-- include with underscore -->
+  <h3>_partial.html</h3>
+
+  <pre>&lt;div&gt;
+  This is a partial.
+&lt;/div&gt;</pre>
+
+  <h4>Regular includes with an underscore</h4>
+
+  <pre>&lt;dj-partial /&gt;</pre>
+
+  <dj-partial />
+
+
+  <!-- shadow include -->
   <h3>www/components/include-shadow.html</h3>
 
   <pre>&lt;div&gt;
@@ -127,14 +144,16 @@
   <dj-include template='www/components/include-shadow.html' shadow />
   <dj-include 'www/components/include-shadow.html' shadow />
 
+
+  <!-- slots -->
   <h4>Slots</h4>
 
   <dj-include template='www/components/include-slot.html'>
-    <span slot="test1">This is the new slot.</span>
+    <span slot="test1">This is the <strong>new</strong> slot.</span>
   </dj-include>
 
   <dj-include template='www/components/include-slot.html'>
     <span slot="test2">This is the new slot.</span>
   </dj-include>
 
-</dj-block name='content'>
+</dj-block>

@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 from dj_angles.exceptions import MissingAttributeError
 from dj_angles.mappers.utils import get_attribute_value_or_first_key
+from dj_angles.templates import get_template
 
 if TYPE_CHECKING:
     from dj_angles.tags import Tag
@@ -63,6 +64,12 @@ def map_include(tag: "Tag") -> str:
         colon_idx = template_file.index(":")
         extension_idx = template_file.index(".")
         template_file = template_file[0:colon_idx] + template_file[extension_idx:]
+
+    if template := get_template(template_file):
+        template_file = f"'{template.template.name}'"
+    else:
+        # Ignore missing template because an exception will be thrown when the component is being rendered
+        pass
 
     replacement = ""
 

@@ -38,6 +38,28 @@ def test_name_attribute():
     assert actual == expected
 
 
+def test_name_self_closing():
+    expected = "{% block content %}{% endblock content %}"
+
+    html = "<dj-block 'content' />"
+    tag = create_tag(html)
+
+    actual = map_block(tag=tag)
+
+    assert actual == expected
+
+
+def test_name_attribute_self_closing():
+    expected = "{% block content %}{% endblock content %}"
+
+    html = "<dj-block name='content' />"
+    tag = create_tag(html)
+
+    actual = map_block(tag=tag)
+
+    assert actual == expected
+
+
 def test_missing_name_throws_exception():
     html = "<dj-block invalid='content'>"
     tag = create_tag(html)

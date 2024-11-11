@@ -48,7 +48,16 @@ def test_block():
 
     template = """
 <dj-block name="content">
-</dj-block  name="content">"""
+</dj-block name="content">"""
+    actual = replace_django_template_tags(template)
+
+    assert actual == expected
+
+
+def test_block_default():
+    expected = "{% block content %}default{% endblock content %}"
+
+    template = '<dj-block name="content">default</dj-block>'
     actual = replace_django_template_tags(template)
 
     assert actual == expected
@@ -269,6 +278,32 @@ def test_slot_missing_template(settings):
 <span slot="test2">This is the new slot.</span>
 </dj-include>
 """
+    actual = replace_django_template_tags(template)
+
+    assert actual == expected
+
+
+def test_short_include_underscore():
+    """Makes sure that if a real template with the file name '_underscore.html' is available,
+    that is the template file that should be used.
+    """
+
+    expected = "<dj-underscore>{% include '_underscore.html' %}</dj-underscore>"
+
+    template = "<dj-underscore></dj-underscore>"
+    actual = replace_django_template_tags(template)
+
+    assert actual == expected
+
+
+def test_short_include_underscore_in_subdirectory():
+    """Makes sure that if a real template with the file name 'components/_underscore.html' is available,
+    that is the template file that should be used.
+    """
+
+    expected = "<dj-components-underscore>{% include 'components/_underscore.html' %}</dj-components-underscore>"
+
+    template = "<dj-components/underscore></dj-components/underscore>"
     actual = replace_django_template_tags(template)
 
     assert actual == expected

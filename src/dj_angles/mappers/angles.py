@@ -6,6 +6,7 @@ from minestrone import HTML
 
 from dj_angles.mappers.include import get_include_template_file, map_include
 from dj_angles.strings import dequotify
+from dj_angles.templates import get_template
 
 if TYPE_CHECKING:
     from dj_angles.tags import Tag
@@ -43,16 +44,7 @@ def map_angles_include(tag: "Tag") -> str:
 
     template_file = dequotify(get_include_template_file(tag))
     wrapping_tag_name = tag.get_wrapping_tag_name(name=template_file)
-    template = None
-
-    for engine in engines.all():
-        try:
-            template = engine.get_template(template_file)
-
-            if template:
-                break
-        except TemplateDoesNotExist:
-            pass
+    template = get_template(template_file)
 
     if template is None:
         return f"<{wrapping_tag_name}>"
