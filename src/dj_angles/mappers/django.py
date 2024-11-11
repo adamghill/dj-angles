@@ -123,6 +123,9 @@ def map_block(tag: "Tag") -> str:
     # The block tag doesn't actually want/need quoted strings per se, so remove them
     name = dequotify(name)
 
+    if tag.is_self_closing:
+        return f"{{% block {name} %}}{{% endblock {name} %}}"
+
     return f"{{% block {name} %}}"
 
 
