@@ -1,8 +1,13 @@
 # Changelog
 
+## 0.12.0
+
+- Self-closing `dj-block` tag; `<dj-block name='content' />` would translate to `{% block content %}{% endblock content %}`.
+- Handle template includes that begin with an underscore; `<dj-partial />` would translate to, in order, either `partial.html` or `_partial.html` depending on which template file was found.
+
 ## 0.11.0
 
-- Use the start tag's `name` for `</dj-block>` if possible.
+- Use the start tag's `name` for `dj-block` end tag if possible.
 
 ## 0.10.0
 
