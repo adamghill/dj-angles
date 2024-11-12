@@ -30,6 +30,14 @@ The wrapping element, e.g. `dj-partial`, is a custom element which browsers will
 The built-in [tags](tag-elements.md) are considered reserved words. Template file names that conflict will not get loaded because reserved words take precedence. For example, if there is a template named "extends.html" `<dj-extends />` could not be used to include it; `<dj-include 'extends.html' />` would need to be used instead.
 ```
 
+### Underscored files
+
+Underscores are used as a convention for partials in some frameworks, so that is supported in `dj-angles`. The following would first look for `partial.html`. If it could not be found, it would then look for `_partial.html`.
+
+```html
+<dj-partial />
+```
+
 ### Wrapping element key
 
 Adding a colon and an identifier to the end of a template name allows for even more specific CSS styling.
