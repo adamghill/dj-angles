@@ -68,7 +68,7 @@ class Tag:
         if get_setting("lower_case_tag", default=False) is True:
             self.tag_name = self.tag_name.lower()
 
-        if get_setting("slugify_tag", default=True) is True:
+        if get_setting("kebab_case_tag", default=True) is True:
             self.tag_name = kebabify(self.tag_name, strip_punctuation=False)
 
         if tag_map is None:

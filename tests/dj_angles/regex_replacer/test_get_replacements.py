@@ -201,7 +201,7 @@ def test_initial_tag_regex_for_react_style(template_string, replacement_string, 
     settings.ANGLES = {
         "initial_tag_regex": r"(dj-|(?=[A-Z]))",
         "lower_case_tag": False,
-        "slugify_tag": False,
+        "kebab_case_tag": False,
     }
 
     expected = [
@@ -245,8 +245,8 @@ def test_lower_case_tag(template_string, replacement_string, settings):
         ),
     ),
 )
-def test_slugify_tag(template_string, replacement_string, settings):
-    settings.ANGLES = {"initial_tag_regex": r"(?=[A-Z])", "slugify_tag": True}
+def test_kebab_case_tag(template_string, replacement_string, settings):
+    settings.ANGLES = {"initial_tag_regex": r"(?=[A-Z])", "kebab_case_tag": True}
 
     expected = [
         (template_string, replacement_string),
