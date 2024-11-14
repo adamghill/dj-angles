@@ -4,7 +4,7 @@ from collections import deque
 from minestrone import HTML
 
 from dj_angles.exceptions import InvalidEndTagError
-from dj_angles.mappers import get_tag_map
+from dj_angles.mappers.mapper import get_tag_map
 from dj_angles.settings import get_setting, get_tag_regex
 from dj_angles.tags import Tag
 

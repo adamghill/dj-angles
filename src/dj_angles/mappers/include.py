@@ -1,7 +1,6 @@
 from typing import TYPE_CHECKING
 
 from dj_angles.exceptions import MissingAttributeError
-from dj_angles.mappers.utils import get_attribute_value_or_first_key
 from dj_angles.templates import get_template
 
 if TYPE_CHECKING:
@@ -16,7 +15,7 @@ def get_include_template_file(tag: "Tag") -> str:
     """
 
     try:
-        template_file = get_attribute_value_or_first_key(tag, "template")
+        template_file = tag.get_attribute_value_or_first_key("template")
     except MissingAttributeError:
         template_file = tag.tag_name
 

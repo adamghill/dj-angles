@@ -2,7 +2,6 @@ import logging
 from typing import TYPE_CHECKING
 
 from dj_angles.exceptions import MissingAttributeError
-from dj_angles.mappers.utils import get_attribute_value_or_first_key
 
 if TYPE_CHECKING:
     from dj_angles.tags import Tag
@@ -18,7 +17,7 @@ def map_bird(tag: "Tag") -> str:
     template_file = tag.tag_name
 
     try:
-        template_file = get_attribute_value_or_first_key(tag, "template")
+        template_file = tag.get_attribute_value_or_first_key("template")
     except MissingAttributeError:
         pass
 

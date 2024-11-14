@@ -50,12 +50,6 @@ class CaseConverter:
         the prepare_string() method. Child classes should override this
         method if they wish to perform pre-conversion checks and manipulate
         the string accordingly.
-
-        :param s: The raw string to convert.
-        :type s: str
-        :param delimiters: A set of delimiters used to identify boundaries.
-            Defaults to DELIMITERS
-        :type delimiters: str
         """
 
         self._delimiters = delimiters
@@ -77,10 +71,7 @@ class CaseConverter:
         self.define_boundaries()
 
     def add_boundary_handler(self, handler):
-        """Add a boundary handler.
-
-        :type handler: BoundaryHandler
-        """
+        """Add a boundary handler."""
 
         self._boundary_handlers.append(handler)
 
@@ -97,18 +88,12 @@ class CaseConverter:
         logger.warning("No boundaries defined")
 
     def delimiters(self):
-        """Retrieve the delimiters.
-
-        :rtype: str
-        """
+        """Retrieve the delimiters."""
 
         return self._delimiters
 
     def raw(self):
-        """Retrieve the raw string to be converted.
-
-        :rtype: str
-        """
+        """Retrieve the raw string to be converted."""
 
         return self._raw_input
 
@@ -140,20 +125,12 @@ class CaseConverter:
         is not manipulated.
 
         Can be overridden.
-
-        :param s: The raw string supplied to the CaseConverter constructor.
-        :type s: str
-        :return: A raw string to be used in conversion.
-        :rtype: str
         """
 
         return s
 
     def _is_boundary(self, pc, c):
-        """Determine if we've hit a boundary or not.
-
-        :rtype: BoundaryHandler
-        """
+        """Determine if we've hit a boundary or not."""
 
         for bh in self._boundary_handlers:
             if bh.is_boundary(pc, c):
@@ -166,16 +143,12 @@ class CaseConverter:
 
         convert() follows a series of steps.
 
-            1. Initialize the output buffer using `init()`.
-            For every character in the input buffer:
-            2. Check if the current position lies on a boundary as defined
-               by the BoundaryHandler instances.
-            3. If on a boundary, execute the handler.
-            4. Else apply a mutation to the character via `mutate()` and add
-               the mutated character to the output buffer.
+        1. Initialize the output buffer using `init()`.
 
-        :return: The converted string.
-        :rtype: str
+        For every character in the input buffer:
+        2. Check if the current position lies on a boundary as defined by the BoundaryHandler instances.
+        3. If on a boundary, execute the handler.
+        4. Else apply a mutation to the character via `mutate()` and add the mutated character to the output buffer.
         """
 
         self.init(self._input_buffer, self._output_buffer)

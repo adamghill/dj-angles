@@ -3,7 +3,9 @@ from typing import Optional, Union
 
 from django.utils.module_loading import import_string
 
-from dj_angles.mappers import map_autoescape, map_block, map_css, map_extends, map_image, map_include
+from dj_angles.mappers.django import map_autoescape, map_block, map_css, map_extends, map_image
+from dj_angles.mappers.include import map_include
+from dj_angles.mappers.thirdparty import map_bird
 from dj_angles.modules import is_module_available
 from dj_angles.settings import get_setting
 
@@ -46,9 +48,6 @@ def get_tag_map() -> Optional[dict[Optional[str], Union[Callable, str]]]:
 
         # Add bird if installed
         if is_module_available("django_bird"):
-            # Import here to avoid circular import
-            from dj_angles.mappers import map_bird
-
             tag_map.update({"bird": map_bird})
 
         # Add dynamic mappers if in settings
