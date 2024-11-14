@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Optional, Union
 from minestrone import Element
 
 from dj_angles.attributes import Attributes
+from dj_angles.caseconverter import kebabcase
 from dj_angles.mappers.angles import map_angles_include
 from dj_angles.settings import get_setting
 
@@ -64,8 +65,11 @@ class Tag:
                 self.is_shadow = True
                 self.attributes.remove(shadow_attribute.key)
 
-        if get_setting("lower_case_tag", default=False):
+        if get_setting("lower_case_tag", default=False) is True:
             self.tag_name = self.tag_name.lower()
+
+        if get_setting("slugify_tag", default=True) is True:
+            self.tag_name = kebabcase(self.tag_name, strip_punctuation=False)
 
         if tag_map is None:
             raise AssertionError("Invalid tag_map")
