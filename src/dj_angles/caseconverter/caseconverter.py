@@ -24,11 +24,12 @@ def stripable_punctuation(delimiters):
 
     Stripable punctuation is defined as all punctuation that is not a delimeter.
     """
+
     return "".join([c for c in string.punctuation if c not in delimiters])
 
 
 class CaseConverter:
-    def __init__(self, s, delimiters=DELIMITERS, strip_punctuation=True):
+    def __init__(self, s, delimiters=DELIMITERS, strip_punctuation=True):  # noqa: FBT002
         """Initialize a case conversion.
 
         On initialization, punctuation can be optionally stripped. If
@@ -56,6 +57,7 @@ class CaseConverter:
             Defaults to DELIMITERS
         :type delimiters: str
         """
+
         self._delimiters = delimiters
 
         s = s.strip(delimiters)
@@ -79,6 +81,7 @@ class CaseConverter:
 
         :type handler: BoundaryHandler
         """
+
         self._boundary_handlers.append(handler)
 
     def define_boundaries(self):
@@ -90,13 +93,15 @@ class CaseConverter:
 
         A CaseConverter without boundary handlers makes little sense.
         """
-        logger.warn("No boundaries defined")
+
+        logger.warning("No boundaries defined")
 
     def delimiters(self):
         """Retrieve the delimiters.
 
         :rtype: str
         """
+
         return self._delimiters
 
     def raw(self):
@@ -104,15 +109,17 @@ class CaseConverter:
 
         :rtype: str
         """
+
         return self._raw_input
 
-    def init(self, input_buffer, output_buffer):
+    def init(self, input_buffer, output_buffer):  # noqa: ARG002
         """Initialize the output buffer.
 
         Can be overridden.
 
         See convert() for call order.
         """
+
         return
 
     def mutate(self, c):
@@ -122,9 +129,10 @@ class CaseConverter:
 
         See convert() for call order.
         """
+
         return c
 
-    def prepare_string(self, s) -> str:
+    def prepare_string(self, s: str) -> str:
         """Prepare the raw intput string for conversion.
 
         Executed during CaseConverter initialization providing an opportunity
@@ -138,6 +146,7 @@ class CaseConverter:
         :return: A raw string to be used in conversion.
         :rtype: str
         """
+
         return s
 
     def _is_boundary(self, pc, c):
@@ -145,6 +154,7 @@ class CaseConverter:
 
         :rtype: BoundaryHandler
         """
+
         for bh in self._boundary_handlers:
             if bh.is_boundary(pc, c):
                 return bh
@@ -167,6 +177,7 @@ class CaseConverter:
         :return: The converted string.
         :rtype: str
         """
+
         self.init(self._input_buffer, self._output_buffer)
 
         logger.debug(f"input_buffer = {self._input_buffer.getvalue()}")
@@ -176,9 +187,6 @@ class CaseConverter:
         cc = self._input_buffer.read(1)
 
         while cc:
-            logger.debug(
-                f"pc = '{pc}'; cc = '{cc}'; input_buffer.tell() = {self._input_buffer.tell()}; output_buffer = '{self._output_buffer.getvalue()}'"
-            )
             bh = self._is_boundary(pc, cc)
             if bh:
                 bh.handle(pc, cc, self._input_buffer, self._output_buffer)
@@ -188,4 +196,4 @@ class CaseConverter:
             pc = cc
             cc = self._input_buffer.read(1)
 
-        return self._output_buffer.getvalue()
+        return str(self._output_buffer.getvalue())

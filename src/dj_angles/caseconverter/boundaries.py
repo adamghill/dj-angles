@@ -14,6 +14,7 @@ class BoundaryHandler:
         :return: True if a boundary is found, else false.
         :rtype: boolean
         """
+
         raise NotImplementedError()
 
     def handle(self, pc, cc, input_buffer, output_buffer):
@@ -29,6 +30,7 @@ class BoundaryHandler:
             it's constructed.
         :type output_buffer: StringBuffer
         """
+
         raise NotImplementedError()
 
 
@@ -37,10 +39,10 @@ class OnDelimeterUppercaseNext(BoundaryHandler):
         self._delimiters = delimiters
         self._join_char = join_char
 
-    def is_boundary(self, pc, c):
+    def is_boundary(self, pc, c):  # noqa: ARG002
         return c in self._delimiters
 
-    def handle(self, pc, cc, input_buffer, output_buffer):
+    def handle(self, pc, cc, input_buffer, output_buffer):  # noqa: ARG002
         output_buffer.write(self._join_char)
         output_buffer.write(input_buffer.read(1).upper())
 
@@ -50,10 +52,10 @@ class OnDelimeterLowercaseNext(BoundaryHandler):
         self._delimiters = delimiters
         self._join_char = join_char
 
-    def is_boundary(self, pc, c):
+    def is_boundary(self, pc, c):  # noqa: ARG002
         return c in self._delimiters
 
-    def handle(self, pc, cc, input_buffer, output_buffer):
+    def handle(self, pc, cc, input_buffer, output_buffer):  # noqa: ARG002
         output_buffer.write(self._join_char)
         output_buffer.write(input_buffer.read(1).lower())
 
@@ -63,9 +65,9 @@ class OnUpperPrecededByLowerAppendUpper(BoundaryHandler):
         self._join_char = join_char
 
     def is_boundary(self, pc, c):
-        return pc != None and pc.isalpha() and pc.islower() and c.isupper()
+        return pc is not None and pc.isalpha() and pc.islower() and c.isupper()
 
-    def handle(self, pc, cc, input_buffer, output_buffer):
+    def handle(self, pc, cc, input_buffer, output_buffer):  # noqa: ARG002
         output_buffer.write(self._join_char)
         output_buffer.write(cc)
 
@@ -75,9 +77,9 @@ class OnUpperPrecededByLowerAppendLower(BoundaryHandler):
         self._join_char = join_char
 
     def is_boundary(self, pc, c):
-        return pc != None and pc.isalpha() and pc.islower() and c.isupper()
+        return pc is not None and pc.isalpha() and pc.islower() and c.isupper()
 
-    def handle(self, pc, cc, input_buffer, output_buffer):
+    def handle(self, pc, cc, input_buffer, output_buffer):  # noqa: ARG002
         output_buffer.write(self._join_char)
         output_buffer.write(cc.lower())
 
@@ -87,9 +89,9 @@ class OnUpperPrecededByUpperAppendJoin(BoundaryHandler):
         self._join_char = join_char
 
     def is_boundary(self, pc, c):
-        return pc != None and pc.isalpha() and pc.isupper() and c.isupper()
+        return pc is not None and pc.isalpha() and pc.isupper() and c.isupper()
 
-    def handle(self, pc, cc, input_buffer, output_buffer):
+    def handle(self, pc, cc, input_buffer, output_buffer):  # noqa: ARG002
         output_buffer.write(self._join_char)
         output_buffer.write(cc)
 
@@ -99,7 +101,7 @@ class OnUpperPrecededByUpperAppendCurrent(BoundaryHandler):
         self._join_char = join_char
 
     def is_boundary(self, pc, c):
-        return pc != None and pc.isalpha() and pc.isupper() and c.isupper()
+        return pc is not None and pc.isalpha() and pc.isupper() and c.isupper()
 
-    def handle(self, pc, cc, input_buffer, output_buffer):
+    def handle(self, pc, cc, input_buffer, output_buffer):  # noqa: ARG002
         output_buffer.write(cc)
