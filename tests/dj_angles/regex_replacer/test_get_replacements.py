@@ -2,7 +2,8 @@ from collections import namedtuple
 
 import pytest
 
-from dj_angles.regex_replacer import clear_tag_map, get_replacements
+from dj_angles.mappers.mapper import clear_tag_map
+from dj_angles.regex_replacer import get_replacements
 
 # Structure to store parameterize data
 Params = namedtuple(

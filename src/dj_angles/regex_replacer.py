@@ -1,108 +1,12 @@
 import re
 from collections import deque
-from collections.abc import Callable
-from functools import lru_cache
-from importlib.util import find_spec
-from typing import Optional, Union
 
-from django.utils.module_loading import import_string
 from minestrone import HTML
 
 from dj_angles.exceptions import InvalidEndTagError
-from dj_angles.mappers.django import map_autoescape, map_block, map_css, map_extends, map_image
-from dj_angles.mappers.include import map_include
-from dj_angles.mappers.thirdparty import map_bird
-from dj_angles.settings import get_setting
+from dj_angles.mappers import get_tag_map
+from dj_angles.settings import get_setting, get_tag_regex
 from dj_angles.tags import Tag
-
-TAG_NAME_TO_DJANGO_TEMPLATE_TAG_MAP: Optional[dict[Optional[str], Union[Callable, str]]] = {
-    "extends": map_extends,
-    "block": map_block,
-    "verbatim": "verbatim",
-    "include": map_include,
-    "comment": "comment",
-    "#": "comment",
-    "autoescape-on": map_autoescape,
-    "autoescape-off": map_autoescape,
-    "csrf-token": "csrf_token",
-    "csrf": "csrf_token",
-    "csrf-input": "csrf_token",
-    "debug": "debug",
-    "filter": "filter",
-    "lorem": "lorem",
-    "now": "now",
-    "spaceless": "spaceless",
-    "templatetag": "templatetag",
-    "image": map_image,
-    "css": map_css,
-}
-"""Default mappings for tag names to Django template tags."""
-
-tag_map: Optional[dict[Optional[str], Union[Callable, str]]] = None
-
-
-def _is_module_available(module_name):
-    """Helper method to check if a module is available."""
-
-    return find_spec(module_name) is not None
-
-
-def _get_tag_regex():
-    """Gets a compiled regex based on the `initial_tag_regex` setting or default of r'(dj-)'."""
-
-    initial_tag_regex = get_setting("initial_tag_regex", default=r"(dj-)")
-
-    if initial_tag_regex is None:
-        initial_tag_regex = ""
-
-    tag_regex = rf"</?({initial_tag_regex}(?P<tag_name>[^\s>]+))\s*(?P<template_tag_args>.*?)\s*/?>"
-
-    @lru_cache(maxsize=32)
-    def _compile_regex(_tag_regex):
-        """Silly internal function to cache the compiled regex."""
-
-        return re.compile(_tag_regex)
-
-    return _compile_regex(tag_regex)
-
-
-def get_tag_map() -> Optional[dict[Optional[str], Union[Callable, str]]]:
-    """Get the complete tag map based on the default, dynamic, and settings mappers."""
-
-    global tag_map  # noqa: PLW0603
-
-    if tag_map is None:
-        tag_map = TAG_NAME_TO_DJANGO_TEMPLATE_TAG_MAP
-
-        if tag_map is None:
-            raise AssertionError("Invalid tag_map")
-
-        # Add bird if installed
-        if _is_module_available("django_bird"):
-            tag_map.update({"bird": map_bird})
-
-        # Add dynamic mappers if in settings
-        mappers = get_setting("mappers", default={})
-
-        if not isinstance(mappers, dict):
-            raise AssertionError("ANGLES.mappers must be a dictionary")
-
-        tag_map.update(mappers)
-
-        # Add default mapper if in settings, or fallback to the default mapper
-        default_mapper = get_setting("default_mapper", "dj_angles.mappers.angles.default_mapper")
-
-        # Add the default with a magic key of `None`
-        tag_map.update({None: import_string(default_mapper)})
-
-    return tag_map
-
-
-def clear_tag_map() -> None:
-    """Clear the generated tag map so that it will be re-generated. Useful for tests."""
-
-    global tag_map  # noqa: PLW0603
-    tag_map = None
 
 
 def get_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> list[tuple[str, str]]:
@@ -118,7 +22,7 @@ def get_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> 
     """
 
     replacements = []
-    tag_regex = _get_tag_regex()
+    tag_regex = get_tag_regex()
     tag_queue: deque = deque()
 
     tag_map = get_tag_map()

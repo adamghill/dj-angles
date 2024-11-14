@@ -1,7 +1,7 @@
 import pytest
 from django.conf import settings
 
-from dj_angles.regex_replacer import clear_tag_map
+from dj_angles.mappers.mapper import clear_tag_map
 
 
 def pytest_configure():

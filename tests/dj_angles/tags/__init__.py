@@ -1,11 +1,12 @@
 import re
 
-from dj_angles.regex_replacer import _get_tag_regex, get_tag_map
+from dj_angles.mappers.mapper import get_tag_map
+from dj_angles.settings import get_tag_regex
 from dj_angles.tags import Tag
 
 
 def create_tag(html):
-    tag_regex = _get_tag_regex()
+    tag_regex = get_tag_regex()
     match = re.match(tag_regex, html)
 
     tag_html = html[match.start() : match.end()]

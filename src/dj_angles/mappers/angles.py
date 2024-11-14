@@ -34,7 +34,7 @@ def default_mapper(tag: "Tag") -> str:
 
 
 def map_angles_include(tag: "Tag") -> str:
-    """Mapper function for the angles include tag which is custom to handle slots.
+    """Mapper function for the angles include tag; handles the implementation of slots.
 
     Args:
         param tag: The tag to map.
