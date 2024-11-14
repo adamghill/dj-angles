@@ -1,10 +1,10 @@
 import pytest
 
-from dj_angles.caseconverter import kebabcase
+from dj_angles.caseconverter import kebabify
 
 
 @pytest.mark.parametrize(
-    "input, output",
+    "input, expect",
     [
         # With punctuation.
         ("Hello, world!", "hello-world"),
@@ -33,5 +33,20 @@ from dj_angles.caseconverter import kebabcase
         ("heLlo WoRld", "he-llo-wo-rld"),
     ],
 )
-def test_kebab_with_default_args(input, output):
-    assert kebabcase(input) == output
+def test_default(input, expect):
+    assert kebabify(input) == expect
+
+
+@pytest.mark.parametrize(
+    "input, expect",
+    [
+        # With punctuation.
+        ("component/partial", "component/partial"),
+        # With extension
+        ("component/partial.html", "component/partial.html"),
+        # Pascal cased
+        ("PartialOne", "partial-one"),
+    ],
+)
+def test_keep_punctuation(input, expect):
+    assert kebabify(input, strip_punctuation=False) == expect

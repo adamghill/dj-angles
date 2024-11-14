@@ -1,1 +1,1 @@
-from dj_angles.caseconverter.kebab import kebabcase
+from dj_angles.caseconverter.kebab import kebabify

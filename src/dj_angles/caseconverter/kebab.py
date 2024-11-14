@@ -19,7 +19,7 @@ class Kebab(CaseConverter):
         return c.lower()
 
 
-def kebabcase(s, **kwargs):
+def kebabify(s, **kwargs):
     """Convert a string to kebab case
 
     Example
