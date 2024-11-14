@@ -75,6 +75,7 @@ self
 installation
 components
 tag-elements
+examples
 ```
 
 ```{toctree}
