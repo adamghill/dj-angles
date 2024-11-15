@@ -91,7 +91,7 @@ def test_additional_attribute():
 
 
 def test_get_django_template_tag(settings):
-    settings.ANGLES["default_mapper"] = "dj_angles.mappers.thirdparty.map_bird"
+    settings.ANGLES["default_mapper"] = "dj_angles.mappers.map_bird"
 
     expected = "{% bird partial %}"
 
@@ -104,7 +104,7 @@ def test_get_django_template_tag(settings):
 
 
 def test_get_django_template_tag_self_closing(settings):
-    settings.ANGLES["default_mapper"] = "dj_angles.mappers.thirdparty.map_bird"
+    settings.ANGLES["default_mapper"] = "dj_angles.mappers.map_bird"
 
     expected = "{% bird partial / %}"
 
@@ -117,7 +117,7 @@ def test_get_django_template_tag_self_closing(settings):
 
 
 def test_get_django_template_tag_is_end(settings):
-    settings.ANGLES["default_mapper"] = "dj_angles.mappers.thirdparty.map_bird"
+    settings.ANGLES["default_mapper"] = "dj_angles.mappers.map_bird"
 
     expected = "{% endbird %}"
 

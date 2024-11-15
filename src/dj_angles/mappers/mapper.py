@@ -41,7 +41,7 @@ class TagMap(UserDict):
         self.data: dict[Optional[str], Union[Callable, str]] = TAG_NAME_TO_DJANGO_TEMPLATE_TAG_MAP.copy()
 
         # Add bird if installed
-        self.add_module_mapper("django_bird", "bird", "dj_angles.mappers.thirdparty.map_bird")
+        self.add_module_mapper("django_bird", "bird", "dj_angles.mappers.map_bird")
 
         # Add custom mappers if they are defined in settings
         self.add_custom_mappers()
@@ -65,7 +65,7 @@ class TagMap(UserDict):
     def add_default_mapper(self) -> None:
         """Add default mapper if in settings, or fallback to the default mapper."""
 
-        default_mapper = get_setting("default_mapper", "dj_angles.mappers.angles.default_mapper")
+        default_mapper = get_setting("default_mapper", "dj_angles.mappers.default_mapper")
 
         if default_mapper is not None:
             # Add the default with a magic key of `None`
