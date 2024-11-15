@@ -56,7 +56,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "project.urls"
 
-ANGLES = {"slots_enabled": True}
+ANGLES = {
+    "slots_enabled": True,
+    # "initial_tag_regex": r"(?=\w)",
+    # "map_explicit_tags_only": True,
+    # "default_mapper": None,
+}
 DJANGO_BIRD = {"ENABLE_AUTO_CONFIG": False}
 
 TEMPLATES = [

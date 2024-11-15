@@ -344,3 +344,42 @@ def test_css(template_string, replacement_string):
     actual = get_replacements(template_string, raise_for_missing_start_tag=False)
 
     assert actual == expected
+
+
+def test_no_prefix(settings):
+    # settings.ANGLES["default_mapper"] = None
+    settings.ANGLES["initial_tag_regex"] = r"(?=\w)"
+
+    expected = [("<block name='content'>", "{% block content %}")]
+    actual = get_replacements("<block name='content'>", raise_for_missing_start_tag=False)
+
+    assert actual == expected
+
+
+def test_no_prefix_with_default_mapper(settings):
+    settings.ANGLES["initial_tag_regex"] = r"(?=\w)"
+
+    expected = [("<partial />", "<dj-partial>{% include 'partial.html' %}</dj-partial>")]
+    actual = get_replacements("<partial />", raise_for_missing_start_tag=False)
+
+    assert actual == expected
+
+
+def test_no_prefix_without_default_mapper(settings):
+    settings.ANGLES["default_mapper"] = None
+    settings.ANGLES["initial_tag_regex"] = r"(?=\w)"
+
+    expected = []
+    actual = get_replacements("<partial />", raise_for_missing_start_tag=False)
+
+    assert actual == expected
+
+
+def test_no_prefix_map_explicit_tags_only(settings):
+    settings.ANGLES["map_explicit_tags_only"] = True
+    settings.ANGLES["initial_tag_regex"] = r"(?=\w)"
+
+    expected = []
+    actual = get_replacements("<partial />", raise_for_missing_start_tag=False)
+
+    assert actual == expected

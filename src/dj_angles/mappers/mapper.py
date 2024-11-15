@@ -41,7 +41,7 @@ def get_tag_map() -> Optional[dict[Optional[str], Union[Callable, str]]]:
     global tag_map  # noqa: PLW0603
 
     if tag_map is None:
-        tag_map = TAG_NAME_TO_DJANGO_TEMPLATE_TAG_MAP
+        tag_map = TAG_NAME_TO_DJANGO_TEMPLATE_TAG_MAP.copy()
 
         if tag_map is None:
             raise AssertionError("Invalid tag_map")
@@ -61,8 +61,9 @@ def get_tag_map() -> Optional[dict[Optional[str], Union[Callable, str]]]:
         # Add default mapper if in settings, or fallback to the default mapper
         default_mapper = get_setting("default_mapper", "dj_angles.mappers.angles.default_mapper")
 
-        # Add the default with a magic key of `None`
-        tag_map.update({None: import_string(default_mapper)})
+        if default_mapper is not None:
+            # Add the default with a magic key of `None`
+            tag_map.update({None: import_string(default_mapper)})
 
     return tag_map
 

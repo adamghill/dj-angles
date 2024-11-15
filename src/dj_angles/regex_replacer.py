@@ -27,10 +27,15 @@ def get_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> 
 
     tag_map = get_tag_map()
 
+    map_explicit_tags_only = get_setting("map_explicit_tags_only", False)
+
     for match in re.finditer(tag_regex, html):
         tag_html = html[match.start() : match.end()].strip()
         tag_name = match.group("tag_name").strip()
         template_tag_args = match.group("template_tag_args").strip()
+
+        if (map_explicit_tags_only or tag_map.get(None) is None) and tag_name.lower() not in tag_map:
+            continue
 
         tag = Tag(
             tag_map=tag_map,

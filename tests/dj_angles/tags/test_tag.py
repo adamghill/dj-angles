@@ -46,3 +46,14 @@ def test_default_mapping(settings):
     actual = tag.get_django_template_tag()
 
     assert expected == actual
+
+
+def test_get_attribute_value_or_first_key():
+    expected = "'test1'"
+
+    html = "<dj-include template='test1'>"
+
+    tag = create_tag(html)
+    actual = tag.get_attribute_value_or_first_key("template")
+
+    assert expected == actual
