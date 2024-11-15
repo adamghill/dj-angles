@@ -13,7 +13,7 @@ ANGLES = {
 }
 ```
 
-```html
+```text
 <block name='content'>
   <include 'partial.html' />
 </block>
