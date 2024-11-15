@@ -1,5 +1,4 @@
-from collections.abc import Callable
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING, Optional
 
 from minestrone import Element
 
@@ -7,6 +6,7 @@ from dj_angles.attributes import Attributes
 from dj_angles.caseconverter import kebabify
 from dj_angles.exceptions import MissingAttributeError
 from dj_angles.mappers.angles import map_angles_include
+from dj_angles.mappers.mapper import TagMap
 from dj_angles.settings import get_setting
 
 if TYPE_CHECKING:
@@ -44,7 +44,7 @@ class Tag:
 
     def __init__(
         self,
-        tag_map: Optional[dict[Optional[str], Union[Callable, str]]],
+        tag_map: TagMap,
         html: str,
         tag_name: str,
         template_tag_args: str,
