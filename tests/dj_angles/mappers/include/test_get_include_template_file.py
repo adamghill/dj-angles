@@ -78,3 +78,14 @@ def test_fallback():
     actual = get_include_template_file(tag=tag)
 
     assert actual == expected
+
+
+def test_src_attribute():
+    expected = '"partial.html"'
+
+    html = '<dj-include src="partial">'
+    tag = create_tag(html)
+
+    actual = get_include_template_file(tag=tag)
+
+    assert actual == expected

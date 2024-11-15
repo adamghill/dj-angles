@@ -15,7 +15,16 @@ def get_include_template_file(tag: "Tag") -> str:
     """
 
     try:
-        template_file = tag.get_attribute_value_or_first_key("template")
+        template_file = None
+
+        try:
+            template_file = tag.get_attribute_value_or_first_key("src")
+        except MissingAttributeError:
+            # Re-parse attributes in case the previous call popped off an attribute
+            tag.parse_attributes()
+
+        if not template_file:
+            template_file = tag.get_attribute_value_or_first_key("template")
     except MissingAttributeError:
         template_file = tag.tag_name
 

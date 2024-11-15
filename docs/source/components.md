@@ -8,6 +8,8 @@ These are equivalent ways to include HTML files.
 
 ```text
 <dj-partial />
+<dj-include src='partial.html' />
+<dj-include src='partial' />
 <dj-include template='partial.html' />
 <dj-include template='partial' />
 <dj-include 'partial.html' />
