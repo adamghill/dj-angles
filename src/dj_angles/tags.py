@@ -13,6 +13,9 @@ if TYPE_CHECKING:
     from collections import deque
 
 
+SHADOW_ATTRIBUTE_KEY = "shadow"
+
+
 class Tag:
     """Encapsulates metadata and functionality for a tag that will be processed by `dj-angles`."""
 
@@ -54,17 +57,16 @@ class Tag:
         self.tag_name = tag_name
 
         self._template_tag_args = template_tag_args
+        self.attributes = None
         self.parse_attributes()
 
         if self.tag_name.endswith("!"):
             self.tag_name = self.tag_name[:-1]
             self.is_shadow = True
-        else:
-            shadow_attribute = self.attributes.get("shadow")
-
-            if shadow_attribute:
+        elif self.attributes:
+            if self.attributes.has(SHADOW_ATTRIBUTE_KEY):
                 self.is_shadow = True
-                self.attributes.remove(shadow_attribute.key)
+                self.attributes.remove(SHADOW_ATTRIBUTE_KEY)
 
         if get_setting("lower_case_tag", default=False) is True:
             self.tag_name = self.tag_name.lower()
@@ -89,6 +91,9 @@ class Tag:
         """Creates `Attributes` based on the template tag arguments."""
 
         self.attributes = Attributes(self._template_tag_args)
+
+        if self.is_shadow and self.attributes.has(SHADOW_ATTRIBUTE_KEY):
+            self.attributes.remove(SHADOW_ATTRIBUTE_KEY)
 
     def get_django_template_tag(self, slots: Optional[list[tuple[str, Element]]] = None) -> str:
         """Generate the Django template tag.

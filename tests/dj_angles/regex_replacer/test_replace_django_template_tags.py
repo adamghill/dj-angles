@@ -121,10 +121,19 @@ def test_short_include_shadow():
     assert actual == expected
 
 
-def test_short_include_self_closing_shadow():
+def test_short_include_self_closing_shadow_bang():
     expected = "<dj-partial><template shadowrootmode='open'>{% include 'partial.html' %}</template></dj-partial>"
 
     template = "<dj-partial! />"
+    actual = replace_django_template_tags(template)
+
+    assert actual == expected
+
+
+def test_short_include_self_closing_shadow():
+    expected = "<dj-partial><template shadowrootmode='open'>{% include 'partial.html' %}</template></dj-partial>"
+
+    template = "<dj-include template='partial.html' shadow />"
     actual = replace_django_template_tags(template)
 
     assert actual == expected
