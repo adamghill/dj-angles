@@ -1,6 +1,9 @@
 from typing import TYPE_CHECKING
 
+from django.template import TemplateDoesNotExist, TemplateSyntaxError
+
 from dj_angles.exceptions import InvalidAttributeError, MissingAttributeError
+from dj_angles.settings import get_setting
 from dj_angles.strings import dequotify
 from dj_angles.templates import get_template
 
@@ -77,11 +80,40 @@ def map_include(tag: "Tag") -> str:
         extension_idx = template_file.index(".")
         template_file = template_file[0:colon_idx] + template_file[extension_idx:]
 
-    if template := get_template(template_file):
-        template_file = f"'{template.template.name}'"  # type: ignore[union-attr]
-    else:
-        # Ignore missing template because an exception will be thrown when the component is being rendered
-        pass
+    try:
+        # By default do not raise exceptions for invalid templates if running unit tests
+        raise_on_invalid_template = not get_setting("IS_IN_UNIT_TEST", default=False)
+
+        if template := get_template(template_file, raise_exception=raise_on_invalid_template):
+            template.render()
+
+            template_file = f"'{template.template.name}'"
+    except (TemplateDoesNotExist, TemplateSyntaxError) as e:
+        handle_errors = (
+            get_setting(key_path="error_boundaries", setting_name="enabled", default=True) is True
+            or tag.error_boundary is True
+        )
+
+        if handle_errors:
+            error_html = ""
+            template_file = dequotify(template_file)
+
+            if hasattr(e, "template_debug"):
+                error_html = (
+                    f"Error parsing {template_file}: {e} in {e.template_debug['name']} line {e.template_debug['line']}"
+                )
+            elif hasattr(e, "tried"):
+                if e.tried:
+                    error_html = f"<h1>{template_file}</h1><p>Tried: {', '.join(e.tried) or 'Unknown'}</p>"
+                else:
+                    error_html = f"<h1>{template_file}</h1><p>{e}</p>"
+            else:
+                error_html = "<h1>{template_file}</h1><p>{e}</p>"
+
+            if get_setting(key_path="error_boundaries", setting_name="shadow", default=True):
+                return tag.get_error(f"<template shadowrootmode='open'>{error_html}</template>")
+
+            return tag.get_error(error_html)
 
     replacement = ""
 

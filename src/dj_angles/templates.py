@@ -5,11 +5,12 @@ from django.template.loader import select_template
 from dj_angles.strings import dequotify
 
 
-def get_template(template_file: str) -> Template | None:
+def get_template(template_file: str, raise_exception: bool = False) -> Template | None:
     """Check for the template file by looking for different template file variations.
 
-    Currently, the only other variation is looking for the template file with an underscore
-    in front (a typical convention for partials).
+    Variations:
+        - template file with an ".html" extension if there is no extension
+        - template file with an underscore in front (a typical convention for partials)
 
     Args:
         param template_file: The original template file name.
@@ -22,6 +23,9 @@ def get_template(template_file: str) -> Template | None:
 
     template_file = dequotify(template_file)
     template_file_list = [template_file]
+
+    if "." not in template_file:
+        template_file_list.append(f"{template_file}.html")
 
     if not template_file.startswith("_"):
         if "/" in template_file:
@@ -39,6 +43,7 @@ def get_template(template_file: str) -> Template | None:
     try:
         template = select_template(template_file_list)
     except TemplateDoesNotExist:
-        pass
+        if raise_exception:
+            raise
 
     return template

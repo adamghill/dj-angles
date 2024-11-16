@@ -78,7 +78,7 @@ class TagMap(UserDict):
     def add_default_mapper(self) -> None:
         """Add default mapper if in settings, or fallback to the default mapper."""
 
-        default_mapper = get_setting("default_mapper", "dj_angles.mappers.default_mapper")
+        default_mapper = get_setting("default_mapper", default="dj_angles.mappers.default_mapper")
 
         if default_mapper is not None:
             # Add the default with a magic key of `None`

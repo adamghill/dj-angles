@@ -1,6 +1,8 @@
 import logging
 from dataclasses import dataclass
 
+from dj_angles.tags import Tag
+
 logger = logging.getLogger(__name__)
 
 

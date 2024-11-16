@@ -1,6 +1,7 @@
 import re
 from typing import TYPE_CHECKING, Optional
 
+from django.conf import settings
 from minestrone import Element
 
 from dj_angles.attributes import Attributes
@@ -9,6 +10,8 @@ from dj_angles.exceptions import MissingAttributeError
 from dj_angles.mappers.angles import map_angles_include
 from dj_angles.mappers.mapper import TagMap, get_tag_map
 from dj_angles.settings import get_setting
+from dj_angles.strings import dequotify
+from dj_angles.templates import get_template
 
 if TYPE_CHECKING:
     from collections import deque
@@ -36,6 +39,8 @@ VOID_ELEMENTS = {
 
 
 SHADOW_ATTRIBUTE_KEY = "shadow"
+BOUNDARY_ATTRIBUTE_KEY = "boundary"
+FALLBACK_ATTRIBUTE_KEY = "fallback"
 
 
 class Tag:
@@ -73,6 +78,12 @@ class Tag:
     outer_html: str | None = None
     """The outer HTML of the tag."""
 
+    error_boundary: bool = False
+    """Whether or not the tag should handle errors."""
+
+    error_fallback: Optional[str] = ""
+    """What to display if there is an error. Can be a string or a template."""
+
     def __init__(
         self,
         tag_map: TagMap | dict | None = None,
@@ -100,6 +111,14 @@ class Tag:
             self.is_wrapped = False
             self.attributes.remove("no-wrap")
 
+        if self.attributes.has(BOUNDARY_ATTRIBUTE_KEY):
+            self.error_boundary = True
+            self.attributes.remove(BOUNDARY_ATTRIBUTE_KEY)
+
+        if self.attributes.has(FALLBACK_ATTRIBUTE_KEY):
+            self.error_fallback = dequotify(self.attributes.get(FALLBACK_ATTRIBUTE_KEY).value)
+            self.attributes.remove(FALLBACK_ATTRIBUTE_KEY)
+
         if get_setting("lower_case_tag", default=False) is True:
             self.tag_name = self.tag_name.lower()
 
@@ -126,6 +145,20 @@ class Tag:
 
         if self.is_shadow and self.attributes.has(SHADOW_ATTRIBUTE_KEY):
             self.attributes.remove(SHADOW_ATTRIBUTE_KEY)
+
+    def get_error(self, message: str) -> str:
+        """Get HTML for the tag when there is an error."""
+
+        if self.error_fallback or not settings.DEBUG:
+            if fallback_template := get_template(self.error_fallback, raise_exception=False):
+                return fallback_template.render()
+
+            return self.error_fallback
+
+        error_style = get_setting(key_path="error_boundaries", setting_name="style", default="border: 1px red solid;")
+        error_class = get_setting(key_path="error_boundaries", setting_name="class", default="")
+
+        return f"<div style='{error_style}' class='{error_class}'>{message}</div>"
 
     def get_django_template_tag(self, slots: list[tuple[str, Element]] | None = None) -> str:
         """Generate the Django template tag.
