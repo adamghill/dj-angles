@@ -5,19 +5,28 @@ from typing import Any
 from django.conf import settings
 
 
-def get_setting(setting_name: str, default=None) -> Any:
-    """Get a `dj-angles` setting from the `ANGLES` setting dictionary.
+def get_setting(setting_name: str, key_path: str = "", default: Any = None) -> Any:
+    """Get a setting from the `ANGLES` dictionary in settings.
 
     Args:
         param setting_name: The name of the setting.
+        param key_path: The name of the sub-dictionary under `ANGLES`.
         param default: The value that should be returned if the setting is missing.
     """
 
     if not hasattr(settings, "ANGLES"):
         settings.ANGLES = {}
 
-    if setting_name in settings.ANGLES:
-        return settings.ANGLES[setting_name]
+    data = settings.ANGLES
+
+    if key_path:
+        if key_path not in data:
+            data[key_path] = {}
+
+        data = data[key_path]
+
+    if setting_name in data:
+        return data[setting_name]
 
     return default
 

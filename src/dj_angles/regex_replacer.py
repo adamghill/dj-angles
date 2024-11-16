@@ -27,7 +27,7 @@ def get_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> 
 
     tag_map = get_tag_map()
 
-    map_explicit_tags_only = get_setting("map_explicit_tags_only", False)
+    map_explicit_tags_only = get_setting("map_explicit_tags_only", default=False)
 
     for match in re.finditer(tag_regex, html):
         tag_html = html[match.start() : match.end()].strip()
