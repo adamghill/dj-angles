@@ -45,23 +45,18 @@ def pytest_configure():
             },
         ],
         SECRET_KEY="this-is-a-secret",
-        DATABASES={
-            "default": {
-                "ENGINE": "django.db.backends.sqlite3",
-            }
+        ANGLES={
+            "IS_IN_UNIT_TEST": True,
         },
-        MIDDLEWARE=(
-            "dj_angles.middleware.RequestMethodMiddleware",
-            "dj_angles.middleware.RequestAJAXMiddleware",
-        ),
-        ANGLES={},
     )
 
 
 @pytest.fixture(autouse=True)
 def reset_settings(settings):
     # Make sure that ANGLES is empty before every test
-    settings.ANGLES = {}
+    settings.ANGLES = {
+        "IS_IN_UNIT_TEST": True,
+    }
 
     # Clear the caches before every test
     clear_tag_map()
