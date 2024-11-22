@@ -74,6 +74,15 @@ class Attributes(Sequence):
                 self._attributes.append(attribute)
                 attribute_keys.add(attribute.key)
 
+    def has(self, name: str) -> bool:
+        """Whether or not an there is an :obj:`~dj_angles.attributes.Attribute` by name.
+
+        Args:
+            param name: The name of the attribute.
+        """
+
+        return self.get(name) is not None
+
     def get(self, name: str) -> Optional[Attribute]:
         """Get an :obj:`~dj_angles.attributes.Attribute` by name. Returns `None` if the attribute is missing.
 

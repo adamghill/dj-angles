@@ -178,7 +178,7 @@ def test_no_extension(template_string, replacement_string):
     ),
 )
 def test_initial_tag_regex(template_string, replacement_string, settings):
-    settings.ANGLES = {"initial_tag_regex": r"(dj-|\$)"}
+    settings.ANGLES.update({"initial_tag_regex": r"(dj-|\$)"})
 
     expected = [
         (template_string, replacement_string),
@@ -198,11 +198,13 @@ def test_initial_tag_regex(template_string, replacement_string, settings):
     ),
 )
 def test_initial_tag_regex_for_react_style(template_string, replacement_string, settings):
-    settings.ANGLES = {
-        "initial_tag_regex": r"(dj-|(?=[A-Z]))",
-        "lower_case_tag": False,
-        "kebab_case_tag": False,
-    }
+    settings.ANGLES.update(
+        {
+            "initial_tag_regex": r"(dj-|(?=[A-Z]))",
+            "lower_case_tag": False,
+            "kebab_case_tag": False,
+        }
+    )
 
     expected = [
         (template_string, replacement_string),
@@ -222,7 +224,7 @@ def test_initial_tag_regex_for_react_style(template_string, replacement_string, 
     ),
 )
 def test_lower_case_tag(template_string, replacement_string, settings):
-    settings.ANGLES = {"initial_tag_regex": r"(dj-|(?=[A-Z]))", "lower_case_tag": True}
+    settings.ANGLES.update({"initial_tag_regex": r"(dj-|(?=[A-Z]))", "lower_case_tag": True})
 
     expected = [
         (template_string, replacement_string),
@@ -246,7 +248,7 @@ def test_lower_case_tag(template_string, replacement_string, settings):
     ),
 )
 def test_kebab_case_tag(template_string, replacement_string, settings):
-    settings.ANGLES = {"initial_tag_regex": r"(?=[A-Z])", "kebab_case_tag": True}
+    settings.ANGLES.update({"initial_tag_regex": r"(?=[A-Z])", "kebab_case_tag": True})
 
     expected = [
         (template_string, replacement_string),
@@ -266,12 +268,14 @@ def test_kebab_case_tag(template_string, replacement_string, settings):
     ),
 )
 def test_mappers_string(template_string, replacement_string, settings):
-    settings.ANGLES = {
-        "initial_tag_regex": None,
-        "mappers": {
-            "blob": "include",
-        },
-    }
+    settings.ANGLES.update(
+        {
+            "initial_tag_regex": None,
+            "mappers": {
+                "blob": "include",
+            },
+        }
+    )
     clear_tag_map()
 
     expected = [
@@ -292,10 +296,12 @@ def test_mappers_string(template_string, replacement_string, settings):
     ),
 )
 def test_mappers_callable(template_string, replacement_string, settings):
-    settings.ANGLES = {
-        "initial_tag_regex": None,
-        "mappers": {"blob": lambda tag: "blob2"},  # noqa: ARG005
-    }
+    settings.ANGLES.update(
+        {
+            "initial_tag_regex": None,
+            "mappers": {"blob": lambda tag: "blob2"},  # noqa: ARG005
+        }
+    )
     clear_tag_map()
 
     expected = [

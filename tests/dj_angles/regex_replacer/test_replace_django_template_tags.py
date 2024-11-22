@@ -121,10 +121,19 @@ def test_short_include_shadow():
     assert actual == expected
 
 
-def test_short_include_self_closing_shadow():
+def test_short_include_self_closing_shadow_bang():
     expected = "<dj-partial><template shadowrootmode='open'>{% include 'partial.html' %}</template></dj-partial>"
 
     template = "<dj-partial! />"
+    actual = replace_django_template_tags(template)
+
+    assert actual == expected
+
+
+def test_short_include_self_closing_shadow():
+    expected = "<dj-partial><template shadowrootmode='open'>{% include 'partial.html' %}</template></dj-partial>"
+
+    template = "<dj-include template='partial.html' shadow />"
     actual = replace_django_template_tags(template)
 
     assert actual == expected
@@ -304,6 +313,24 @@ def test_short_include_underscore_in_subdirectory():
     expected = "<dj-components-underscore>{% include 'components/_underscore.html' %}</dj-components-underscore>"
 
     template = "<dj-components/underscore></dj-components/underscore>"
+    actual = replace_django_template_tags(template)
+
+    assert actual == expected
+
+
+def test_with():
+    expected = '<dj-www-components-include>{% include "www/components/include.html" with request=request only %}</dj-www-components-include>'
+
+    template = '<dj-include src="www/components/include.html" with request=request only></dj-include>'
+    actual = replace_django_template_tags(template)
+
+    assert actual == expected
+
+
+def test_with_only():
+    expected = '<dj-www-components-include>{% include "www/components/include.html" with request=request %}</dj-www-components-include>'
+
+    template = '<dj-include src="www/components/include.html" with request=request></dj-include>'
     actual = replace_django_template_tags(template)
 
     assert actual == expected

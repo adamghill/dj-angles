@@ -37,14 +37,18 @@ def pytest_configure():
             },
         ],
         SECRET_KEY="this-is-a-secret",
-        ANGLES={},
+        ANGLES={
+            "IS_IN_UNIT_TEST": True,
+        },
     )
 
 
 @pytest.fixture(autouse=True)
 def reset_settings(settings):
     # Make sure that ANGLES is empty before every test
-    settings.ANGLES = {}
+    settings.ANGLES = {
+        "IS_IN_UNIT_TEST": True,
+    }
 
     # Clear the tag map before every test
     clear_tag_map()
