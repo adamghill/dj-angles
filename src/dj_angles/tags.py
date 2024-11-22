@@ -2,8 +2,6 @@ import re
 from typing import TYPE_CHECKING, Optional
 
 from django.conf import settings
-from django.template import Origin, TemplateDoesNotExist, TemplateSyntaxError
-from django.utils.html import escape
 from minestrone import Element
 
 from dj_angles.attributes import Attributes
@@ -41,7 +39,7 @@ VOID_ELEMENTS = {
 
 
 SHADOW_ATTRIBUTE_KEY = "shadow"
-FALLBACK_ATTRIBUTE_KEY = "fallback"
+DEFAULT_ATTRIBUTE_KEY = "default"
 
 ERROR_BOUNDARY_ATTRIBUTE_KEY = "error-boundary"
 ERROR_BOUNDARY_TAG_NAMES = ["block"]
@@ -123,9 +121,9 @@ class Tag:
             self.is_error_boundary = True
             self.attributes.remove(ERROR_BOUNDARY_ATTRIBUTE_KEY)
 
-        if self.attributes.has(FALLBACK_ATTRIBUTE_KEY):
-            self.error_fallback = dequotify(self.attributes.get(FALLBACK_ATTRIBUTE_KEY).value)
-            self.attributes.remove(FALLBACK_ATTRIBUTE_KEY)
+        if self.is_error_boundary and self.attributes.has(DEFAULT_ATTRIBUTE_KEY):
+            self.error_fallback = dequotify(self.attributes.get(DEFAULT_ATTRIBUTE_KEY).value)
+            self.attributes.remove(DEFAULT_ATTRIBUTE_KEY)
 
         if get_setting("lower_case_tag", default=False) is True:
             self.tag_name = self.tag_name.lower()

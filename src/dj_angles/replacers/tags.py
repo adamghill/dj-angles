@@ -108,7 +108,10 @@ def replace_tags(html: str, *, origin: Optional[Origin] = None, raise_for_missin
                     inner_start_pos = raw_inner_range_start + leading_whitespace_len
                     inner_end_pos = raw_inner_range_end - trailing_whitespace_len
 
-                    if getattr(tag, "is_error_boundary", False):
+                    if (
+                        getattr(tag, "is_error_boundary", False)
+                        and get_setting(key_path="error_boundaries", setting_name="enabled", default=True) is True
+                    ):
                         # Skip processing the inner tags in the main loop since we are handling them recursively/here
                         matches_to_skip = len(re.findall(tag_regex, raw_inner))
 
@@ -138,6 +141,15 @@ def replace_tags(html: str, *, origin: Optional[Origin] = None, raise_for_missin
                         )
                     else:
                         # Slots logic
+                        # duplicate loop for slots since we might not have entered if block above?
+                        # Wait, if is_error_boundary is true BUT setting is disabled?
+                        # Then we fall into else block?
+                        # If error boundary is disabled, do we want to process slots inside it?
+                        # Probably not, it's just a normal tag then?
+                        # But loop assumes it is error boundary or slot container.
+                        # If setting disabled, we do nothing with inner content here
+                        # (inner tags will be processed by outer loop because matches_to_skip is not set).
+
                         found_slot = False
                         for element in HTML(inner_html).elements:
                             if slot_name := element.attributes.get("slot"):
