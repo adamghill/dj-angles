@@ -9,7 +9,7 @@ from dj_angles.replacers import convert_template
 
 class Loader(AppDirectoriesLoader):
     def _get_template_string(self, template_name):
-        """Get the string content a template."""
+        """Get the string content as a template."""
 
         try:
             with open(template_name, encoding=self.engine.file_charset) as f:
@@ -21,7 +21,11 @@ class Loader(AppDirectoriesLoader):
         """Gets the converted template contents."""
 
         template_string = self._get_template_string(origin.name)
+<<<<<<< HEAD
         converted_template_string = convert_template(template_string)
+=======
+        converted_template_string = replace_django_template_tags(template_string, origin=origin)
+>>>>>>> b8109bf (Remove support for boundary from includes, add new tag and add support to blocks.)
 
         return converted_template_string
 

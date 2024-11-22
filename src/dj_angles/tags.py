@@ -2,6 +2,8 @@ import re
 from typing import TYPE_CHECKING, Optional
 
 from django.conf import settings
+from django.template import Origin, TemplateDoesNotExist, TemplateSyntaxError
+from django.utils.html import escape
 from minestrone import Element
 
 from dj_angles.attributes import Attributes
@@ -39,8 +41,10 @@ VOID_ELEMENTS = {
 
 
 SHADOW_ATTRIBUTE_KEY = "shadow"
-BOUNDARY_ATTRIBUTE_KEY = "boundary"
 FALLBACK_ATTRIBUTE_KEY = "fallback"
+
+ERROR_BOUNDARY_ATTRIBUTE_KEY = "error-boundary"
+ERROR_BOUNDARY_TAG_NAMES = ["block"]
 
 
 class Tag:
@@ -78,11 +82,13 @@ class Tag:
     outer_html: str | None = None
     """The outer HTML of the tag."""
 
-    error_boundary: bool = False
+    is_error_boundary: bool = False
     """Whether or not the tag should handle errors."""
 
     error_fallback: Optional[str] = ""
     """What to display if there is an error. Can be a string or a template."""
+
+    inner_html: Optional[str] = None
 
     def __init__(
         self,
@@ -111,9 +117,11 @@ class Tag:
             self.is_wrapped = False
             self.attributes.remove("no-wrap")
 
-        if self.attributes.has(BOUNDARY_ATTRIBUTE_KEY):
-            self.error_boundary = True
-            self.attributes.remove(BOUNDARY_ATTRIBUTE_KEY)
+        if self.tag_name == "error-boundary":
+            self.is_error_boundary = True
+        elif self.tag_name in ERROR_BOUNDARY_TAG_NAMES and self.attributes.has(ERROR_BOUNDARY_ATTRIBUTE_KEY):
+            self.is_error_boundary = True
+            self.attributes.remove(ERROR_BOUNDARY_ATTRIBUTE_KEY)
 
         if self.attributes.has(FALLBACK_ATTRIBUTE_KEY):
             self.error_fallback = dequotify(self.attributes.get(FALLBACK_ATTRIBUTE_KEY).value)
@@ -141,24 +149,83 @@ class Tag:
     def parse_attributes(self):
         """Creates `Attributes` based on the template tag arguments."""
 
+        # print("self._template_tag_args", self._template_tag_args)
         self.attributes = Attributes(self._template_tag_args)
 
         if self.is_shadow and self.attributes.has(SHADOW_ATTRIBUTE_KEY):
             self.attributes.remove(SHADOW_ATTRIBUTE_KEY)
 
-    def get_error(self, message: str) -> str:
+    def get_error_html(self, exception: Exception) -> str:
         """Get HTML for the tag when there is an error."""
 
-        if self.error_fallback or not settings.DEBUG:
+        if self.error_fallback:
             if fallback_template := get_template(self.error_fallback, raise_exception=False):
                 return fallback_template.render()
 
             return self.error_fallback
 
-        error_style = get_setting(key_path="error_boundaries", setting_name="style", default="border: 1px red solid;")
+        html = ""
+
+        if hasattr(exception, "template_debug"):
+            template_debug = exception.template_debug
+            source = template_debug["name"]
+
+            if hasattr(settings, "BASE_DIR"):
+                original_source = source
+                source = source.replace(str(settings.BASE_DIR), "")
+
+                if original_source != source and source.startswith("/"):
+                    source = source[1:]
+
+            during = template_debug["during"]
+            during = during.replace("{", "&#123;").replace("}", "&#125;")
+            during = f"<pre><code>{{% verbatim %}}{during}{{% endverbatim %}}</code></pre>"
+
+            if source == "<unknown source>":
+                html = f"""<h2>
+  {template_debug["message"]}
+</h2>
+<p>
+  {during}
+</p>"""
+            else:
+                error = template_debug["message"]
+
+                if hasattr(exception, "tried"):
+                    error = f"Could not find the template: '{error}'"
+
+                    if exception.tried:
+                        error = f"{error}: {', '.join(exception.tried)}"
+
+                if not error.endswith("."):
+                    error = f"{error}."
+
+                html = f"""<h2>
+  {source}
+</h2>
+<p>
+  <em>{error}</em>
+</p>
+<p>
+  {during}
+</p>
+"""
+        else:
+            html = f"<em>{exception}</em>"
+
+        error_style = get_setting(
+            key_path="error_boundaries",
+            setting_name="style",
+            default="border: 1px red solid; padding: 0 24px 0 24px;",
+        )
         error_class = get_setting(key_path="error_boundaries", setting_name="class", default="")
 
-        return f"<div style='{error_style}' class='{error_class}'>{message}</div>"
+        html = f"<div style='{error_style}' class='{error_class}'>{html}</div>"
+
+        if get_setting(key_path="error_boundaries", setting_name="shadow", default=True):
+            html = f'<div><template shadowrootmode="open">{html}</template></div>'
+
+        return html
 
     def get_django_template_tag(self, slots: list[tuple[str, Element]] | None = None) -> str:
         """Generate the Django template tag.

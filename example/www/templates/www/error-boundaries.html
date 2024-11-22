@@ -1,0 +1,25 @@
+<dj-extends parent='www/base.html' />
+
+<dj-block name='content' error-boundary>
+  <dj-include src="www/components/include-bad1.html" />
+</dj-block>
+
+<dj-block name='extra-content'>
+  <dj-error-boundary>
+    <dj-include src="www/components/include-bad.html" />
+  </dj-error-boundary>
+
+  <dj-error-boundary>
+    <dj-include src="www/components/include-bad1.html" />
+  </dj-error-boundary>
+
+  <dj-error-boundary>
+    <dj-include src="www/components/include.html" />
+  </dj-error-boundary>
+
+  <dj-include src="www/components/include.html" />
+
+  <dj-include src="www/components/include.html" />
+
+  <dj-include src="www/components/include.html" />
+</dj-block>

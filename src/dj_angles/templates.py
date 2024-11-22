@@ -5,7 +5,7 @@ from django.template.loader import select_template
 from dj_angles.strings import dequotify
 
 
-def get_template(template_file: str, raise_exception: bool = False) -> Template | None:
+def get_template(template_file: str, *, raise_exception: bool = False) -> Template | None:
     """Check for the template file by looking for different template file variations.
 
     Variations:

@@ -29,7 +29,7 @@ def stripable_punctuation(delimiters):
 
 
 class CaseConverter:
-    def __init__(self, s, delimiters=DELIMITERS, strip_punctuation=True):  # noqa: FBT002
+    def __init__(self, s, delimiters=DELIMITERS, *, strip_punctuation=True):
         """Initialize a case conversion.
 
         On initialization, punctuation can be optionally stripped. If
