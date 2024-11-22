@@ -1,7 +1,9 @@
 import logging
 import re
 from collections import deque
+from typing import Optional
 
+from django.template import Context, Origin, Template, TemplateDoesNotExist, TemplateSyntaxError
 from minestrone import HTML
 
 from dj_angles.exceptions import InvalidEndTagError
@@ -14,11 +16,12 @@ from dj_angles.tags import Tag
 logger = logging.getLogger(__name__)
 
 
-def replace_tags(html: str, *, raise_for_missing_start_tag: bool = True) -> str:
+def replace_tags(html: str, *, origin: Optional[Origin] = None, raise_for_missing_start_tag: bool = True) -> str:
     """Get a list of tag replacements based on the template HTML.
 
     Args:
         html: Template HTML.
+        origin: The origin of the template.
         raise_for_missing_start_tag: Whether or not to raise an error if an invalid tag is discovered.
 
     Returns:
@@ -32,7 +35,13 @@ def replace_tags(html: str, *, raise_for_missing_start_tag: bool = True) -> str:
 
     map_explicit_tags_only = get_setting("map_explicit_tags_only", default=False)
 
+    matches_to_skip = 0
+
     for match in re.finditer(tag_regex, html):
+        if matches_to_skip > 0:
+            matches_to_skip -= 1
+            continue
+
         tag_html = html[match.start() : match.end()].strip()
         tag_name = match.group("tag_name").strip()
 
@@ -61,18 +70,24 @@ def replace_tags(html: str, *, raise_for_missing_start_tag: bool = True) -> str:
 
         slots = []
 
-        # Parse the inner HTML for includes to handle slots
+        # Parse the inner HTML for includes to handle slots or error boundaries
         if (
-            get_setting("slots_enabled", default=False)
-            and not tag.is_self_closing
+            not tag.is_self_closing
             and not tag.is_end
-            and (tag.django_template_tag is None or tag.is_include)
+            and (
+                (get_setting("slots_enabled", default=False) and (tag.django_template_tag is None or tag.is_include))
+                or getattr(tag, "is_error_boundary", False)
+            )
         ):
             end_of_include_tag = match.end()
 
-            # Find the next closing tag that matches the initial_tag_regex setting
-            initial_tag_regex = get_setting("initial_tag_regex", default=r"(dj-)")
-            closing_tag_pattern = rf"</{initial_tag_regex}"
+            # Find the next closing tag
+            if getattr(tag, "is_error_boundary", False):
+                closing_tag_pattern = rf"</{tag.tag_name}"
+            else:
+                initial_tag_regex = get_setting("initial_tag_regex", default=r"(dj-)")
+                closing_tag_pattern = rf"</{initial_tag_regex}"
+
             closing_match = re.search(closing_tag_pattern, html[end_of_include_tag:])
 
             if closing_match:
@@ -93,21 +108,51 @@ def replace_tags(html: str, *, raise_for_missing_start_tag: bool = True) -> str:
                     inner_start_pos = raw_inner_range_start + leading_whitespace_len
                     inner_end_pos = raw_inner_range_end - trailing_whitespace_len
 
-                    found_slot = False
-                    for element in HTML(inner_html).elements:
-                        if slot_name := element.attributes.get("slot"):
-                            slots.append((slot_name, element))
-                            found_slot = True
+                    if getattr(tag, "is_error_boundary", False):
+                        # Skip processing the inner tags in the main loop since we are handling them recursively/here
+                        matches_to_skip = len(re.findall(tag_regex, raw_inner))
 
-                    if found_slot:
-                        # Remove slot content from the current HTML because it will be injected into the include
-                        # component; use calculated inner_start_pos and inner_end_pos to precisely target the
-                        # stripped content
+                        try:
+                            parsed_inner_html = replace_tags(
+                                inner_html, origin=origin, raise_for_missing_start_tag=raise_for_missing_start_tag
+                            )
+
+                            # Parse the inner HTML and create a template to check for syntax errors
+                            inner_html_template = Template(parsed_inner_html, origin=origin)
+
+                            # It would be nice to pass in the template context here, but cannot
+                            # find access to it with this process, so it is empty
+                            inner_html_template.render(context=Context())
+
+                            replacements_content = parsed_inner_html
+                        except (TemplateDoesNotExist, TemplateSyntaxError) as e:
+                            replacements_content = tag.get_error_html(e)
+
                         edits.append(
                             AtomicEdit(
-                                position=inner_start_pos, content="", is_insert=False, end_position=inner_end_pos
+                                position=inner_start_pos,
+                                content=replacements_content,
+                                is_insert=False,
+                                end_position=inner_end_pos,
                             )
                         )
+                    else:
+                        # Slots logic
+                        found_slot = False
+                        for element in HTML(inner_html).elements:
+                            if slot_name := element.attributes.get("slot"):
+                                slots.append((slot_name, element))
+                                found_slot = True
+
+                        if found_slot:
+                            # Remove slot content from the current HTML because it will be injected into the include
+                            # component; use calculated inner_start_pos and inner_end_pos to precisely target the
+                            # stripped content
+                            edits.append(
+                                AtomicEdit(
+                                    position=inner_start_pos, content="", is_insert=False, end_position=inner_end_pos
+                                )
+                            )
 
         django_template_tag = tag.get_django_template_tag(slots=slots)
 
