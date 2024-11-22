@@ -47,24 +47,25 @@ def check_for_missing_start_tag(raise_for_missing_start_tag, tag, tag_queue):
 def get_replacements_for_error_boundaries(tag_regex, origin, tag, replacements):
     matches_to_skip = 0
 
-    if tag.is_error_boundary and tag.inner_html:
-        matches_to_skip = len(re.findall(tag_regex, tag.inner_html))
+    if get_setting(key_path="error_boundaries", setting_name="enabled", default=True) is True:
+        if tag.is_error_boundary and tag.inner_html:
+            matches_to_skip = len(re.findall(tag_regex, tag.inner_html))
 
-        try:
-            parsed_inner_html = replace_django_template_tags(tag.inner_html)
+            try:
+                parsed_inner_html = replace_django_template_tags(tag.inner_html)
 
-            # Parse the inner HTML and create a template
-            inner_html_template = Template(parsed_inner_html, origin=origin)
+                # Parse the inner HTML and create a template
+                inner_html_template = Template(parsed_inner_html, origin=origin)
 
-            # It would be nice to pass in the template context here, but cannot
-            # find access to it with this process, so it is empty
-            inner_html_template.render(context=Context())
+                # It would be nice to pass in the template context here, but cannot
+                # find access to it with this process, so it is empty
+                inner_html_template.render(context=Context())
 
-            replacements.append((tag.inner_html, parsed_inner_html))
-        except (TemplateDoesNotExist, TemplateSyntaxError) as e:
-            error_html = tag.get_error_html(e)
+                replacements.append((tag.inner_html, parsed_inner_html))
+            except (TemplateDoesNotExist, TemplateSyntaxError) as e:
+                error_html = tag.get_error_html(e)
 
-            replacements.append((tag.inner_html, error_html))
+                replacements.append((tag.inner_html, error_html))
 
     return matches_to_skip
 
