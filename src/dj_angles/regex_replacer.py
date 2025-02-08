@@ -32,7 +32,7 @@ def get_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> 
     for match in re.finditer(tag_regex, html):
         tag_html = html[match.start() : match.end()].strip()
         tag_name = match.group("tag_name").strip()
-        template_tag_args = match.group("template_tag_args").strip()
+        template_tag_args = match.group("template_tag_args").strip().replace("\n", " ")
 
         if (map_explicit_tags_only or tag_map.get(None) is None) and tag_name.lower() not in tag_map:
             continue

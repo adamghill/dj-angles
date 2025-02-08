@@ -211,6 +211,16 @@ def test_include_template_extension_self_closing():
     assert actual == expected
 
 
+def test_include_arguments_with_newlines():
+    expected = "<dj-partial>{% include 'partial.html' with blob=True stuff=True %}</dj-partial>"
+
+    template = """<dj-partial with blob=True
+stuff=True></dj-partial>"""
+    actual = replace_django_template_tags(template)
+
+    assert actual == expected
+
+
 def test_invalid_tag():
     with pytest.raises(InvalidEndTagError) as e:
         replace_django_template_tags("""

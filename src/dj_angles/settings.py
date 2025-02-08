@@ -36,6 +36,6 @@ def get_tag_regex():
     def _compile_regex(_tag_regex):
         """Silly internal function to cache the compiled regex."""
 
-        return re.compile(_tag_regex)
+        return re.compile(_tag_regex, re.DOTALL)
 
     return _compile_regex(tag_regex)
