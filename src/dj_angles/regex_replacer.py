@@ -6,6 +6,7 @@ from minestrone import HTML
 from dj_angles.exceptions import InvalidEndTagError
 from dj_angles.mappers.mapper import get_tag_map
 from dj_angles.settings import get_setting, get_tag_regex
+from dj_angles.strings import replace_newlines
 from dj_angles.tags import Tag
 
 
@@ -32,7 +33,9 @@ def get_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> 
     for match in re.finditer(tag_regex, html):
         tag_html = html[match.start() : match.end()].strip()
         tag_name = match.group("tag_name").strip()
-        template_tag_args = match.group("template_tag_args").strip().replace("\n", " ")
+
+        template_tag_args = match.group("template_tag_args").strip()
+        template_tag_args = replace_newlines(template_tag_args, " ")
 
         if (map_explicit_tags_only or tag_map.get(None) is None) and tag_name.lower() not in tag_map:
             continue

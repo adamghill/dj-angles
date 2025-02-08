@@ -57,7 +57,7 @@ class Tag:
         self.tag_name = tag_name
 
         self._template_tag_args = template_tag_args
-        self.attributes = Attributes(template_tag_args="")
+        self.attributes = Attributes()
         self.parse_attributes()
 
         if self.tag_name.endswith("!"):

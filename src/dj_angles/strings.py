@@ -12,3 +12,17 @@ def dequotify(s: str) -> str:
         return s[1:-1]
 
     return s
+
+
+def replace_newlines(s: str, replacement: str = "") -> str:
+    """Replaces newlines with the given replacement string.
+
+    Args:
+        param s: The string to replace newlines in.
+        param replacement: The string to replace the newlines with.
+
+    Returns:
+        A new string with the newlines replaced.
+    """
+
+    return s.replace("\r\n", replacement).replace("\n", replacement).replace("\r", replacement)

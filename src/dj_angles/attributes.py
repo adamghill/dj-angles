@@ -56,7 +56,7 @@ class Attributes(Sequence):
     template_tag_args: str
     """The original attributes as an unparsed string."""
 
-    def __init__(self, template_tag_args: str):
+    def __init__(self, template_tag_args: str = ""):
         self._attributes: list[Attribute] = []
 
         self.template_tag_args = template_tag_args
