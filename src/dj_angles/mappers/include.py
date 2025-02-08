@@ -73,11 +73,8 @@ def map_include(tag: "Tag") -> str:
         extension_idx = template_file.index(".")
         template_file = template_file[0:colon_idx] + template_file[extension_idx:]
 
-    if template := get_template(template_file):
+    if template := get_template(template_file, raise_exception=False):
         template_file = f"'{template.template.name}'"
-    else:
-        # Ignore missing template because an exception will be thrown when the component is being rendered
-        pass
 
     replacement = ""
 

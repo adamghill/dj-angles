@@ -22,6 +22,8 @@
       <ul>
         <li>
           <a class="{% if request.path == "/include" %}current{% endif %}" href="/include">include</a>
+          <a class="{% if request.path == "/error-boundaries" %}current{% endif %}"
+            href="/error-boundaries">error-boundaries</a>
           <a class="{% if request.path == "/bird" %}current{% endif %}" href="/bird">django-bird</a>
         </li>
       </ul>
@@ -30,7 +32,10 @@
 
   <main>
     <dj-block name='content'>
-    </dj-block name='content'>
+    </dj-block>
+
+    <dj-block name='extra-content'>
+    </dj-block>
   </main>
 
   <footer>

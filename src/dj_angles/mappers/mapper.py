@@ -29,6 +29,7 @@ TAG_NAME_TO_DJANGO_TEMPLATE_TAG_MAP: dict[Optional[str], Union[Callable, str]] =
     "templatetag": "templatetag",
     "image": map_image,
     "css": map_css,
+    "error-boundary": lambda tag: "",  # noqa: ARG005  # the inner_html gets handled in `regex_replacer`
 }
 """Default mappings for tag names to Django template tags."""
 
@@ -65,7 +66,7 @@ class TagMap(UserDict):
     def add_default_mapper(self) -> None:
         """Add default mapper if in settings, or fallback to the default mapper."""
 
-        default_mapper = get_setting("default_mapper", "dj_angles.mappers.default_mapper")
+        default_mapper = get_setting("default_mapper", default="dj_angles.mappers.default_mapper")
 
         if default_mapper is not None:
             # Add the default with a magic key of `None`

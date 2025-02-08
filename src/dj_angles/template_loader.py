@@ -9,7 +9,7 @@ from dj_angles.regex_replacer import replace_django_template_tags
 
 class Loader(AppDirectoriesLoader):
     def _get_template_string(self, template_name):
-        """Get the string content a template."""
+        """Get the string content as a template."""
 
         try:
             with open(template_name, encoding=self.engine.file_charset) as f:
@@ -21,7 +21,7 @@ class Loader(AppDirectoriesLoader):
         """Gets the converted template contents."""
 
         template_string = self._get_template_string(origin.name)
-        converted_template_string = replace_django_template_tags(template_string)
+        converted_template_string = replace_django_template_tags(template_string, origin=origin)
 
         return converted_template_string
 
