@@ -1,8 +1,12 @@
 # Changelog
 
+## 0.13.1
+
+- Better handling of spaces and tabs in template tag arguments.
+
 ## 0.13.0
 
-- Handle newlines in dj-angle element attributes.
+- Handle newlines in template tag arguments.
 
 ## 0.12.0
 
