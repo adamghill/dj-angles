@@ -61,6 +61,10 @@ ANGLES = {
     # "initial_tag_regex": r"(?=\w)",
     # "map_explicit_tags_only": True,
     # "default_mapper": None,
+    "mappers": {
+        "template": "dj_angles.mappers.map_include",
+    },
+    "error_boundaries": {"enabled": True, "shadow": True},
 }
 DJANGO_BIRD = {"ENABLE_AUTO_CONFIG": False}
 

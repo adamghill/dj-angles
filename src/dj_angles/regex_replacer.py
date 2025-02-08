@@ -11,6 +11,15 @@ from dj_angles.settings import get_setting, get_tag_regex
 from dj_angles.tags import Tag
 
 
+def _render_template(html: str, origin: Origin):
+    # Parse the inner HTML and create a template
+    template = Template(html, origin=origin)
+
+    # It would be nice to pass in the template context here, but cannot
+    # find access to it with this process, so it is empty
+    template.render(context=Context())
+
+
 def set_tag_inner_html(html, match, tag):
     if (
         not tag.is_self_closing
@@ -54,15 +63,18 @@ def get_replacements_for_error_boundaries(tag_regex, origin, tag, replacements):
             try:
                 parsed_inner_html = replace_django_template_tags(tag.inner_html)
 
-                # Parse the inner HTML and create a template
-                inner_html_template = Template(parsed_inner_html, origin=origin)
+                _render_template(parsed_inner_html, origin)
 
-                # It would be nice to pass in the template context here, but cannot
-                # find access to it with this process, so it is empty
-                inner_html_template.render(context=Context())
+                # # Parse the inner HTML and create a template
+                # inner_html_template = Template(parsed_inner_html, origin=origin)
+
+                # # It would be nice to pass in the template context here, but cannot
+                # # find access to it with this process, so it is empty
+                # inner_html_template.render(context=Context())
 
                 replacements.append((tag.inner_html, parsed_inner_html))
             except (TemplateDoesNotExist, TemplateSyntaxError) as e:
+                print("eee", e.__dict__)
                 error_html = tag.get_error_html(e)
 
                 replacements.append((tag.inner_html, error_html))
