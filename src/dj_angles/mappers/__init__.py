@@ -4,14 +4,14 @@ from dj_angles.mappers.include import map_include
 from dj_angles.mappers.thirdparty import map_bird
 
 __all__ = [
-    "map_include",
+    "default_mapper",
+    "map_angles_include",
     "map_autoescape",
+    "map_bird",
     "map_block",
     "map_css",
     "map_endblock",
     "map_extends",
     "map_image",
-    "default_mapper",
-    "map_angles_include",
-    "map_bird",
+    "map_include",
 ]

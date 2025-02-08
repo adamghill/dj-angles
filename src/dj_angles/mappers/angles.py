@@ -27,7 +27,7 @@ def default_mapper(tag: "Tag") -> str:
 
     django_template_tag = map_include(tag)
 
-    if tag.is_end and tag.is_shadow or (tag.start_tag and tag.start_tag.is_shadow):
+    if (tag.is_end and tag.is_shadow) or (tag.start_tag and tag.start_tag.is_shadow):
         django_template_tag = f"</template>{django_template_tag}"
 
     return django_template_tag
