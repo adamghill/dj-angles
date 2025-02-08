@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.13.0
+
+- Handle newlines in dj-angle element attributes.
+
 ## 0.12.0
 
 - Self-closing `dj-block` tag; `<dj-block name='content' />` would translate to `{% block content %}{% endblock content %}`.
