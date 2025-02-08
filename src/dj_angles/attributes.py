@@ -68,6 +68,11 @@ class Attributes(Sequence):
         attribute_keys = set()
 
         for arg in yield_tokens(self.template_tag_args, " "):
+            arg = arg.strip()  # noqa: PLW2901
+
+            if not arg:
+                continue
+
             attribute = Attribute(arg)
 
             if attribute.key not in attribute_keys:
