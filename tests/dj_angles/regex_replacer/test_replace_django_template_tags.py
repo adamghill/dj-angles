@@ -1,7 +1,12 @@
 import pytest
 
 from dj_angles.exceptions import InvalidEndTagError
-from dj_angles.regex_replacer import replace_django_template_tags
+from dj_angles.regex_replacer import (
+    end_of_tag_index,
+    get_end_of_attribute_value,
+    get_previous_element_tag,
+    replace_django_template_tags,
+)
 
 
 def test_typical():
@@ -366,3 +371,238 @@ def test_with_only():
     actual = replace_django_template_tags(template)
 
     assert actual == expected
+
+
+def test_if_true():
+    expected = "<div>{% if True %}<span>test</span>{% endif %}</div>"
+
+    template = '<div><span dj-if="True">test</span></div>'
+    actual = replace_django_template_tags(template)
+
+    assert actual == expected
+
+
+def test_if_true_2():
+    expected = "{% if True %}<span>test</span>{% endif %}"
+
+    template = '<span dj-if="True">test</span>'
+    actual = replace_django_template_tags(template)
+
+    assert actual == expected
+
+
+def test_if_blob():
+    expected = """
+<div class="pt-0{% if True %} pb-0{% endif %}">
+    {% if True %}<span>
+        test
+    </span>{% endif %}
+</div>
+"""
+
+    template = """
+<div class="pt-0{% if True %} pb-0{% endif %}">
+    <span dj-if="True">
+        test
+    </span>
+</div>
+"""
+    actual = replace_django_template_tags(template)
+
+    assert actual == expected
+
+
+def test_if_django_variable():
+    expected = "<div>{% if some_variable %}<span>test</span>{% endif %}</div>"
+
+    template = '<div><span dj-if="some_variable">test</span></div>'
+    actual = replace_django_template_tags(template)
+
+    assert actual == expected
+
+
+def test_if_false():
+    expected = "<div>{% if False %}<span>test</span>{% endif %}</div>"
+
+    template = '<div><span dj-if="False">test</span></div>'
+    actual = replace_django_template_tags(template)
+
+    assert actual == expected
+
+
+def test_elif_else():
+    expected = """<h1 class="text-2xl md:text-4xl font-semibold my-4 mb-2">
+    {% if is_collection %}<a href="{% url 'movie:collection' slug=collection.slug %}">
+    {{ name }}
+    </a>
+    {% elif name == 'Upcoming' %}<a href="{% url 'movie:upcoming' %}">
+    {{ name }}
+    </a>
+    {% else %}<a href="{% url 'movie:recent' %}">
+    {{ name }}
+    </a>{% endif %}
+</h1>"""
+
+    template = """<h1 class="text-2xl md:text-4xl font-semibold my-4 mb-2">
+    <a href="{% url 'movie:collection' slug=collection.slug %}" dj-if="is_collection">
+    {{ name }}
+    </a>
+    <a href="{% url 'movie:upcoming' %}" dj-elif="name == 'Upcoming'">
+    {{ name }}
+    </a>
+    <a href="{% url 'movie:recent' %}" dj-else>
+    {{ name }}
+    </a>
+</h1>"""
+
+    actual = replace_django_template_tags(template)
+
+    assert actual == expected
+
+
+def test_multiple_ifs():
+    expected = """
+{% if is_collection %}<a1 href="{% url 'movie:collection' slug=collection.slug %}">
+{{ name }}
+</a1>{% endif %}
+
+{% if is_collection %}<a4 href="{% url 'movie:collection' slug=collection.slug %}">
+{{ name }}
+</a4>{% endif %}
+"""
+
+    template = """
+<a1 href="{% url 'movie:collection' slug=collection.slug %}" dj-if="is_collection">
+{{ name }}
+</a1>
+
+<a4 href="{% url 'movie:collection' slug=collection.slug %}" dj-if="is_collection">
+{{ name }}
+</a4>
+"""
+
+    actual = replace_django_template_tags(template)
+
+    assert actual == expected
+
+
+def test_multiple_elifs():
+    expected = """
+{% if is_collection %}<a1 href="{% url 'movie:collection' slug=collection.slug %}">
+{{ name }}
+</a1>
+{% elif name == 'Upcoming' %}<a2 href="{% url 'movie:upcoming' %}">
+{{ name }}
+</a2>{% endif %}
+
+{% if is_collection %}<a4 href="{% url 'movie:collection' slug=collection.slug %}">
+{{ name }}
+</a4>
+{% elif name == 'Upcoming' %}<a5 href="{% url 'movie:upcoming' %}">
+{{ name }}
+</a5>{% endif %}
+"""
+
+    template = """
+<a1 href="{% url 'movie:collection' slug=collection.slug %}" dj-if="is_collection">
+{{ name }}
+</a1>
+<a2 href="{% url 'movie:upcoming' %}" dj-elif="name == 'Upcoming'">
+{{ name }}
+</a2>
+
+<a4 href="{% url 'movie:collection' slug=collection.slug %}" dj-if="is_collection">
+{{ name }}
+</a4>
+<a5 href="{% url 'movie:upcoming' %}" dj-elif="name == 'Upcoming'">
+{{ name }}
+</a5>
+"""
+
+    actual = replace_django_template_tags(template)
+
+    assert actual == expected
+
+
+def test_elif_with_no_if():
+    template = """
+<a2 href="{% url 'movie:upcoming' %}" dj-elif="name == 'Upcoming'">
+{{ name }}
+</a2>
+"""
+
+    with pytest.raises(AssertionError) as e:
+        replace_django_template_tags(template)
+
+    assert e.exconly() == "AssertionError: Invalid use of dj-elif outside of a conditional block"
+
+
+def test_else_with_no_if():
+    template = """
+<a2 href="{% url 'movie:upcoming' %}" dj-else>
+{{ name }}
+</a2>
+"""
+
+    with pytest.raises(AssertionError) as e:
+        replace_django_template_tags(template)
+
+    assert e.exconly() == "AssertionError: Invalid use of dj-else outside of a conditional block"
+
+
+def test_extra_else():
+    template = """
+<a1 href="{% url 'movie:upcoming' %}" dj-id="True">
+{{ name }}
+</a1>
+<a2 href="{% url 'movie:upcoming' %}" dj-else>
+{{ name }}
+</a2>
+
+<a3 href="{% url 'movie:upcoming' %}" dj-else>
+{{ name }}
+</a3>
+"""
+
+    with pytest.raises(AssertionError) as e:
+        replace_django_template_tags(template)
+
+    assert e.exconly() == "AssertionError: Invalid use of dj-else outside of a conditional block"
+
+
+def test_get_end_of_attribute_value():
+    assert get_end_of_attribute_value('"hello"', 0) == ("hello", 7)
+    assert get_end_of_attribute_value('dj-if="hello"', 6) == ("hello", 13)
+    assert get_end_of_attribute_value("dj-if='hello'", 6) == ("hello", 13)
+    assert get_end_of_attribute_value("dj-if=hello", 6) == ("hello", 11)
+    assert get_end_of_attribute_value("dj-if=hello there", 6) == ("hello", 11)
+    assert get_end_of_attribute_value("dj-if=hello.there", 6) == ("hello.there", 17)
+    assert get_end_of_attribute_value("dj-if=hello><span></span>", 6) == ("hello", 11)
+
+
+def test_get_previous_element_tag():
+    assert get_previous_element_tag("<div dj-if='hello'>test</div>", 4) == ("div", 0)
+    assert get_previous_element_tag("<span dj-if=hello>test</div>", 5) == ("span", 0)
+    assert get_previous_element_tag("<p dj-if=hello there>test</div>", 2) == ("p", 0)
+    assert get_previous_element_tag("<div dj-if=hello.there>test</div>", 4) == ("div", 0)
+    assert get_previous_element_tag("<div><div dj-if=hello.there>test</div></div>", 10) == ("div", 5)
+
+
+def test_end_of_tag_index():
+    assert end_of_tag_index("<div dj-if='hello'>test</div>", 4, "div") == 29
+    assert end_of_tag_index("<div dj-if='hello'><div>test</div></div>", 4, "div") == 40
+    assert end_of_tag_index("<div dj-if='hello'><div>test</div></div>", 20, "div") == 34
+    assert end_of_tag_index("<div dj-if='hello'><span>test</span></div>", 20, "div") == 42
+
+    expected = 61
+    html = """
+<div dj-if='hello'>
+    <div>
+        test
+    </div>
+</div><div><p>hello</p></div>"""
+    actual = end_of_tag_index(html, 4, "div")
+    assert actual == expected
+
+    assert end_of_tag_index("<img dj-if='hello' />", 4, "img") == 21
+    assert end_of_tag_index("<img dj-if='hello'>", 4, "img") == 19
