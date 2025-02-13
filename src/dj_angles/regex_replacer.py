@@ -105,32 +105,32 @@ def get_attribute_replacements(html: str) -> list[tuple[str, str]]:
     """
 
     replacements = []
+    initial_attribute_regex = get_setting("initial_attribute_regex", default=r"(dj-)")
 
-    for match in re.finditer(r"\s((dj-if|dj-elif)=|dj-else)", html):
+    for match in re.finditer(
+        rf"\s(({initial_attribute_regex}if|{initial_attribute_regex}elif)=|{initial_attribute_regex}else)", html
+    ):
+        original_html = html
+        dj_attribute = (match.groups()[1] or match.groups()[0]).strip()
+
         start_idx = match.start()
         value_start_idx = match.end()
 
-        original_html = html
-        dj_attribute = (match.groups()[-1] or match.groups()[0]).strip()
-
         (value, end_idx) = get_end_of_attribute_value(html, value_start_idx)
-
         new_html = html[:start_idx] + html[end_idx:]
-
         (tag_name, tag_idx) = get_previous_element_tag(new_html, start_idx)
-
         end_of_tag_idx = end_of_tag_index(new_html, tag_idx + 1, tag_name)
 
         conditional_start_tag = ""
         condition_end_tag = ""
 
-        if dj_attribute == "dj-if":
+        if re.match(f"{initial_attribute_regex}if", dj_attribute):
             conditional_start_tag = f"{{% if {value} %}}"
             condition_end_tag = "{% endif %}"
-        elif dj_attribute == "dj-elif":
+        elif re.match(f"{initial_attribute_regex}elif", dj_attribute):
             conditional_start_tag = f"{{% elif {value} %}}"
             condition_end_tag = "{% endif %}"
-        elif dj_attribute == "dj-else":
+        elif re.match(f"{initial_attribute_regex}else", dj_attribute):
             conditional_start_tag = "{% else %}"
             condition_end_tag = "{% endif %}"
         else:

@@ -386,6 +386,28 @@ def test_if_true():
     assert actual == expected
 
 
+def test_if_true_initial_attribute_regex(settings):
+    settings.ANGLES["initial_attribute_regex"] = r"(:)"
+
+    expected = "{% if True %}<span>test</span>{% endif %}"
+
+    template = '<span :if="True">test</span>'
+    actual = convert_template(template)
+
+    assert actual == expected
+
+
+def test_if_true_initial_attribute_regex_empty(settings):
+    settings.ANGLES["initial_attribute_regex"] = r"(?=\w)"
+
+    expected = "{% if True %}<span>test</span>{% endif %}"
+
+    template = '<span if="True">test</span>'
+    actual = convert_template(template)
+
+    assert actual == expected
+
+
 def test_if_with_newlines():
     expected = """
 <div class="pt-0{% if True %} pb-0{% endif %}">
