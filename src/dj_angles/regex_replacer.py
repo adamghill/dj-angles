@@ -4,7 +4,7 @@ from collections import deque
 from minestrone import HTML
 
 from dj_angles.exceptions import InvalidEndTagError
-from dj_angles.html import end_of_tag_index, get_end_of_attribute_value, get_previous_element_tag
+from dj_angles.htmls import end_of_tag_index, get_end_of_attribute_value, get_previous_element_tag
 from dj_angles.mappers.mapper import get_tag_map
 from dj_angles.settings import get_setting, get_tag_regex
 from dj_angles.strings import replace_newlines
@@ -104,7 +104,7 @@ def get_attribute_replacements(html: str) -> list[tuple[str, str]]:
         and the second item is the replacement string, e.g. "{% if True %}<div></div>{% endif %}".
     """
 
-    replacements = []
+    replacements: list[tuple[str, str]] = []
     initial_attribute_regex = get_setting("initial_attribute_regex", default=r"(dj-)")
 
     for match in re.finditer(

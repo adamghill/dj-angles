@@ -1,3 +1,5 @@
+# from typing import tuple
+
 # List of void elements from: https://www.thoughtco.com/html-singleton-tags-3468620
 VOID_ELEMENTS = {
     "area",
@@ -19,7 +21,7 @@ VOID_ELEMENTS = {
 }
 
 
-def get_end_of_attribute_value(html: str, start_idx: int) -> (str, int):
+def get_end_of_attribute_value(html: str, start_idx: int) -> tuple[str, int]:
     starts_with_double_quote = False
     starts_with_single_quote = False
     idx = 0
@@ -51,7 +53,7 @@ def get_end_of_attribute_value(html: str, start_idx: int) -> (str, int):
     return (value, start_idx + idx)
 
 
-def get_previous_element_tag(html: str, start_idx: int) -> (str, int):
+def get_previous_element_tag(html: str, start_idx: int) -> tuple[str, int]:
     start_tag_idx = -1
     tag_name = ""
 
@@ -72,7 +74,7 @@ def find_character(html: str, start_idx: int, character: str, *, reverse: bool =
     inside_single_quote = False
     inside_double_quote = False
 
-    indexes = []
+    indexes: range
 
     if reverse:
         indexes = range(start_idx - 1, -1, -1)
