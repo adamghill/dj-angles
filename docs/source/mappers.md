@@ -41,7 +41,7 @@ ANGLES = {
 <dj-component 'partial.html' />
 ```
 
-Would compile to the following Django template.
+Would transpile to the following Django template.
 
 ```text
 {% include 'partial.html' %}
@@ -49,7 +49,7 @@ Would compile to the following Django template.
 
 ### Callable value
 
-When the dictionary value is a callable, the string result is dictated by the output of the mapper function. The callable has one argument, `Tag`, which encapsulates information about the matched tag that can be useful in building custom functionality, e.g. `tag_name`, `is_end`, `is_self_closing`, etc.
+When the dictionary value is a callable, the result is dictated by the output of the mapper function. The callable has one argument, `Tag`, which encapsulates information about the matched tag that can be useful in building custom functionality, e.g. `tag_name`, `is_end`, `is_self_closing`, etc.
 
 ```python
 # settings.py
@@ -76,7 +76,7 @@ ANGLES = {
 <dj-hello 'Goodbye!' />
 ```
 
-Would compile to the following Django template.
+Would transpile to the following Django template.
 
 ```html
 This is some text.

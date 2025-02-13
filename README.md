@@ -13,12 +13,11 @@
 ## ⭐ Features
 
 - Use HTML-like elements in Django templates, e.g. `<dj-partial />` instead of `{% include 'partial.html' %}`
-- Wraps `include` templates in a custom element for easier debugging and targeted CSS styling
 - Can be sprinkled in as needed to enhance existing Django functionality
 - Since it looks like HTML, syntax highlighting mostly "just works"
+- Wraps included templates in a custom element for easier debugging and targeted CSS styling
+- Support for making components with the [Shadow DOM](https://dj-angles.adamghill.com/components/#CSS-scoping)
 - Integrates with Django component libraries like [django-bird](https://django-bird.readthedocs.io)
-- Lets you excitedly tell your friends how neat the Shadow DOM is
-- Pretend like you are writing React components, but without dealing with a JavaScript build process
 
 ## 💥 Example
 
@@ -36,6 +35,16 @@
 
 <dj-block name='content'>  <!-- {% block content %} -->
   <dj-include template='partial.html' />  <!-- {% include 'partial.html' %} -->
+
+  <div dj-if="True">  <!-- {% if True %}<div> -->
+    If
+  </div>
+  <div dj-elif="False">  <!-- {% elif False %}<div> -->
+    Elif
+  </div>
+  <div dj-else>  <!-- {% else %}<div> -->
+    Else
+  </div>  <!-- </div>{% endif %} -->
 
   <dj-verbatim>  <!-- {% verbatim %} -->
     This is verbatim: {% include %}
@@ -74,10 +83,22 @@
 
 To learn how to install and use `dj-angles` see the complete documentation at https://dj-angles.adamghill.com/.
 
+## 🧩 Django Component Libraries
+
+There are a growing number of component libraries for Django. A non-complete list:
+
+- [Slippers](https://mitchel.me/slippers/): Build reusable components in Django without writing a single line of Python.
+- [django-components](https://django-components.github.io/django-components/): Create simple reusable template components in Django.
+- [django-template-partials](https://github.com/carltongibson/django-template-partials): Reusable named inline partials for the Django Template Language.
+- [django-bird](https://django-bird.readthedocs.io): High-flying components for perfectionists with deadlines.
+- [django-cotton](https://django-cotton.com): Enabling Modern UI Composition in Django.
+- [django-viewcomponent](https://github.com/rails-inspire-django/django-viewcomponent): Build reusable components in Django, inspired by Rails ViewComponent.
+- [django-unicorn](https://www.django-unicorn.com): The magical reactive component framework for Django ✨.
+
 ## ✨ Inspiration
 
 - [Web Components](https://web.dev/learn/html/template)
-- [Cotton](https://django-cotton.com) by [wrabit](https://github.com/wrabit)
+- [django-cotton](https://django-cotton.com) by [wrabit](https://github.com/wrabit)
 
 ## 🙌 Contributors
 

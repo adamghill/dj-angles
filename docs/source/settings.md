@@ -4,7 +4,7 @@ Settings can be configured via an `ANGLES` dictionary in `settings.py`.
 
 ## `default_mapper`
 
-A default mapper. Useful for tighter integration with other component libraries. `String` which defaults to `"dj_angles.mappers.angles.default_mapper"`.
+A default mapper. Useful for tighter integration with other component libraries. `String` which is an import path. Defaults to `"dj_angles.mappers.angles.default_mapper"`.
 
 Example settings:
 
@@ -22,7 +22,7 @@ ANGLES = {
 <dj-partial />
 ```
 
-Would be translated to the following.
+Would be transpiled to the following.
 
 ```html
 <dj-partial>{% include 'partial.html' %}</dj-partial>
@@ -34,7 +34,7 @@ Would be translated to the following.
 <dj-partial />
 ```
 
-Would be translated to the following.
+Would be transpiled to the following.
 
 ```html
 <dj-partial>{% bird partial / %}</dj-partial>

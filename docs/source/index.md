@@ -3,11 +3,11 @@
 ## ⭐ Features
 
 - Use HTML-like elements in Django templates, e.g. `<dj-partial />` instead of `{% include 'partial.html' %}`
-- Can be sprinkled in as needed, but does not remove existing Django functionality
-- Pretend like you are writing React components, but without dealing with JavaScript at all
-- Lets you excitedly tell your friends how neat the Shadow DOM is
+- Can be sprinkled in as needed to enhance existing Django functionality
 - Since it looks like HTML, syntax highlighting mostly "just works"
 - Wraps included templates in a custom element for easier debugging and targeted CSS styling
+- Support for making components with the [Shadow DOM](components.md#css-scoping)
+- Integrates with Django component libraries like [django-bird](https://django-bird.readthedocs.io)
 
 ## 💥 Example
 
@@ -25,6 +25,16 @@
 
 <dj-block name='content'>  <!-- {% block content %} -->
   <dj-partial />  <!-- {% include 'partial.html' %} -->
+
+  <div dj-if="True">  <!-- {% if True %}<div> -->
+    If
+  </div>
+  <div dj-elif="False">  <!-- {% elif False %}<div> -->
+    Elif
+  </div>
+  <div dj-else>  <!-- {% else %}<div> -->
+    Else
+  </div>  <!-- </div>{% endif %} -->
 
   <dj-include template='partial.html' />  <!-- {% include 'partial.html' %} -->
 
@@ -65,7 +75,8 @@
 
 ## ✨ Inspiration
 
-I have been interested in Django components for a long time (see [django-unicorn](https://www.django-unicorn.com), [dlitejs](https://dlitejs.com), etc), but had never thought of using HTML tags in Django templates until I looked at [Cotton](https://django-cotton.com) by [wrabit](https://github.com/wrabit). `dj-angles` takes that basic idea further than just components to encompass even more of the Django template tags.
+- [Web Components](https://web.dev/learn/html/template)
+- [Cotton](https://django-cotton.com) by [wrabit](https://github.com/wrabit)
 
 ```{toctree}
 :maxdepth: 2

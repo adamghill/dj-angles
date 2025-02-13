@@ -1,5 +1,7 @@
 # Attributes
 
+The `dj-angles` approach is shown first and then the equivalent Django Template Language is second.
+
 ## [`if`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#if)
 
 ```html
