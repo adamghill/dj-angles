@@ -8,7 +8,11 @@
 
 ## Installation
 
-Using the auto settings in `django-bird` will unfortunately create a conflict with the two packages, so the settings must done manually. Here is an example, but see https://django-bird.readthedocs.io/en/latest/configuration.html#manual-setup for more details.
+Using the auto settings `django-bird` should not conflict with the two packages. If you would like to configure the library manually here is an example. See [https://django-bird.readthedocs.io/en/latest/configuration.html#manual-setup](https://django-bird.readthedocs.io/en/latest/configuration.html#manual-setup) for more details.
+
+```{note}
+`django-bird` deprecated its custom template loader in [v0.13.0](https://github.com/joshuadavidthomas/django-bird/releases/tag/v0.13.0), so if you are on an older version you will need to update to use the example config below.
+```
 
 ```python
 # settings.py
@@ -16,7 +20,7 @@ Using the auto settings in `django-bird` will unfortunately create a conflict wi
 
 DJANGO_BIRD = {
     "ENABLE_AUTO_CONFIG": False
-}  # this is required for `django-bird`
+}  # this is optional for `django-bird`
 
 TEMPLATES = [
     {
@@ -26,7 +30,7 @@ TEMPLATES = [
         ],
         "OPTIONS": {
             "builtins": [
-                "django_bird.templatetags.django_bird",  # this is not required, but is useful for `django-bird`
+                "django_bird.templatetags.django_bird",  # this is not required, but is useful for `django-bird` and is added by the library's auto settings
             ],
             "context_processors": [
                 "django.template.context_processors.debug",
@@ -38,8 +42,7 @@ TEMPLATES = [
                 (
                     "django.template.loaders.cached.Loader",
                     [
-                        "dj_angles.template_loader.Loader",  # this is required for to be first for `dj-angles`
-                        "django_bird.loader.BirdLoader",  # this is required for `django-bird`
+                        "dj_angles.template_loader.Loader",
                         "django.template.loaders.filesystem.Loader",
                         "django.template.loaders.app_directories.Loader",
                     ],
