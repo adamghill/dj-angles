@@ -3,7 +3,7 @@ from collections import namedtuple
 import pytest
 
 from dj_angles.mappers.mapper import clear_tag_map
-from dj_angles.regex_replacer import get_replacements
+from dj_angles.regex_replacer import get_tag_replacements
 
 # Structure to store parameterize data
 Params = namedtuple(
@@ -129,7 +129,7 @@ def test_typical(template_string, replacement_string):
     expected = [
         (template_string, replacement_string),
     ]
-    actual = get_replacements(template_string, raise_for_missing_start_tag=False)
+    actual = get_tag_replacements(template_string, raise_for_missing_start_tag=False)
 
     assert actual == expected
 
@@ -147,7 +147,7 @@ def test_no_extension(template_string, replacement_string):
     expected = [
         (template_string, replacement_string),
     ]
-    actual = get_replacements(template_string, raise_for_missing_start_tag=False)
+    actual = get_tag_replacements(template_string, raise_for_missing_start_tag=False)
 
     assert actual == expected
 
@@ -183,7 +183,7 @@ def test_initial_tag_regex(template_string, replacement_string, settings):
     expected = [
         (template_string, replacement_string),
     ]
-    actual = get_replacements(template_string, raise_for_missing_start_tag=False)
+    actual = get_tag_replacements(template_string, raise_for_missing_start_tag=False)
 
     assert actual == expected
 
@@ -207,7 +207,7 @@ def test_initial_tag_regex_for_react_style(template_string, replacement_string, 
     expected = [
         (template_string, replacement_string),
     ]
-    actual = get_replacements(template_string, raise_for_missing_start_tag=False)
+    actual = get_tag_replacements(template_string, raise_for_missing_start_tag=False)
 
     assert actual == expected
 
@@ -227,7 +227,7 @@ def test_lower_case_tag(template_string, replacement_string, settings):
     expected = [
         (template_string, replacement_string),
     ]
-    actual = get_replacements(template_string, raise_for_missing_start_tag=False)
+    actual = get_tag_replacements(template_string, raise_for_missing_start_tag=False)
 
     assert actual == expected
 
@@ -251,7 +251,7 @@ def test_kebab_case_tag(template_string, replacement_string, settings):
     expected = [
         (template_string, replacement_string),
     ]
-    actual = get_replacements(template_string, raise_for_missing_start_tag=False)
+    actual = get_tag_replacements(template_string, raise_for_missing_start_tag=False)
 
     assert actual == expected
 
@@ -277,7 +277,7 @@ def test_mappers_string(template_string, replacement_string, settings):
     expected = [
         (template_string, replacement_string),
     ]
-    actual = get_replacements(template_string, raise_for_missing_start_tag=False)
+    actual = get_tag_replacements(template_string, raise_for_missing_start_tag=False)
 
     assert actual == expected
 
@@ -301,7 +301,7 @@ def test_mappers_callable(template_string, replacement_string, settings):
     expected = [
         (template_string, replacement_string),
     ]
-    actual = get_replacements(template_string, raise_for_missing_start_tag=False)
+    actual = get_tag_replacements(template_string, raise_for_missing_start_tag=False)
 
     assert actual == expected
 
@@ -323,7 +323,7 @@ def test_image(template_string, replacement_string):
     expected = [
         (template_string, replacement_string),
     ]
-    actual = get_replacements(template_string, raise_for_missing_start_tag=False)
+    actual = get_tag_replacements(template_string, raise_for_missing_start_tag=False)
 
     assert actual == expected
 
@@ -341,7 +341,7 @@ def test_css(template_string, replacement_string):
     expected = [
         (template_string, replacement_string),
     ]
-    actual = get_replacements(template_string, raise_for_missing_start_tag=False)
+    actual = get_tag_replacements(template_string, raise_for_missing_start_tag=False)
 
     assert actual == expected
 
@@ -351,7 +351,7 @@ def test_no_prefix(settings):
     settings.ANGLES["initial_tag_regex"] = r"(?=\w)"
 
     expected = [("<block name='content'>", "{% block content %}")]
-    actual = get_replacements("<block name='content'>", raise_for_missing_start_tag=False)
+    actual = get_tag_replacements("<block name='content'>", raise_for_missing_start_tag=False)
 
     assert actual == expected
 
@@ -360,7 +360,7 @@ def test_no_prefix_with_default_mapper(settings):
     settings.ANGLES["initial_tag_regex"] = r"(?=\w)"
 
     expected = [("<partial />", "<dj-partial>{% include 'partial.html' %}</dj-partial>")]
-    actual = get_replacements("<partial />", raise_for_missing_start_tag=False)
+    actual = get_tag_replacements("<partial />", raise_for_missing_start_tag=False)
 
     assert actual == expected
 
@@ -370,7 +370,7 @@ def test_no_prefix_without_default_mapper(settings):
     settings.ANGLES["initial_tag_regex"] = r"(?=\w)"
 
     expected = []
-    actual = get_replacements("<partial />", raise_for_missing_start_tag=False)
+    actual = get_tag_replacements("<partial />", raise_for_missing_start_tag=False)
 
     assert actual == expected
 
@@ -380,6 +380,6 @@ def test_no_prefix_map_explicit_tags_only(settings):
     settings.ANGLES["initial_tag_regex"] = r"(?=\w)"
 
     expected = []
-    actual = get_replacements("<partial />", raise_for_missing_start_tag=False)
+    actual = get_tag_replacements("<partial />", raise_for_missing_start_tag=False)
 
     assert actual == expected

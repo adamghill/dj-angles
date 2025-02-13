@@ -32,12 +32,13 @@ TAG_NAME_TO_DJANGO_TEMPLATE_TAG_MAP: dict[Optional[str], Union[Callable, str]] =
 }
 """Default mappings for tag names to Django template tags."""
 
-# tag_map: Optional[dict[Optional[str], Union[Callable, str]]] = None
 tag_map: Optional["TagMap"] = None
 
 
 class TagMap(UserDict):
     def __init__(self) -> None:
+        super().__init__()
+
         self.data: dict[Optional[str], Union[Callable, str]] = TAG_NAME_TO_DJANGO_TEMPLATE_TAG_MAP.copy()
 
         # Add bird if installed
@@ -82,7 +83,7 @@ class TagMap(UserDict):
                     pass
 
     def add_module_mapper(self, module: str, tag_name: str, mapper: Union[str, Callable]) -> None:
-        """Add module mappers depending on whether it is installed or not."""
+        """Add module mappers depending on whether the module is installed or not."""
 
         if is_module_available(module):
             self.data.update({tag_name: mapper})

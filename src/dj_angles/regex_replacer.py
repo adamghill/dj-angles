@@ -4,14 +4,15 @@ from collections import deque
 from minestrone import HTML
 
 from dj_angles.exceptions import InvalidEndTagError
+from dj_angles.html import end_of_tag_index, get_end_of_attribute_value, get_previous_element_tag
 from dj_angles.mappers.mapper import get_tag_map
 from dj_angles.settings import get_setting, get_tag_regex
 from dj_angles.strings import replace_newlines
 from dj_angles.tags import Tag
 
 
-def get_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> list[tuple[str, str]]:
-    """Get a list of replacements (tuples that consists of 2 strings) based on the template HTML.
+def get_tag_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> list[tuple[str, str]]:
+    """Get a list of tag replacements (tuples that consists of 2 strings) based on the template HTML.
 
     Args:
         param html: Template HTML.
@@ -92,27 +93,18 @@ def get_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> 
     return replacements
 
 
-def replace_django_template_tags(html: str) -> str:
-    """Gets a list of replacements based on template HTML, replaces the necessary strings, and returns the new string.
+def get_attribute_replacements(html: str) -> list[tuple[str, str]]:
+    """Get a list of attribute replacements (tuples that consists of 2 strings) based on the template HTML.
 
     Args:
         param html: Template HTML.
 
     Returns:
-        The converted template HTML.
+        A list of tuples where the first item in the tuple is the existing element, e.g. "<div dj-if="True"></div>"
+        and the second item is the replacement string, e.g. "{% if True %}<div></div>{% endif %}".
     """
 
-    replacements = get_replacements(html=html)
-
-    for r in replacements:
-        html = html.replace(
-            r[0],
-            r[1],
-            1,
-        )
-
-    # Handle dj-attributes
-    dj_attribute_replacements = []
+    replacements = []
 
     for match in re.finditer(r"\s((dj-if|dj-elif)=|dj-else)", html):
         start_idx = match.start()
@@ -150,22 +142,22 @@ def replace_django_template_tags(html: str) -> str:
         original_internal_html = original_html[tag_idx:original_end_of_tag_idx]
 
         if dj_attribute in ("dj-elif", "dj-else"):
-            if not dj_attribute_replacements:
+            if not replacements:
                 raise AssertionError(f"Invalid use of {dj_attribute} outside of a conditional block")
 
-            last_replacement = dj_attribute_replacements.pop(-1)
+            last_replacement = replacements.pop(-1)
             original_snippet = last_replacement[0]
             new_snippet = last_replacement[1]
 
             if dj_attribute == "dj-else":
                 if not ("dj-if" in original_snippet or "dj-elif" in original_snippet):
-                    raise AssertionError(f"Invalid use of dj-else after: {original_snippet}")
+                    raise AssertionError("Invalid use of dj-else")
             elif dj_attribute == "dj-elif":
                 if "dj-if" not in original_snippet:
-                    raise AssertionError(f"Invalid use of dj-elif after: {original_snippet}")
+                    raise AssertionError("Invalid use of dj-elif")
 
             if new_snippet.endswith("{% endif %}"):
-                dj_attribute_replacements.append(
+                replacements.append(
                     (
                         original_snippet,
                         new_snippet[:-11],  # remove the previous {% endif %}
@@ -174,9 +166,24 @@ def replace_django_template_tags(html: str) -> str:
 
         replacement_html = f"{conditional_start_tag}{internal_html}{condition_end_tag}"
 
-        dj_attribute_replacements.append((original_internal_html, replacement_html))
+        replacements.append((original_internal_html, replacement_html))
 
-    for r in dj_attribute_replacements:
+    return replacements
+
+
+def convert_template(html: str) -> str:
+    """Gets a list of replacements based on template HTML, replaces the necessary strings, and returns the new string.
+
+    Args:
+        param html: Template HTML.
+
+    Returns:
+        The converted template HTML.
+    """
+
+    replacements = get_tag_replacements(html=html) + get_attribute_replacements(html=html)
+
+    for r in replacements:
         html = html.replace(
             r[0],
             r[1],
@@ -184,126 +191,3 @@ def replace_django_template_tags(html: str) -> str:
         )
 
     return html
-
-
-def get_end_of_attribute_value(html: str, start_idx: int) -> (str, int):
-    starts_with_double_quote = False
-    starts_with_single_quote = False
-    idx = 0
-    value = ""
-
-    for c in html[start_idx:]:
-        if idx == 0 and c == "'":
-            starts_with_single_quote = True
-            idx += 1
-            continue
-        elif idx == 0 and c == '"':
-            starts_with_double_quote = True
-            idx += 1
-            continue
-        elif starts_with_single_quote and c == "'":
-            idx += 1
-            break
-        elif starts_with_double_quote and c == '"':
-            idx += 1
-            break
-        elif not starts_with_double_quote and not starts_with_single_quote and c == " ":
-            break
-        elif not starts_with_double_quote and not starts_with_single_quote and c == ">":
-            break
-
-        value += c
-        idx += 1
-
-    return (value, start_idx + idx)
-
-
-def get_previous_element_tag(html: str, start_idx: int) -> (str, int):
-    start_tag_idx = -1
-    tag_name = ""
-    inside_single_quote = False
-    inside_double_quote = False
-
-    # Start searching backwards from the start_idx, looking for the beginning of a tag
-    for i in range(start_idx - 1, -1, -1):
-        c = html[i]
-
-        # Toggle the quote flags when encountering quotes
-        if c == "'" and not inside_double_quote:
-            inside_single_quote = not inside_single_quote
-        elif c == '"' and not inside_single_quote:
-            inside_double_quote = not inside_double_quote
-
-        # If we find a '<' and we're not inside quotes, we've found the start of a tag
-        if c == "<" and not inside_single_quote and not inside_double_quote:
-            start_tag_idx = i
-            break
-
-    # If we found the start of the tag, extract the tag name
-    if start_tag_idx != -1:
-        for c in html[start_tag_idx + 1 : start_idx]:  # Start after '<'
-            if c in (" ", ">"):
-                break
-
-            tag_name += c
-
-    return (tag_name, start_tag_idx)
-
-
-# List of void elements from: https://www.thoughtco.com/html-singleton-tags-3468620
-VOID_ELEMENTS = {
-    "area",
-    "base",
-    "br",
-    "col",
-    "command",
-    "embed",
-    "hr",
-    "img",
-    "input",
-    "keygen",
-    "link",
-    "meta",
-    "param",
-    "source",
-    "track",
-    "wbr",
-}
-
-
-def end_of_tag_index(html: str, start_idx: int, tag_name: str) -> int:
-    if tag_name in VOID_ELEMENTS:
-        idx = html.find("/>", start_idx)
-
-        if idx > -1:
-            return idx + 2
-
-        # TOOD: Handle > in attribute strings
-        idx = html.find(">", start_idx)
-
-        if idx > -1:
-            return idx + 1
-
-    open_tag = f"<{tag_name}"
-    close_tag = f"</{tag_name}>"
-
-    depth = 1
-    idx = start_idx
-
-    while idx < len(html):
-        # Check for opening tag
-        if html.startswith(open_tag, idx):
-            depth += 1
-            idx += len(open_tag)
-            continue
-
-        # Check for closing tag
-        if html.startswith(close_tag, idx):
-            depth -= 1
-
-            if depth == 0:
-                return idx + len(close_tag)
-
-        idx += 1
-
-    return -1

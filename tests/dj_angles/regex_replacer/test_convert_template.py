@@ -1,12 +1,7 @@
 import pytest
 
 from dj_angles.exceptions import InvalidEndTagError
-from dj_angles.regex_replacer import (
-    end_of_tag_index,
-    get_end_of_attribute_value,
-    get_previous_element_tag,
-    replace_django_template_tags,
-)
+from dj_angles.regex_replacer import convert_template
 
 
 def test_typical():
@@ -41,7 +36,7 @@ def test_typical():
 
   <dj-debug />
 </dj-block content>"""
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -54,7 +49,7 @@ def test_block():
     template = """
 <dj-block name="content">
 </dj-block name="content">"""
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -63,7 +58,7 @@ def test_block_default():
     expected = "{% block content %}default{% endblock content %}"
 
     template = '<dj-block name="content">default</dj-block>'
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -74,7 +69,7 @@ def test_block_different_name():
 </dj-block  name="content2">"""
 
     with pytest.raises(InvalidEndTagError):
-        replace_django_template_tags(template)
+        convert_template(template)
 
 
 def test_block_missing_end_name():
@@ -85,7 +80,7 @@ def test_block_missing_end_name():
     template = """
 <dj-block name="content">
 </dj-block>"""
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -94,7 +89,7 @@ def test_short_include():
     expected = "<dj-partial>{% include 'partial.html' %}</dj-partial>"
 
     template = "<dj-partial></dj-partial>"
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -103,7 +98,7 @@ def test_short_include_self_closing():
     expected = "<dj-partial>{% include 'partial.html' %}</dj-partial>"
 
     template = "<dj-partial />"
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -112,7 +107,7 @@ def test_short_include_shadow_no_end_tag_shadow():
     expected = "<dj-partial><template shadowrootmode='open'>{% include 'partial.html' %}</template></dj-partial>"
 
     template = "<dj-partial!></dj-partial>"
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -121,7 +116,7 @@ def test_short_include_shadow():
     expected = "<dj-partial><template shadowrootmode='open'>{% include 'partial.html' %}</template></dj-partial>"
 
     template = "<dj-partial!></dj-partial!>"
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -130,7 +125,7 @@ def test_short_include_self_closing_shadow_bang():
     expected = "<dj-partial><template shadowrootmode='open'>{% include 'partial.html' %}</template></dj-partial>"
 
     template = "<dj-partial! />"
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -139,7 +134,7 @@ def test_short_include_self_closing_shadow():
     expected = "<dj-partial><template shadowrootmode='open'>{% include 'partial.html' %}</template></dj-partial>"
 
     template = "<dj-include template='partial.html' shadow />"
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -148,7 +143,7 @@ def test_include_no_extension():
     expected = "<dj-partial>{% include 'partial.html' %}</dj-partial>"
 
     template = "<dj-include 'partial'></dj-include>"
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -157,7 +152,7 @@ def test_include_no_extension_self_closing():
     expected = "<dj-partial>{% include 'partial.html' %}</dj-partial>"
 
     template = "<dj-include 'partial' />"
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -166,7 +161,7 @@ def test_include_extension():
     expected = "<dj-partial>{% include 'partial.html' %}</dj-partial>"
 
     template = "<dj-include 'partial.html'></dj-include>"
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -175,7 +170,7 @@ def test_include_extension_self_closing():
     expected = "<dj-partial>{% include 'partial.html' %}</dj-partial>"
 
     template = "<dj-include 'partial.html' />"
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -184,7 +179,7 @@ def test_include_template_no_extension():
     expected = "<dj-partial>{% include 'partial.html' %}</dj-partial>"
 
     template = "<dj-include template='partial'></dj-include>"
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -193,7 +188,7 @@ def test_include_template_no_extension_self_closing():
     expected = "<dj-partial>{% include 'partial.html' %}</dj-partial>"
 
     template = "<dj-include template='partial' />"
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -202,7 +197,7 @@ def test_include_template_extension():
     expected = "<dj-partial>{% include 'partial.html' %}</dj-partial>"
 
     template = "<dj-include template='partial.html'></dj-include>"
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -211,7 +206,7 @@ def test_include_template_extension_self_closing():
     expected = "<dj-partial>{% include 'partial.html' %}</dj-partial>"
 
     template = "<dj-include template='partial.html' />"
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -221,7 +216,7 @@ def test_include_arguments_with_newlines():
 
     template = """<dj-partial with blob=True
 stuff=True></dj-partial>"""
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -231,7 +226,7 @@ def test_include_arguments_with_newlines_and_extra_spaces():
 
     template = """<dj-partial with blob=True
     stuff=True></dj-partial>"""
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -241,14 +236,14 @@ def test_include_arguments_with_newlines_and_tab():
 
     template = """<dj-partial with blob=True
 	stuff=True></dj-partial>"""
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
 
 def test_invalid_tag():
     with pytest.raises(InvalidEndTagError) as e:
-        replace_django_template_tags("""
+        convert_template("""
 <dj-block content>
 <input>
 
@@ -262,7 +257,7 @@ def test_invalid_tag():
 
 def test_extends():
     expected = "{% extends 'base.html' %}"
-    actual = replace_django_template_tags("<dj-extends 'base.html' />")
+    actual = convert_template("<dj-extends 'base.html' />")
 
     assert actual == expected
 
@@ -295,7 +290,7 @@ def test_slot(settings):
 <span slot="test2">new slot2</span>
 </dj-include>
 """
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -322,7 +317,7 @@ def test_slot_missing_template(settings):
 <span slot="test2">This is the new slot.</span>
 </dj-include>
 """
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -335,7 +330,7 @@ def test_short_include_underscore():
     expected = "<dj-underscore>{% include '_underscore.html' %}</dj-underscore>"
 
     template = "<dj-underscore></dj-underscore>"
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -348,7 +343,7 @@ def test_short_include_underscore_in_subdirectory():
     expected = "<dj-components-underscore>{% include 'components/_underscore.html' %}</dj-components-underscore>"
 
     template = "<dj-components/underscore></dj-components/underscore>"
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -358,7 +353,7 @@ def test_with():
 </dj-www-components-include>'
 
     template = '<dj-include src="www/components/include.html" with request=request only></dj-include>'
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -368,30 +363,30 @@ def test_with_only():
 </dj-www-components-include>'
 
     template = '<dj-include src="www/components/include.html" with request=request></dj-include>'
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
+
+    assert actual == expected
+
+
+def test_if_true_internal_tag():
+    expected = "<div>{% if True %}<span>test</span>{% endif %}</div>"
+
+    template = '<div><span dj-if="True">test</span></div>'
+    actual = convert_template(template)
 
     assert actual == expected
 
 
 def test_if_true():
-    expected = "<div>{% if True %}<span>test</span>{% endif %}</div>"
-
-    template = '<div><span dj-if="True">test</span></div>'
-    actual = replace_django_template_tags(template)
-
-    assert actual == expected
-
-
-def test_if_true_2():
     expected = "{% if True %}<span>test</span>{% endif %}"
 
     template = '<span dj-if="True">test</span>'
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
 
-def test_if_blob():
+def test_if_with_newlines():
     expected = """
 <div class="pt-0{% if True %} pb-0{% endif %}">
     {% if True %}<span>
@@ -407,7 +402,7 @@ def test_if_blob():
     </span>
 </div>
 """
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -416,7 +411,7 @@ def test_if_django_variable():
     expected = "<div>{% if some_variable %}<span>test</span>{% endif %}</div>"
 
     template = '<div><span dj-if="some_variable">test</span></div>'
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -424,8 +419,8 @@ def test_if_django_variable():
 def test_if_false():
     expected = "<div>{% if False %}<span>test</span>{% endif %}</div>"
 
-    template = '<div><span dj-if="False">test</span></div>'
-    actual = replace_django_template_tags(template)
+    template = "<div><span dj-if='False'>test</span></div>"
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -455,7 +450,7 @@ def test_elif_else():
     </a>
 </h1>"""
 
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -481,7 +476,7 @@ def test_multiple_ifs():
 </a4>
 """
 
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -519,7 +514,57 @@ def test_multiple_elifs():
 </a5>
 """
 
-    actual = replace_django_template_tags(template)
+    actual = convert_template(template)
+
+    assert actual == expected
+
+
+def test_void_element():
+    expected = '{% if is_collection %}<input type="checkbox" checked>{% endif %}'
+
+    template = '<input type="checkbox" checked dj-if="is_collection">'
+
+    actual = convert_template(template)
+
+    assert actual == expected
+
+
+def test_self_closing_element():
+    expected = '{% if is_collection %}<input type="checkbox" checked />{% endif %}'
+
+    template = '<input type="checkbox" checked dj-if="is_collection" />'
+
+    actual = convert_template(template)
+
+    assert actual == expected
+
+
+def test_if_self_closing_with_right_angle_bracket():
+    expected = '{% if is_collection %}<input type="checkbox" class="oh>no" />{% endif %}'
+
+    template = '<input type="checkbox" class="oh>no" dj-if="is_collection" />'
+
+    actual = convert_template(template)
+
+    assert actual == expected
+
+
+def test_if_void_with_right_angle_bracket():
+    expected = '{% if is_collection %}<input type="checkbox" class="oh>no">{% endif %}'
+
+    template = '<input type="checkbox" class="oh>no" dj-if="is_collection">'
+
+    actual = convert_template(template)
+
+    assert actual == expected
+
+
+def test_if_with_right_angle_bracket():
+    expected = '{% if is_collection %}<div class="oh>no"><span>cool</span></div>{% endif %}'
+
+    template = '<div dj-if="is_collection" class="oh>no"><span>cool</span></div>'
+
+    actual = convert_template(template)
 
     assert actual == expected
 
@@ -532,7 +577,7 @@ def test_elif_with_no_if():
 """
 
     with pytest.raises(AssertionError) as e:
-        replace_django_template_tags(template)
+        convert_template(template)
 
     assert e.exconly() == "AssertionError: Invalid use of dj-elif outside of a conditional block"
 
@@ -545,64 +590,25 @@ def test_else_with_no_if():
 """
 
     with pytest.raises(AssertionError) as e:
-        replace_django_template_tags(template)
+        convert_template(template)
 
     assert e.exconly() == "AssertionError: Invalid use of dj-else outside of a conditional block"
 
 
 def test_extra_else():
     template = """
-<a1 href="{% url 'movie:upcoming' %}" dj-id="True">
+<a1 href="{% url 'movie:upcoming' %}" dj-if="True">
 {{ name }}
 </a1>
 <a2 href="{% url 'movie:upcoming' %}" dj-else>
 {{ name }}
 </a2>
-
 <a3 href="{% url 'movie:upcoming' %}" dj-else>
 {{ name }}
 </a3>
 """
 
     with pytest.raises(AssertionError) as e:
-        replace_django_template_tags(template)
+        convert_template(template)
 
-    assert e.exconly() == "AssertionError: Invalid use of dj-else outside of a conditional block"
-
-
-def test_get_end_of_attribute_value():
-    assert get_end_of_attribute_value('"hello"', 0) == ("hello", 7)
-    assert get_end_of_attribute_value('dj-if="hello"', 6) == ("hello", 13)
-    assert get_end_of_attribute_value("dj-if='hello'", 6) == ("hello", 13)
-    assert get_end_of_attribute_value("dj-if=hello", 6) == ("hello", 11)
-    assert get_end_of_attribute_value("dj-if=hello there", 6) == ("hello", 11)
-    assert get_end_of_attribute_value("dj-if=hello.there", 6) == ("hello.there", 17)
-    assert get_end_of_attribute_value("dj-if=hello><span></span>", 6) == ("hello", 11)
-
-
-def test_get_previous_element_tag():
-    assert get_previous_element_tag("<div dj-if='hello'>test</div>", 4) == ("div", 0)
-    assert get_previous_element_tag("<span dj-if=hello>test</div>", 5) == ("span", 0)
-    assert get_previous_element_tag("<p dj-if=hello there>test</div>", 2) == ("p", 0)
-    assert get_previous_element_tag("<div dj-if=hello.there>test</div>", 4) == ("div", 0)
-    assert get_previous_element_tag("<div><div dj-if=hello.there>test</div></div>", 10) == ("div", 5)
-
-
-def test_end_of_tag_index():
-    assert end_of_tag_index("<div dj-if='hello'>test</div>", 4, "div") == 29
-    assert end_of_tag_index("<div dj-if='hello'><div>test</div></div>", 4, "div") == 40
-    assert end_of_tag_index("<div dj-if='hello'><div>test</div></div>", 20, "div") == 34
-    assert end_of_tag_index("<div dj-if='hello'><span>test</span></div>", 20, "div") == 42
-
-    expected = 61
-    html = """
-<div dj-if='hello'>
-    <div>
-        test
-    </div>
-</div><div><p>hello</p></div>"""
-    actual = end_of_tag_index(html, 4, "div")
-    assert actual == expected
-
-    assert end_of_tag_index("<img dj-if='hello' />", 4, "img") == 21
-    assert end_of_tag_index("<img dj-if='hello'>", 4, "img") == 19
+    assert e.exconly() == "AssertionError: Invalid use of dj-else"
