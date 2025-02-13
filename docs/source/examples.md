@@ -1,6 +1,6 @@
 # Examples
 
-`dj-angles` is pretty flexible when determining what HTML to parse. Here are some examples of to show what can be done. Set up [custom mappers](mappers.md) to handle additional use cases.
+`dj-angles` is pretty flexible when determining what HTML to parse. Here are some examples to show what can be done. [Custom mappers](mappers.md) can also be setup to handle additional use cases.
 
 ## Tags without a dj- prefix
 
@@ -47,7 +47,7 @@ This would transpile to the following.
 <dj-partial>{% include 'partial-one.html' %}</dj-partial>
 ```
 
-## Special character
+## Tags with a special character
 
 ```python
 # settings.py
@@ -67,3 +67,43 @@ This would transpile to the following.
 <dj-partial>{% include 'partial.html' %}</dj-partial>
 ```
 
+## Attributes without a dj- prefix
+
+```python
+# settings.py
+
+ANGLES = {
+  "initial_attribute_regex": r"(?=\w)",  # lookahead match anything that starts with a letter
+}
+```
+
+```text
+<div if="True">Example</div>
+```
+
+This would transpile to the following.
+
+```text
+{% if True %}<div if="True">Example</div>{% endif %}
+```
+
+
+## Attributes with a special character
+
+```python
+# settings.py
+
+ANGLES = {
+  "initial_attribute_regex": r"(:)",
+}
+```
+
+```text
+<div :if="True">Example</div>
+```
+
+This would transpile to the following.
+
+```text
+{% if True %}<div if="True">Example</div>{% endif %}
+```

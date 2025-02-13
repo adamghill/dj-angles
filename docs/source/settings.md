@@ -40,6 +40,10 @@ Would be translated to the following.
 <dj-partial>{% bird partial / %}</dj-partial>
 ```
 
+## `initial_attribute_regex`
+
+The regex for `dj-angles` attributes, e.g. `dj-if`. `Raw string` which defaults to `r"(dj-)"`.
+
 ## `initial_tag_regex`
 
 The regex to know that particular HTML should be parsed by `dj-angles`. `Raw string` which defaults to `r"(dj-)"`.

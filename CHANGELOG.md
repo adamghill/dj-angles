@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.14.0
+
+- Add support for `dj-if`, `dj-elif`, `dj-else` attributes.
+- Add `initial_attribute_regex` setting.
+
 ## 0.13.1
 
 - Better handling of spaces and tabs in template tag arguments.
