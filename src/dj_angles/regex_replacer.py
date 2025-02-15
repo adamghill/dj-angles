@@ -4,10 +4,10 @@ from collections import deque
 from minestrone import HTML
 
 from dj_angles.exceptions import InvalidEndTagError
-from dj_angles.htmls import end_of_tag_index, get_end_of_attribute_value, get_previous_element_tag
+from dj_angles.htmls import find_character, get_outer_html
 from dj_angles.mappers.mapper import get_tag_map
 from dj_angles.settings import get_setting, get_tag_regex
-from dj_angles.strings import replace_newlines
+from dj_angles.strings import dequotify, replace_newlines
 from dj_angles.tags import Tag
 
 
@@ -26,7 +26,6 @@ def get_tag_replacements(html: str, *, raise_for_missing_start_tag: bool = True)
     replacements = []
     tag_regex = get_tag_regex()
     tag_queue: deque = deque()
-
     tag_map = get_tag_map()
 
     map_explicit_tags_only = get_setting("map_explicit_tags_only", False)
@@ -105,68 +104,74 @@ def get_attribute_replacements(html: str) -> list[tuple[str, str]]:
     """
 
     replacements: list[tuple[str, str]] = []
+
     initial_attribute_regex = get_setting("initial_attribute_regex", default=r"(dj-)")
+    if_attribute_regex = re.compile(rf"{initial_attribute_regex}if")
+    elif_attribute_regex = re.compile(rf"{initial_attribute_regex}elif")
+    else_attribute_regex = re.compile(rf"{initial_attribute_regex}else")
 
     for match in re.finditer(
         rf"\s(({initial_attribute_regex}if|{initial_attribute_regex}elif)=|{initial_attribute_regex}else)", html
     ):
-        original_html = html
         dj_attribute = (match.groups()[1] or match.groups()[0]).strip()
 
-        start_idx = match.start()
-        value_start_idx = match.end()
+        attribute_start_idx = match.start()
 
-        (value, end_idx) = get_end_of_attribute_value(html, value_start_idx)
-        new_html = html[:start_idx] + html[end_idx:]
-        (tag_name, tag_idx) = get_previous_element_tag(new_html, start_idx)
-        end_of_tag_idx = end_of_tag_index(new_html, tag_idx + 1, tag_name)
+        value_start_idx = match.end()
+        value_end_idx = find_character(html, value_start_idx, character_regex=r"[\s>]")
+        value = html[value_start_idx:value_end_idx]
+        value = dequotify(value)
 
         conditional_start_tag = ""
         condition_end_tag = ""
 
-        if re.match(f"{initial_attribute_regex}if", dj_attribute):
+        if if_attribute_regex.search(dj_attribute):
             conditional_start_tag = f"{{% if {value} %}}"
             condition_end_tag = "{% endif %}"
-        elif re.match(f"{initial_attribute_regex}elif", dj_attribute):
+        elif elif_attribute_regex.search(dj_attribute):
             conditional_start_tag = f"{{% elif {value} %}}"
             condition_end_tag = "{% endif %}"
-        elif re.match(f"{initial_attribute_regex}else", dj_attribute):
+        elif else_attribute_regex.search(dj_attribute):
             conditional_start_tag = "{% else %}"
             condition_end_tag = "{% endif %}"
         else:
-            raise AssertionError(f"Unknown dj-attribute: {dj_attribute}")
+            raise AssertionError(f"Unknown attribute: {dj_attribute}")
 
-        internal_html = new_html[tag_idx:end_of_tag_idx]
+        # Get the outer HTML of the tag that the attribute is in
+        tag_start_idx = find_character(html, value_start_idx, "<", reverse=True)
+        tag_outer_html = get_outer_html(html, tag_start_idx)
 
-        original_end_of_tag_idx = end_of_tag_index(original_html, tag_idx + 1, tag_name)
-        original_internal_html = original_html[tag_idx:original_end_of_tag_idx]
+        # Remove the dj_angles attribute from the tag's HTML
+        replacement_html = (
+            tag_outer_html[: attribute_start_idx - tag_start_idx] + tag_outer_html[value_end_idx - tag_start_idx :]
+        )
 
-        if dj_attribute in ("dj-elif", "dj-else"):
+        if elif_attribute_regex.search(dj_attribute) or else_attribute_regex.search(dj_attribute):
+            # Check that dj-elif and dj-else attributes are used in a conditional block
             if not replacements:
                 raise AssertionError(f"Invalid use of {dj_attribute} outside of a conditional block")
 
             last_replacement = replacements.pop(-1)
-            original_snippet = last_replacement[0]
-            new_snippet = last_replacement[1]
+            original_html = last_replacement[0]
+            new_html = last_replacement[1]
 
-            if dj_attribute == "dj-else":
-                if not ("dj-if" in original_snippet or "dj-elif" in original_snippet):
-                    raise AssertionError("Invalid use of dj-else")
-            elif dj_attribute == "dj-elif":
-                if "dj-if" not in original_snippet:
-                    raise AssertionError("Invalid use of dj-elif")
+            if else_attribute_regex.search(dj_attribute):
+                if not (elif_attribute_regex.search(original_html) or if_attribute_regex.search(original_html)):
+                    raise AssertionError(f"Invalid use of {dj_attribute} attribute")
+            elif elif_attribute_regex.search(dj_attribute):
+                if not if_attribute_regex.search(original_html):
+                    raise AssertionError(f"Invalid use of {dj_attribute} attribute")
 
-            if new_snippet.endswith("{% endif %}"):
-                replacements.append(
-                    (
-                        original_snippet,
-                        new_snippet[:-11],  # remove the previous {% endif %}
-                    ),
-                )
+            # Remove {% endif %} from the previous replacement
+            replacements.append(
+                (
+                    original_html,
+                    new_html[:-11],
+                ),
+            )
 
-        replacement_html = f"{conditional_start_tag}{internal_html}{condition_end_tag}"
-
-        replacements.append((original_internal_html, replacement_html))
+        replacement_html = f"{conditional_start_tag}{replacement_html}{condition_end_tag}"
+        replacements.append((tag_outer_html, replacement_html))
 
     return replacements
 
@@ -181,9 +186,16 @@ def convert_template(html: str) -> str:
         The converted template HTML.
     """
 
-    replacements = get_tag_replacements(html=html) + get_attribute_replacements(html=html)
+    # Replace dj-angles attributes first
+    for r in get_attribute_replacements(html=html):
+        html = html.replace(
+            r[0],
+            r[1],
+            1,
+        )
 
-    for r in replacements:
+    # Replace dj_angles tags
+    for r in get_tag_replacements(html=html):
         html = html.replace(
             r[0],
             r[1],

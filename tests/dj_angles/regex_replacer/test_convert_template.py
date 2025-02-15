@@ -19,7 +19,7 @@ def test_typical():
   <dj-another-directory-another-partial>{% include 'another-directory/another-partial.html' %}</dj-another-directory-another-partial>
 
   {% debug %}
-{% endblock content %}"""  # noqa: E501
+{% endblock content %}"""
 
     template = """<dj-extends 'base.html' />
 
@@ -368,19 +368,19 @@ def test_with_only():
     assert actual == expected
 
 
-def test_if_true_internal_tag():
-    expected = "<div>{% if True %}<span>test</span>{% endif %}</div>"
+def test_if_true():
+    expected = "{% if True %}<span>test</span>{% endif %}"
 
-    template = '<div><span dj-if="True">test</span></div>'
+    template = '<span dj-if="True">test</span>'
     actual = convert_template(template)
 
     assert actual == expected
 
 
-def test_if_true():
-    expected = "{% if True %}<span>test</span>{% endif %}"
+def test_if_true_internal_tag():
+    expected = "<div>{% if True %}<span>test</span>{% endif %}</div>"
 
-    template = '<span dj-if="True">test</span>'
+    template = '<div><span dj-if="True">test</span></div>'
     actual = convert_template(template)
 
     assert actual == expected
@@ -551,6 +551,52 @@ def test_void_element():
     assert actual == expected
 
 
+def test_multiple_void_elements():
+    expected = """
+{% if is_collection %}<input type="checkbox" checked>{% endif %}
+
+{% if is_collection %}<img src="image.jpg">{% endif %}
+"""
+
+    template = """
+<input type="checkbox" checked dj-if="is_collection">
+
+<img src="image.jpg" dj-if="is_collection">
+"""
+
+    actual = convert_template(template)
+
+    assert actual == expected
+
+
+def test_multiple_self_closing_elements():
+    expected = """
+{% if is_collection %}<input type="checkbox" checked />{% endif %}
+
+{% if is_collection %}<img src="image.jpg" />{% endif %}
+"""
+
+    template = """
+<input type="checkbox" checked dj-if="is_collection" />
+
+<img src="image.jpg" dj-if="is_collection" />
+"""
+
+    actual = convert_template(template)
+
+    assert actual == expected
+
+
+def test_void_element_extra_html():
+    expected = '<div>{% if is_collection %}<input type="checkbox" checked>{% endif %}</div>'
+
+    template = '<div><input type="checkbox" checked dj-if="is_collection"></div>'
+
+    actual = convert_template(template)
+
+    assert actual == expected
+
+
 def test_self_closing_element():
     expected = '{% if is_collection %}<input type="checkbox" checked />{% endif %}'
 
@@ -633,4 +679,22 @@ def test_extra_else():
     with pytest.raises(AssertionError) as e:
         convert_template(template)
 
-    assert e.exconly() == "AssertionError: Invalid use of dj-else"
+    assert e.exconly() == "AssertionError: Invalid use of dj-else attribute"
+
+
+def test_if_component_self_closing():
+    expected = "{% if True %}<dj-partial>{% include 'partial.html' %}</dj-partial>{% endif %}"
+
+    template = '<dj-partial dj-if="True" />'
+    actual = convert_template(template)
+
+    assert actual == expected
+
+
+def test_if_component_self_closing_extra_html():
+    expected = "<span></span>{% if True %}<dj-partial>{% include 'partial.html' %}</dj-partial>{% endif %}<span></span>"
+
+    template = '<span></span><dj-partial dj-if="True" /><span></span>'
+    actual = convert_template(template)
+
+    assert actual == expected

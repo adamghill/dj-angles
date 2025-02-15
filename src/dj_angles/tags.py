@@ -6,11 +6,32 @@ from dj_angles.attributes import Attributes
 from dj_angles.caseconverter import kebabify
 from dj_angles.exceptions import MissingAttributeError
 from dj_angles.mappers.angles import map_angles_include
-from dj_angles.mappers.mapper import TagMap
+from dj_angles.mappers.mapper import TagMap, get_tag_map
 from dj_angles.settings import get_setting
 
 if TYPE_CHECKING:
     from collections import deque
+
+
+# List of void elements from: https://www.thoughtco.com/html-singleton-tags-3468620
+VOID_ELEMENTS = {
+    "area",
+    "base",
+    "br",
+    "col",
+    "command",
+    "embed",
+    "hr",
+    "img",
+    "input",
+    "keygen",
+    "link",
+    "meta",
+    "param",
+    "source",
+    "track",
+    "wbr",
+}
 
 
 SHADOW_ATTRIBUTE_KEY = "shadow"
@@ -47,10 +68,10 @@ class Tag:
 
     def __init__(
         self,
-        tag_map: TagMap,
-        html: str,
-        tag_name: str,
-        template_tag_args: str,
+        tag_map: TagMap | None = None,
+        html: str = "",
+        tag_name: str = "",
+        template_tag_args: str = "",
         tag_queue: Optional["deque"] = None,
     ):
         self.html = html
@@ -75,7 +96,7 @@ class Tag:
             self.tag_name = kebabify(self.tag_name, strip_punctuation=False)
 
         if tag_map is None:
-            raise AssertionError("Invalid tag_map")
+            tag_map = get_tag_map()
 
         # Get the Django template tag based on the tag name or get the fallback with magic `None`
         self.django_template_tag = tag_map.get(self.tag_name) or tag_map.get(None)
@@ -190,6 +211,12 @@ class Tag:
         """Whether the Django template tag is `include`."""
 
         return callable(self.django_template_tag) and self.django_template_tag.__name__ == "map_include"
+
+    @property
+    def can_be_void(self):
+        """Whether the tag can be a void element."""
+
+        return self.tag_name in VOID_ELEMENTS
 
     @property
     def component_name(self):

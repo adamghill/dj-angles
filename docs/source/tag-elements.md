@@ -1,5 +1,7 @@
 # Tags
 
+The `dj-angles` approach is shown first and then the equivalent Django Template Language is second.
+
 ## [`#`](https://docs.djangoproject.com/en/stable/ref/templates/language/#comments)
 
 ```
