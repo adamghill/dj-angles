@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.14.1-dev
+
+- Support conditional attributes on dj tags, e.g. `dj-include`
+
 ## 0.14.0
 
 - Add support for `dj-if`, `dj-elif`, `dj-else` attributes.
