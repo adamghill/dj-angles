@@ -66,6 +66,9 @@ class Tag:
     start_tag: Optional["Tag"] = None
     """The associated start tag. Only set for end tags."""
 
+    outer_html: Optional[str] = None
+    """The outer HTML of the tag."""
+
     def __init__(
         self,
         tag_map: TagMap | None = None,

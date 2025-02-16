@@ -8,7 +8,7 @@ from dj_angles.regex_replacer import get_tag_replacements
 # Structure to store parameterize data
 Params = namedtuple(
     "Params",
-    ("template_string", "replacement_string"),
+    ("original", "replacement"),
 )
 
 
@@ -20,252 +20,246 @@ def _shadowify(s: str) -> str:
     Params._fields,
     (
         Params(
-            template_string="<dj-extends 'base.html' />",
-            replacement_string="{% extends 'base.html' %}",
+            original="<dj-extends 'base.html' />",
+            replacement="{% extends 'base.html' %}",
         ),
         Params(
-            template_string="<dj-extends parent='base.html' />",
-            replacement_string="{% extends 'base.html' %}",
+            original="<dj-extends parent='base.html' />",
+            replacement="{% extends 'base.html' %}",
         ),
         Params(
-            template_string="<dj-include 'partial.html' />",
-            replacement_string="<dj-partial>{% include 'partial.html' %}</dj-partial>",
+            original="<dj-include 'partial.html' />",
+            replacement="<dj-partial>{% include 'partial.html' %}</dj-partial>",
         ),
         Params(
-            template_string="<dj-include 'partial.html' shadow />",
-            replacement_string=_shadowify("{% include 'partial.html' %}"),
+            original="<dj-include 'partial.html' shadow />",
+            replacement=_shadowify("{% include 'partial.html' %}"),
         ),
         Params(
-            template_string="<dj-include 'partial.html' test='hello' />",
-            replacement_string="<dj-partial>{% include 'partial.html' test='hello' %}</dj-partial>",
+            original="<dj-include 'partial.html' test='hello' />",
+            replacement="<dj-partial>{% include 'partial.html' test='hello' %}</dj-partial>",
         ),
         Params(
-            template_string="<dj-include 'shadow-partial.html' />",
-            replacement_string="<dj-shadow-partial>{% include 'shadow-partial.html' %}</dj-shadow-partial>",
+            original="<dj-include 'shadow-partial.html' />",
+            replacement="<dj-shadow-partial>{% include 'shadow-partial.html' %}</dj-shadow-partial>",
         ),
         Params(
-            template_string="<dj-partial />",
-            replacement_string="<dj-partial>{% include 'partial.html' %}</dj-partial>",
+            original="<dj-partial />",
+            replacement="<dj-partial>{% include 'partial.html' %}</dj-partial>",
         ),
         Params(
-            template_string="<dj-partial test='hello' />",
-            replacement_string="<dj-partial>{% include 'partial.html' test='hello' %}</dj-partial>",
+            original="<dj-partial test='hello' />",
+            replacement="<dj-partial>{% include 'partial.html' test='hello' %}</dj-partial>",
         ),
         Params(
-            template_string="<dj-shadow-partial />",
-            replacement_string="<dj-shadow-partial>{% include 'shadow-partial.html' %}</dj-shadow-partial>",
+            original="<dj-shadow-partial />",
+            replacement="<dj-shadow-partial>{% include 'shadow-partial.html' %}</dj-shadow-partial>",
         ),
         Params(
-            template_string="<dj-comment>",
-            replacement_string="{% comment %}",
+            original="<dj-comment>",
+            replacement="{% comment %}",
         ),
         Params(
-            template_string="</dj-comment>",
-            replacement_string="{% endcomment %}",
+            original="</dj-comment>",
+            replacement="{% endcomment %}",
         ),
         Params(
-            template_string="<dj-#>",
-            replacement_string="{% comment %}",
+            original="<dj-#>",
+            replacement="{% comment %}",
         ),
         Params(
-            template_string="</dj-#>",
-            replacement_string="{% endcomment %}",
+            original="</dj-#>",
+            replacement="{% endcomment %}",
         ),
         Params(
-            template_string="<dj-verbatim>",
-            replacement_string="{% verbatim %}",
+            original="<dj-verbatim>",
+            replacement="{% verbatim %}",
         ),
         Params(
-            template_string="</dj-verbatim>",
-            replacement_string="{% endverbatim %}",
+            original="</dj-verbatim>",
+            replacement="{% endverbatim %}",
         ),
         Params(
-            template_string="<dj-autoescape-on>",
-            replacement_string="{% autoescape on %}",
+            original="<dj-autoescape-on>",
+            replacement="{% autoescape on %}",
         ),
         Params(
-            template_string="</dj-autoescape-on>",
-            replacement_string="{% endautoescape %}",
+            original="</dj-autoescape-on>",
+            replacement="{% endautoescape %}",
         ),
         Params(
-            template_string="</dj-autoescape-off>",
-            replacement_string="{% endautoescape %}",
+            original="</dj-autoescape-off>",
+            replacement="{% endautoescape %}",
         ),
         Params(
-            template_string="<dj-csrf />",
-            replacement_string="{% csrf_token %}",
+            original="<dj-csrf />",
+            replacement="{% csrf_token %}",
         ),
         Params(
-            template_string="<dj-csrf-input />",
-            replacement_string="{% csrf_token %}",
+            original="<dj-csrf-input />",
+            replacement="{% csrf_token %}",
         ),
         Params(
-            template_string="<dj-block name='content'>",
-            replacement_string="{% block content %}",
+            original="<dj-block name='content'>",
+            replacement="{% block content %}",
         ),
         Params(
-            template_string="</dj-block name='content'>",
-            replacement_string="{% endblock content %}",
+            original="</dj-block name='content'>",
+            replacement="{% endblock content %}",
         ),
         Params(
-            template_string="<dj-block 'content'>",
-            replacement_string="{% block content %}",
+            original="<dj-block 'content'>",
+            replacement="{% block content %}",
         ),
         Params(
-            template_string="</dj-block 'content'>",
-            replacement_string="{% endblock content %}",
+            original="</dj-block 'content'>",
+            replacement="{% endblock content %}",
         ),
         Params(
-            template_string="<dj-block content>",
-            replacement_string="{% block content %}",
+            original="<dj-block content>",
+            replacement="{% block content %}",
         ),
         Params(
-            template_string="</dj-block content>",
-            replacement_string="{% endblock content %}",
+            original="</dj-block content>",
+            replacement="{% endblock content %}",
         ),
     ),
 )
-def test_typical(template_string, replacement_string):
-    expected = [
-        (template_string, replacement_string),
-    ]
-    actual = get_tag_replacements(template_string, raise_for_missing_start_tag=False)
+def test_typical(original, replacement):
+    actual = get_tag_replacements(original, raise_for_missing_start_tag=False)
 
-    assert actual == expected
+    for tag_replacement in actual:
+        assert tag_replacement.original == original
+        assert tag_replacement.replacement == replacement
 
 
 @pytest.mark.parametrize(
     Params._fields,
     (
         Params(
-            template_string="<dj-include 'partial' />",
-            replacement_string="<dj-partial>{% include 'partial.html' %}</dj-partial>",
+            original="<dj-include 'partial' />",
+            replacement="<dj-partial>{% include 'partial.html' %}</dj-partial>",
         ),
     ),
 )
-def test_no_extension(template_string, replacement_string):
-    expected = [
-        (template_string, replacement_string),
-    ]
-    actual = get_tag_replacements(template_string, raise_for_missing_start_tag=False)
+def test_no_extension(original, replacement):
+    actual = get_tag_replacements(original, raise_for_missing_start_tag=False)
 
-    assert actual == expected
+    for tag_replacement in actual:
+        assert tag_replacement.original == original
+        assert tag_replacement.replacement == replacement
 
 
 @pytest.mark.parametrize(
     Params._fields,
     (
         Params(
-            template_string="<$partial />",
-            replacement_string="<dj-partial>{% include 'partial.html' %}</dj-partial>",
+            original="<$partial />",
+            replacement="<dj-partial>{% include 'partial.html' %}</dj-partial>",
         ),
         Params(
-            template_string="<$partial! />",
-            replacement_string=_shadowify("{% include 'partial.html' %}"),
+            original="<$partial! />",
+            replacement=_shadowify("{% include 'partial.html' %}"),
         ),
         Params(
-            template_string="<$partial!>",
-            replacement_string="<dj-partial><template shadowrootmode='open'>{% include 'partial.html' %}",
+            original="<$partial!>",
+            replacement="<dj-partial><template shadowrootmode='open'>{% include 'partial.html' %}",
         ),
         Params(
-            template_string="</$partial!>",
-            replacement_string="</template></dj-partial>",
+            original="</$partial!>",
+            replacement="</template></dj-partial>",
         ),
         Params(
-            template_string="<$directory/partial />",
-            replacement_string="<dj-directory-partial>{% include 'directory/partial.html' %}</dj-directory-partial>",
+            original="<$directory/partial />",
+            replacement="<dj-directory-partial>{% include 'directory/partial.html' %}</dj-directory-partial>",
         ),
     ),
 )
-def test_initial_tag_regex(template_string, replacement_string, settings):
+def test_initial_tag_regex(original, replacement, settings):
     settings.ANGLES = {"initial_tag_regex": r"(dj-|\$)"}
 
-    expected = [
-        (template_string, replacement_string),
-    ]
-    actual = get_tag_replacements(template_string, raise_for_missing_start_tag=False)
+    actual = get_tag_replacements(original, raise_for_missing_start_tag=False)
 
-    assert actual == expected
+    for tag_replacement in actual:
+        assert tag_replacement.original == original
+        assert tag_replacement.replacement == replacement
 
 
 @pytest.mark.parametrize(
     Params._fields,
     (
         Params(
-            template_string="<Partial />",
-            replacement_string="<dj-partial>{% include 'Partial.html' %}</dj-partial>",
+            original="<Partial />",
+            replacement="<dj-partial>{% include 'Partial.html' %}</dj-partial>",
         ),
     ),
 )
-def test_initial_tag_regex_for_react_style(template_string, replacement_string, settings):
+def test_initial_tag_regex_for_react_style(original, replacement, settings):
     settings.ANGLES = {
         "initial_tag_regex": r"(dj-|(?=[A-Z]))",
         "lower_case_tag": False,
         "kebab_case_tag": False,
     }
 
-    expected = [
-        (template_string, replacement_string),
-    ]
-    actual = get_tag_replacements(template_string, raise_for_missing_start_tag=False)
+    actual = get_tag_replacements(original, raise_for_missing_start_tag=False)
 
-    assert actual == expected
+    for tag_replacement in actual:
+        assert tag_replacement.original == original
+        assert tag_replacement.replacement == replacement
 
 
 @pytest.mark.parametrize(
     Params._fields,
     (
         Params(
-            template_string="<Partial />",
-            replacement_string="<dj-partial>{% include 'partial.html' %}</dj-partial>",
+            original="<Partial />",
+            replacement="<dj-partial>{% include 'partial.html' %}</dj-partial>",
         ),
     ),
 )
-def test_lower_case_tag(template_string, replacement_string, settings):
+def test_lower_case_tag(original, replacement, settings):
     settings.ANGLES = {"initial_tag_regex": r"(dj-|(?=[A-Z]))", "lower_case_tag": True}
 
-    expected = [
-        (template_string, replacement_string),
-    ]
-    actual = get_tag_replacements(template_string, raise_for_missing_start_tag=False)
+    actual = get_tag_replacements(original, raise_for_missing_start_tag=False)
 
-    assert actual == expected
+    for tag_replacement in actual:
+        assert tag_replacement.original == original
+        assert tag_replacement.replacement == replacement
 
 
 @pytest.mark.parametrize(
     Params._fields,
     (
         Params(
-            template_string="<PartialOne />",
-            replacement_string="<dj-partial-one>{% include 'partial-one.html' %}</dj-partial-one>",
+            original="<PartialOne />",
+            replacement="<dj-partial-one>{% include 'partial-one.html' %}</dj-partial-one>",
         ),
         Params(
-            template_string="<PartialTwo />",
-            replacement_string="<dj-partial-two>{% include 'partial-two.html' %}</dj-partial-two>",
+            original="<PartialTwo />",
+            replacement="<dj-partial-two>{% include 'partial-two.html' %}</dj-partial-two>",
         ),
     ),
 )
-def test_kebab_case_tag(template_string, replacement_string, settings):
+def test_kebab_case_tag(original, replacement, settings):
     settings.ANGLES = {"initial_tag_regex": r"(?=[A-Z])", "kebab_case_tag": True}
 
-    expected = [
-        (template_string, replacement_string),
-    ]
-    actual = get_tag_replacements(template_string, raise_for_missing_start_tag=False)
+    actual = get_tag_replacements(original, raise_for_missing_start_tag=False)
 
-    assert actual == expected
+    for tag_replacement in actual:
+        assert tag_replacement.original == original
+        assert tag_replacement.replacement == replacement
 
 
 @pytest.mark.parametrize(
     Params._fields,
     (
         Params(
-            template_string="<blob 'partial.html' />",
-            replacement_string="{% include 'partial.html' %}",
+            original="<blob 'partial.html' />",
+            replacement="{% include 'partial.html' %}",
         ),
     ),
 )
-def test_mappers_string(template_string, replacement_string, settings):
+def test_mappers_string(original, replacement, settings):
     settings.ANGLES = {
         "initial_tag_regex": None,
         "mappers": {
@@ -274,95 +268,90 @@ def test_mappers_string(template_string, replacement_string, settings):
     }
     clear_tag_map()
 
-    expected = [
-        (template_string, replacement_string),
-    ]
-    actual = get_tag_replacements(template_string, raise_for_missing_start_tag=False)
+    actual = get_tag_replacements(original, raise_for_missing_start_tag=False)
 
-    assert actual == expected
+    for tag_replacement in actual:
+        assert tag_replacement.original == original
+        assert tag_replacement.replacement == replacement
 
 
 @pytest.mark.parametrize(
     Params._fields,
     (
         Params(
-            template_string="<blob />",
-            replacement_string="blob2",
+            original="<blob />",
+            replacement="blob2",
         ),
     ),
 )
-def test_mappers_callable(template_string, replacement_string, settings):
+def test_mappers_callable(original, replacement, settings):
     settings.ANGLES = {
         "initial_tag_regex": None,
-        "mappers": {"blob": lambda tag: "blob2"},  # noqa: ARG005
+        "mappers": {"blob": lambda tag: "blob2"},
     }
     clear_tag_map()
 
-    expected = [
-        (template_string, replacement_string),
-    ]
-    actual = get_tag_replacements(template_string, raise_for_missing_start_tag=False)
+    actual = get_tag_replacements(original, raise_for_missing_start_tag=False)
 
-    assert actual == expected
-
-
-@pytest.mark.parametrize(
-    Params._fields,
-    (
-        Params(
-            template_string="<dj-image 'img/blob.png' />",
-            replacement_string="<img src=\"{% static 'img/blob.png' %}\" />",
-        ),
-        Params(
-            template_string="<dj-image 'img/test.jpg' id=\"test\" />",
-            replacement_string='<img src="{% static \'img/test.jpg\' %}" id="test" />',
-        ),
-    ),
-)
-def test_image(template_string, replacement_string):
-    expected = [
-        (template_string, replacement_string),
-    ]
-    actual = get_tag_replacements(template_string, raise_for_missing_start_tag=False)
-
-    assert actual == expected
+    for tag_replacement in actual:
+        assert tag_replacement.original == original
+        assert tag_replacement.replacement == replacement
 
 
 @pytest.mark.parametrize(
     Params._fields,
     (
         Params(
-            template_string="<dj-css 'css/style.css' />",
-            replacement_string='<link href="{% static \'css/style.css\' %}" rel="stylesheet" />',
+            original="<dj-image 'img/blob.png' />",
+            replacement="<img src=\"{% static 'img/blob.png' %}\" />",
+        ),
+        Params(
+            original="<dj-image 'img/test.jpg' id=\"test\" />",
+            replacement='<img src="{% static \'img/test.jpg\' %}" id="test" />',
         ),
     ),
 )
-def test_css(template_string, replacement_string):
-    expected = [
-        (template_string, replacement_string),
-    ]
-    actual = get_tag_replacements(template_string, raise_for_missing_start_tag=False)
+def test_image(original, replacement):
+    actual = get_tag_replacements(original, raise_for_missing_start_tag=False)
 
-    assert actual == expected
+    for tag_replacement in actual:
+        assert tag_replacement.original == original
+        assert tag_replacement.replacement == replacement
+
+
+@pytest.mark.parametrize(
+    Params._fields,
+    (
+        Params(
+            original="<dj-css 'css/style.css' />",
+            replacement='<link href="{% static \'css/style.css\' %}" rel="stylesheet" />',
+        ),
+    ),
+)
+def test_css(original, replacement):
+    actual = get_tag_replacements(original, raise_for_missing_start_tag=False)
+
+    for tag_replacement in actual:
+        assert tag_replacement.original == original
+        assert tag_replacement.replacement == replacement
 
 
 def test_no_prefix(settings):
-    # settings.ANGLES["default_mapper"] = None
     settings.ANGLES["initial_tag_regex"] = r"(?=\w)"
 
-    expected = [("<block name='content'>", "{% block content %}")]
     actual = get_tag_replacements("<block name='content'>", raise_for_missing_start_tag=False)
 
-    assert actual == expected
+    assert actual[0].original == "<block name='content'>"
+    assert actual[0].replacement == "{% block content %}"
 
 
 def test_no_prefix_with_default_mapper(settings):
     settings.ANGLES["initial_tag_regex"] = r"(?=\w)"
 
-    expected = [("<partial />", "<dj-partial>{% include 'partial.html' %}</dj-partial>")]
     actual = get_tag_replacements("<partial />", raise_for_missing_start_tag=False)
 
-    assert actual == expected
+    assert actual[0].original == "<partial />"
+    assert actual[0].replacement == "<dj-partial>{% include 'partial.html' %}</dj-partial>"
 
 
 def test_no_prefix_without_default_mapper(settings):

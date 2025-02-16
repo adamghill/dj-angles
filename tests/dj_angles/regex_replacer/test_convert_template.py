@@ -698,3 +698,121 @@ def test_if_component_self_closing_extra_html():
     actual = convert_template(template)
 
     assert actual == expected
+
+
+def test_if_nested_endif():
+    expected = """
+{% if movies %}<div>
+  {% if True %}<span></span>{% endif %}
+</div>
+{% else %}<p>
+</p>{% endif %}
+"""
+
+    template = """
+<div dj-if="movies">
+  <span dj-if="True"></span dj-endif>
+</div>
+<p dj-else>
+</p>
+"""
+    actual = convert_template(template)
+
+    assert actual == expected
+
+
+def test_if_nested_fi():
+    expected = """
+{% if movies %}<div>
+  {% if True %}<span></span>{% endif %}
+</div>
+{% else %}<p>
+</p>{% endif %}
+"""
+
+    template = """
+<div dj-if="movies">
+  <span dj-if="True"></span dj-fi>
+</div>
+<p dj-else>
+</p>
+"""
+    actual = convert_template(template)
+
+    assert actual == expected
+
+
+def test_if_elif_nested():
+    expected = """
+{% if movies %}<div>
+  {% if True %}<span></span>
+  {% elif True %}<span></span>
+  {% elif True %}<span></span>{% endif %}
+</div>
+{% else %}<p>
+</p>{% endif %}
+"""
+
+    template = """
+<div dj-if="movies">
+  <span dj-if="True"></span>
+  <span dj-elif="True"></span>
+  <span dj-elif="True"></span dj-endif>
+</div>
+<p dj-else>
+</p>
+"""
+    actual = convert_template(template)
+
+    print("expected" + expected)
+    print("actual" + actual)
+
+    assert actual == expected
+
+
+def test_if_nested_same_tag_name():
+    expected = """
+{% if movies %}<div>
+  {% if True %}<div></div>
+  {% elif True %}<div></div>
+  {% elif True %}<div></div>{% endif %}
+</div>
+{% else %}<div>
+</div>{% endif %}
+"""
+
+    template = """
+<div dj-if="movies">
+  <div dj-if="True"></div>
+  <div dj-elif="True"></div>
+  <div dj-elif="True"></div dj-endif>
+</div>
+<div dj-else>
+</div>
+"""
+    actual = convert_template(template)
+
+    assert actual == expected
+
+
+def test_if_nested():
+    expected = """
+{% if movies %}<div>
+  {% if True %}<span></span>{% endif %}
+</div>
+{% else %}<p>
+</p>{% endif %}
+"""
+
+    template = """
+<div dj-if="movies">
+  <span dj-if="True"></span>
+</div>
+<p dj-else>
+</p>
+"""
+    actual = convert_template(template)
+    print("expected" + expected)
+    print("actual" + actual)
+
+    assert actual == expected

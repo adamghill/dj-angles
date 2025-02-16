@@ -1,5 +1,7 @@
+import logging
 import re
 from collections import deque
+from dataclasses import dataclass
 
 from minestrone import HTML
 
@@ -10,9 +12,23 @@ from dj_angles.settings import get_setting, get_tag_regex
 from dj_angles.strings import dequotify, replace_newlines
 from dj_angles.tags import Tag
 
+logger = logging.getLogger(__name__)
 
-def get_tag_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> list[tuple[str, str]]:
-    """Get a list of tag replacements (tuples that consists of 2 strings) based on the template HTML.
+
+@dataclass
+class Replacement:
+    original: str
+    replacement: str
+    tag: Tag
+    keep_endif: bool = False
+    tag_start_idx: int = -1
+
+    def __repr__(self):
+        return f"Replacement(original={self.original!r}, replacement={self.replacement!r})"
+
+
+def get_tag_replacements(html: str, *, raise_for_missing_start_tag: bool = True) -> list[Replacement]:
+    """Get a list of tag replacements based on the template HTML.
 
     Args:
         param html: Template HTML.
@@ -23,7 +39,7 @@ def get_tag_replacements(html: str, *, raise_for_missing_start_tag: bool = True)
         and the second item is the replacement string, e.g. "{% csrf_token %}".
     """
 
-    replacements = []
+    replacements: list[Replacement] = []
     tag_regex = get_tag_regex()
     tag_queue: deque = deque()
     tag_map = get_tag_map()
@@ -79,7 +95,7 @@ def get_tag_replacements(html: str, *, raise_for_missing_start_tag: bool = True)
                             slots.append((slot_name, element))
 
                             # Remove slot from the current HTML because it will be injected into the include component
-                            replacements.append((inner_html, ""))
+                            replacements.append(Replacement(original=inner_html, replacement="", tag=tag))
             except ValueError:
                 # Ending tag could not be found, so skip getting the inner html
                 pass
@@ -87,31 +103,33 @@ def get_tag_replacements(html: str, *, raise_for_missing_start_tag: bool = True)
         django_template_tag = tag.get_django_template_tag(slots=slots)
 
         if django_template_tag:
-            replacements.append((tag.html, django_template_tag))
+            replacements.append(Replacement(original=tag.html, replacement=django_template_tag, tag=tag))
 
     return replacements
 
 
-def get_attribute_replacements(html: str) -> list[tuple[str, str]]:
-    """Get a list of attribute replacements (tuples that consists of 2 strings) based on the template HTML.
+def get_attribute_replacements(html: str) -> list[Replacement]:
+    """Get a list of attribute replacements based on the template HTML.
 
     Args:
         param html: Template HTML.
 
     Returns:
-        A list of tuples where the first item in the tuple is the existing element, e.g. "<div dj-if="True"></div>"
-        and the second item is the replacement string, e.g. "{% if True %}<div></div>{% endif %}".
+        A list of `Replacement` where `original` is the existing element, e.g. "<div dj-if="True"></div>"
+        and `replacement` is the replacement string, e.g. "{% if True %}<div></div>{% endif %}".
     """
 
-    replacements: list[tuple[str, str]] = []
+    replacements: list[Replacement] = []
 
     initial_attribute_regex = get_setting("initial_attribute_regex", default=r"(dj-)")
     if_attribute_regex = re.compile(rf"{initial_attribute_regex}if")
     elif_attribute_regex = re.compile(rf"{initial_attribute_regex}elif")
     else_attribute_regex = re.compile(rf"{initial_attribute_regex}else")
+    endif_attribute_regex = re.compile(rf"({initial_attribute_regex}endif|{initial_attribute_regex}fi)")
 
     for match in re.finditer(
-        rf"\s(({initial_attribute_regex}if|{initial_attribute_regex}elif)=|{initial_attribute_regex}else)", html
+        rf"\s(({initial_attribute_regex}if|{initial_attribute_regex}elif)=|{initial_attribute_regex}else|{initial_attribute_regex}endif|{initial_attribute_regex}fi)",
+        html,
     ):
         dj_attribute = (match.groups()[1] or match.groups()[0]).strip()
 
@@ -124,6 +142,8 @@ def get_attribute_replacements(html: str) -> list[tuple[str, str]]:
 
         conditional_start_tag = ""
         condition_end_tag = ""
+        is_explicit_endif = False
+        is_implicit_endif = False
 
         if if_attribute_regex.search(dj_attribute):
             conditional_start_tag = f"{{% if {value} %}}"
@@ -134,16 +154,58 @@ def get_attribute_replacements(html: str) -> list[tuple[str, str]]:
         elif else_attribute_regex.search(dj_attribute):
             conditional_start_tag = "{% else %}"
             condition_end_tag = "{% endif %}"
+        elif endif_attribute_regex.search(dj_attribute):
+            pass
         else:
             raise AssertionError(f"Unknown attribute: {dj_attribute}")
 
         # Get the outer HTML of the tag that the attribute is in
         tag_start_idx = find_character(html, value_start_idx, "<", reverse=True)
-        tag_outer_html = get_outer_html(html, tag_start_idx)
+        tag = get_outer_html(html, tag_start_idx)
+
+        if not tag:
+            raise AssertionError("Tag could not be found")
+
+        if tag.is_end and endif_attribute_regex.search(tag.html):
+            # Remove the explicit endif from the end tag and mark it and the previous tag as having an explicit endif
+            replacement_idx = len(replacements) - 1
+
+            while replacement_idx >= 0:
+                previous_replacement = replacements[replacement_idx]
+
+                if previous_replacement.replacement.endswith("{% endif %}"):
+                    previous_replacement.replacement = previous_replacement.replacement[:-11]
+
+                if if_attribute_regex.search(previous_replacement.original):
+                    break
+
+                replacement_idx -= 1
+
+            replacement_html = endif_attribute_regex.sub("", tag.html).replace(" >", ">") + "{% endif %}"
+
+            new_replacement = Replacement(
+                original=tag.html,
+                replacement=replacement_html,
+                tag=tag,
+                keep_endif=True,
+                tag_start_idx=tag_start_idx,
+            )
+
+            replacements.append(new_replacement)
+            continue
+
+        if replacements:
+            previous_replacement = replacements[-1]
+
+            if previous_replacement.tag_start_idx > -1:
+                if tag_start_idx > previous_replacement.tag_start_idx:
+                    if tag_start_idx < len(previous_replacement.tag.outer_html) + previous_replacement.tag_start_idx:
+                        is_implicit_endif = True
+                        # is_explicit_endif = True
 
         # Remove the dj_angles attribute from the tag's HTML
         replacement_html = (
-            tag_outer_html[: attribute_start_idx - tag_start_idx] + tag_outer_html[value_end_idx - tag_start_idx :]
+            tag.outer_html[: attribute_start_idx - tag_start_idx] + tag.outer_html[value_end_idx - tag_start_idx :]
         )
 
         if elif_attribute_regex.search(dj_attribute) or else_attribute_regex.search(dj_attribute):
@@ -151,27 +213,53 @@ def get_attribute_replacements(html: str) -> list[tuple[str, str]]:
             if not replacements:
                 raise AssertionError(f"Invalid use of {dj_attribute} outside of a conditional block")
 
-            last_replacement = replacements.pop(-1)
-            original_html = last_replacement[0]
-            new_html = last_replacement[1]
+            replacement_idx = len(replacements) - 1
 
-            if else_attribute_regex.search(dj_attribute):
-                if not (elif_attribute_regex.search(original_html) or if_attribute_regex.search(original_html)):
-                    raise AssertionError(f"Invalid use of {dj_attribute} attribute")
-            elif elif_attribute_regex.search(dj_attribute):
-                if not if_attribute_regex.search(original_html):
-                    raise AssertionError(f"Invalid use of {dj_attribute} attribute")
+            while replacement_idx >= 0:
+                previous_replacement = replacements[replacement_idx]
 
-            # Remove {% endif %} from the previous replacement
-            replacements.append(
-                (
-                    original_html,
-                    new_html[:-11],
-                ),
-            )
+                if not previous_replacement.keep_endif:
+                    if else_attribute_regex.search(dj_attribute):
+                        if not (
+                            elif_attribute_regex.search(previous_replacement.original)
+                            or if_attribute_regex.search(previous_replacement.original)
+                        ):
+                            raise AssertionError(f"Invalid use of {dj_attribute} attribute")
+                    elif elif_attribute_regex.search(dj_attribute):
+                        if not (
+                            if_attribute_regex.search(previous_replacement.original)
+                            or elif_attribute_regex.search(previous_replacement.original)
+                        ):
+                            raise AssertionError(f"Invalid use of {dj_attribute} attribute")
+
+                    # Remove {% endif %} from the previous replacement
+                    if previous_replacement.replacement.endswith("{% endif %}"):
+                        replacements[replacement_idx].original = previous_replacement.original
+                        replacements[replacement_idx].replacement = previous_replacement.replacement[:-11]
+                        replacements[replacement_idx].tag = previous_replacement.tag
+                        replacements[replacement_idx].keep_endif = is_explicit_endif
+                        replacements[replacement_idx].tag_start_idx = previous_replacement.tag_start_idx
+
+                        break
+
+                replacement_idx -= 1
 
         replacement_html = f"{conditional_start_tag}{replacement_html}{condition_end_tag}"
-        replacements.append((tag_outer_html, replacement_html))
+        new_replacement = Replacement(
+            original=tag.outer_html,
+            replacement=replacement_html,
+            tag=tag,
+            keep_endif=is_explicit_endif or is_implicit_endif,
+            tag_start_idx=tag_start_idx,
+        )
+        replacements.append(new_replacement)
+
+    # print()
+    # for r in replacements:
+    #     print(r)
+    # print()
+
+    logger.debug("Attribute replacements: %s", replacements)
 
     return replacements
 
@@ -187,18 +275,18 @@ def convert_template(html: str) -> str:
     """
 
     # Replace dj-angles attributes first
-    for r in get_attribute_replacements(html=html):
+    for replacement in get_attribute_replacements(html=html):
         html = html.replace(
-            r[0],
-            r[1],
+            replacement.original,
+            replacement.replacement,
             1,
         )
 
     # Replace dj_angles tags
-    for r in get_tag_replacements(html=html):
+    for replacement in get_tag_replacements(html=html):
         html = html.replace(
-            r[0],
-            r[1],
+            replacement.original,
+            replacement.replacement,
             1,
         )
 

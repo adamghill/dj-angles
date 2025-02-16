@@ -1,4 +1,5 @@
 import re
+from typing import Optional
 
 from dj_angles.tags import Tag
 
@@ -23,13 +24,14 @@ VOID_ELEMENTS = {
 }
 
 
-def get_outer_html(html: str, start_idx: int) -> str:
+def get_outer_html(html: str, start_idx: int) -> Optional[Tag]:
     """Get the outer HTML for just the tag at a given index.
 
-    Will not return HTML before or after the ending tag.
+    Will not return HTML before the beginning of the tag or after the ending tag.
 
     Example:
-        >>> get_outer_html("<span></span><div dj-if='True'><p>test</p></div><span></span>", 14)
+        >>> tag = get_outer_html("<span></span><div dj-if='True'><p>test</p></div><span></span>", 14)
+        >>> tag.outer_html
         "<div dj-if='True'><p>test</p></div>"
 
     Args:
@@ -37,7 +39,7 @@ def get_outer_html(html: str, start_idx: int) -> str:
         start_idx (int, optional): The index to start searching from.
 
     Returns:
-        str: The outer HTML for just the tag at the given index.
+        Tag: The tag at the given index. The outer HTML is set on `tag.outer_html`.
     """
 
     initial_tag: Tag | None = None
@@ -47,8 +49,6 @@ def get_outer_html(html: str, start_idx: int) -> str:
 
     in_double_quote = False
     in_single_quote = False
-
-    outer_html = ""
 
     while range(start_idx, len(html)):
         if idx >= len(html):
@@ -73,32 +73,34 @@ def get_outer_html(html: str, start_idx: int) -> str:
             if not tag_name:
                 tag_name = tag_html[1:-1].strip()
 
-                if tag_name.startswith("/"):
-                    tag_name = tag_name[1:]
+            if tag_name.startswith("/"):
+                tag_name = tag_name[1:]
 
             tag = Tag(html=tag_html, tag_name=tag_name)
 
             if not initial_tag:
                 if tag.is_self_closing:
-                    outer_html = tag_html
-                    break
+                    tag.outer_html = tag_html
+
+                    return tag
 
                 initial_tag = tag
             elif initial_tag and initial_tag.tag_name == tag.tag_name:
                 if tag.is_end:
                     end_of_tag_idx = idx + 1
-                    outer_html = html[start_idx:end_of_tag_idx]
-                    break
+                    initial_tag.outer_html = html[start_idx:end_of_tag_idx]
+
+                    return initial_tag
 
             tag_html = ""
             tag_name = ""
 
         idx += 1
 
-    if not outer_html and initial_tag and initial_tag.can_be_void:
-        outer_html = initial_tag.html
+    if initial_tag and (initial_tag.can_be_void or initial_tag.is_end):
+        initial_tag.outer_html = initial_tag.html
 
-    return outer_html
+        return initial_tag
 
 
 def find_character(
