@@ -287,7 +287,7 @@ def test_mappers_string(original, replacement, settings):
 def test_mappers_callable(original, replacement, settings):
     settings.ANGLES = {
         "initial_tag_regex": None,
-        "mappers": {"blob": lambda tag: "blob2"},
+        "mappers": {"blob": lambda tag: "blob2"},  # noqa: ARG005
     }
     clear_tag_map()
 

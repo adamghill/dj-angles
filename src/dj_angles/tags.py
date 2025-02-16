@@ -71,7 +71,7 @@ class Tag:
 
     def __init__(
         self,
-        tag_map: TagMap | None = None,
+        tag_map: Optional[TagMap] = None,
         html: str = "",
         tag_name: str = "",
         template_tag_args: str = "",

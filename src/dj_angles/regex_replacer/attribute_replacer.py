@@ -95,14 +95,20 @@ def get_attribute_replacements(html: str) -> list[Replacement]:
             replacements.append(new_replacement)
             continue
 
+        if tag.outer_html is None:
+            raise AttributeError("Unknown outer html for tag")
+
         if replacements:
             previous_replacement = replacements[-1]
 
-            if previous_replacement.tag_start_idx > -1:
-                if tag_start_idx > previous_replacement.tag_start_idx:
-                    if tag_start_idx < len(previous_replacement.tag.outer_html) + previous_replacement.tag_start_idx:
-                        is_implicit_endif = True
-                        # is_explicit_endif = True
+            if previous_replacement.tag.outer_html is None:
+                raise AssertionError("Previous tag has no outer html")
+
+            if previous_replacement.tag_start_idx > -1 and tag_start_idx > previous_replacement.tag_start_idx:
+                check_idx = previous_replacement.tag_start_idx + len(previous_replacement.tag.outer_html)
+
+                if tag_start_idx < check_idx:
+                    is_implicit_endif = True
 
         # Remove the dj_angles attribute from the tag's HTML
         replacement_html = (

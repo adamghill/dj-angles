@@ -19,7 +19,7 @@ def test_typical():
   <dj-another-directory-another-partial>{% include 'another-directory/another-partial.html' %}</dj-another-directory-another-partial>
 
   {% debug %}
-{% endblock content %}"""
+{% endblock content %}"""  # noqa: E501
 
     template = """<dj-extends 'base.html' />
 
@@ -764,9 +764,6 @@ def test_if_elif_nested():
 """
     actual = convert_template(template)
 
-    print("expected" + expected)
-    print("actual" + actual)
-
     assert actual == expected
 
 
@@ -812,7 +809,5 @@ def test_if_nested():
 </p>
 """
     actual = convert_template(template)
-    print("expected" + expected)
-    print("actual" + actual)
 
     assert actual == expected

@@ -42,7 +42,7 @@ def get_outer_html(html: str, start_idx: int) -> Optional[Tag]:
         Tag: The tag at the given index. The outer HTML is set on `tag.outer_html`.
     """
 
-    initial_tag: Tag | None = None
+    initial_tag: Optional[Tag] = None
     idx = start_idx
     tag_html = ""
     tag_name = ""
@@ -102,12 +102,14 @@ def get_outer_html(html: str, start_idx: int) -> Optional[Tag]:
 
         return initial_tag
 
+    return None
+
 
 def find_character(
     html: str,
     start_idx: int,
-    character: str | None = None,
-    character_regex: str | None = None,
+    character: Optional[str] = None,
+    character_regex: Optional[str] = None,
     *,
     reverse: bool = False,
 ) -> int:
