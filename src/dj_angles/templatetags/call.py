@@ -9,8 +9,6 @@ from dj_angles.tokenizer import yield_tokens
 
 logger = logging.getLogger(__name__)
 
-# <dj-call function="quip.has_vote" request="request" as="has_vote" />
-
 
 def resolve(context, arg):
     """

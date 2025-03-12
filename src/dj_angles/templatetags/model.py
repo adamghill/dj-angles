@@ -29,7 +29,7 @@ class ModelNode(CallNode):
         return super().render(context)
 
 
-def do_model(parser, token) -> ModelNode:  # noqa: ARG001
+def do_model(parser, token) -> ModelNode:
     call_node = do_call(parser, token)
 
     # Models are stored in a special part of the context so it doesn't conflict with other data

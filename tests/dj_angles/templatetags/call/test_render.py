@@ -94,7 +94,7 @@ def test_date():
     context = RenderContext({"add_day": lambda d: d + timedelta(days=1)})
     node.render(context)
 
-    assert context["d"] == datetime(2025, 3, 12)
+    assert context["d"] == datetime(2025, 3, 12)  # noqa: DTZ001
 
 
 def test_datetime():
@@ -104,7 +104,7 @@ def test_datetime():
     context = RenderContext({"add_day": lambda dt: dt + timedelta(days=1)})
     node.render(context)
 
-    assert context["dt"] == datetime(2025, 3, 12, 1, 2, 3)
+    assert context["dt"] == datetime(2025, 3, 12, 1, 2, 3)  # noqa: DTZ001
 
 
 def test_time():
