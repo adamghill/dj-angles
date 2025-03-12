@@ -39,45 +39,38 @@ class EvaluatedFunction:
 
 
 @dataclass
+class Portion:
+    name: str
+    args: list = field(default_factory=list)
+    kwargs: dict = field(default_factory=dict)
+
+    def __init__(self, name: str):
+        self.args = []
+        self.kwargs = {}
+        self.name = name
+
+        if self.name.endswith("()"):
+            self.name = self.name[:-2]
+        elif "(" in self.name and ")" in self.name:
+            (self.name, self.args, self.kwargs) = eval_function(self.name)
+
+
+@dataclass
 class ParsedFunction:
     function_name: str
-    args: list = field(default_factory=list)
-    star_args: list = field(default_factory=list)
-    kwargs: dict = field(default_factory=dict)
-    object_name: str | None = None
+    portions: list[Portion] = field(default_factory=list)
 
-    def __init__(
-        self,
-        function_name: str,
-        args: list = None,
-        star_args: list = None,
-        kwargs: dict = None,
-        object_name: str | None = None,
-    ):
+    def __init__(self, function_name: str):
         self.function_name = function_name
-        self.args = args or []
-        self.star_args = star_args or []
-        self.kwargs = kwargs or {}
-
-        self.object_name = object_name
-        self.object_tokens = []
+        self.portions = []
 
         self.parse_function()
 
     def parse_function(self):
-        function_tokens = list(yield_tokens(self.function_name, ".", handle_quotes=True, handle_parenthesis=True))
+        for token in yield_tokens(self.function_name, ".", handle_quotes=True, handle_parenthesis=True):
+            portion = Portion(token)
 
-        if len(function_tokens) > 1:
-            self.object_name = ".".join(function_tokens[:-1])
-            self.function_name = function_tokens[-1]
-
-        if self.function_name.endswith("()"):
-            self.function_name = self.function_name[:-2]
-        elif "(" in self.function_name and ")" in self.function_name:
-            (self.function_name, self.args, self.kwargs) = eval_function(self.function_name)
-
-        if self.object_name:
-            self.object_tokens = list(yield_tokens(self.object_name, ".", handle_quotes=True, handle_parenthesis=True))
+            self.portions.append(portion)
 
 
 def cast_value(value):

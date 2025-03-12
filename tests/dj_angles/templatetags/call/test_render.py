@@ -326,3 +326,33 @@ def test_kwargs_2():
     node.render(context)
 
     assert context["result"] == "rachel jones"
+
+
+def test_chained_functions():
+    class TestObject:
+        def __init__(self, first_value):
+            self.first_value = first_value
+
+        def second(self, second_value):
+            return f"{self.first_value} | {second_value}!"
+
+    def first(first_value):
+        return TestObject(first_value)
+
+    token = Token(TokenType.BLOCK, contents="call first('rachel').second('jones') as result")
+    node = do_call(None, token)
+
+    context = RenderContext({"first": first})
+    node.render(context)
+
+    assert context["result"] == "rachel | jones!"
+
+
+# def test_model():
+#     token = Token(TokenType.BLOCK, contents="call Model.objects.filter(id=1).first() as result")
+#     node = do_call(None, token)
+
+#     context = RenderContext({"Model": Model})
+#     node.render(context)
+
+#     assert context["result"] == "rachel | jones!"

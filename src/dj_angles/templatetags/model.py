@@ -2,6 +2,7 @@ import logging
 
 from django.apps import apps
 
+from dj_angles.evaluator import Portion
 from dj_angles.templatetags.call import CallNode, do_call
 
 logger = logging.getLogger(__name__)
@@ -33,6 +34,6 @@ def do_model(parser, token) -> ModelNode:  # noqa: ARG001
 
     # Models are stored in a special part of the context so it doesn't conflict with other data
     # so add this fake object name because we will use it in the render method
-    call_node.parsed_function.object_tokens.insert(0, "__dj_angles_models")
+    call_node.parsed_function.portions.insert(0, Portion(name="__dj_angles_models"))
 
     return ModelNode(call_node.parsed_function, call_node.context_variable_name)

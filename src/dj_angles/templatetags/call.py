@@ -1,3 +1,4 @@
+import inspect
 import logging
 
 from django.template import Node, TemplateSyntaxError, Variable
@@ -37,48 +38,19 @@ class CallNode(Node):
         self.parsed_function = parsed_function
         self.context_variable_name = context_variable_name
 
-    def _get_function_from_context(self, context):
-        fn = None
-
-        if self.parsed_function.object_name:
-            obj = None
-
-            # Handle nested objects
-            if self.parsed_function.object_tokens:
-                for idx, token in enumerate(self.parsed_function.object_tokens):
-                    if idx == 0:
-                        obj = context[token]
-                    elif isinstance(obj, dict):
-                        obj = obj[token]
-                    else:
-                        obj = getattr(obj, token)
-            else:
-                obj = context[self.parsed_function.object_name]
-
-            fn = getattr(obj, self.parsed_function.function_name)
-            fn = getattr(obj, self.parsed_function.function_name)
-        else:
-            fn = context.get(self.parsed_function.function_name)
-
-        return fn
-
-    def render(self, context):
-        """Execute the function with the provided arguments and stores the results in context."""
-
-        fn = self._get_function_from_context(context)
-
-        if fn is None:
-            raise TemplateSyntaxError(f"Function '{self.parsed_function.function_name}' not found")
-
-        if isinstance(self.parsed_function.args, str):
+    def resolve_args(self, context, portion):
+        if isinstance(portion.args, str):
             # A "string" for args means it's a splat
-            args = resolve(context, self.parsed_function.args)
+            args = resolve(context, portion.args)
         else:
-            args = [resolve(context, arg) for arg in self.parsed_function.args]
+            args = [resolve(context, arg) for arg in portion.args]
 
+        return args
+
+    def resolve_kwargs(self, context, portion):
         kwargs = {}
 
-        for key, value in self.parsed_function.kwargs.items():
+        for key, value in portion.kwargs.items():
             if key is None:
                 # `None` key implies that the kwarg is a double splat
                 try:
@@ -88,17 +60,49 @@ class CallNode(Node):
             else:
                 kwargs[resolve(context, key)] = resolve(context, value)
 
+        return kwargs
+
+    def get_result(self, context, obj, portion):
+        args = self.resolve_args(context, portion)
+        kwargs = self.resolve_kwargs(context, portion)
+
         result = None
 
-        if callable(fn):
-            result = fn(*args, **kwargs)
-        else:
-            result = fn
+        if obj is None:
+            result = context[portion.name]
+        elif hasattr(obj, portion.name):
+            result = getattr(obj, portion.name)
+        elif callable(obj):
+            result = obj
+        elif portion.name in context:
+            result = resolve(context, portion.name)
+
+        if inspect.ismethod(result) or inspect.isfunction(result):
+            result = result(*args, **kwargs)
+
+        return result
+
+    def render(self, context):
+        """Execute the function with the provided arguments and stores the results in context."""
+
+        obj = None
+
+        for idx, portion in enumerate(self.parsed_function.portions):
+            if idx == 0:
+                obj = self.get_result(context, obj, portion)
+            elif isinstance(obj, dict):
+                # TODO: make test for this
+                obj = obj[portion.name]
+            elif hasattr(obj, portion.name):
+                obj = getattr(obj, portion.name)
+
+            if callable(obj):
+                obj = self.get_result(context, obj, portion)
 
         if self.context_variable_name is not None:
-            context[self.context_variable_name] = result
+            context[self.context_variable_name] = obj
 
-        # Must return an empty string
+        # Must render a string
         return ""
 
 
@@ -143,6 +147,8 @@ def do_call(parser, token) -> CallNode:  # noqa: ARG001
             context_variable_name = template_tag_arguments[idx + 1]
             break
 
-        parsed_function.args.append(arg)
+        # Handle arguments that are not handled by parsing the contents with `ParsedFunction`
+        # i.e. arguments that are not inside parenthesis
+        parsed_function.portions[-1].args.append(arg)
 
     return CallNode(parsed_function, context_variable_name)
