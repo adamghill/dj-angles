@@ -1,4 +1,5 @@
 version = 1
+revision = 1
 requires-python = ">=3.9"
 resolution-markers = [
     "python_full_version >= '3.10' and python_full_version < '3.12'",
@@ -222,7 +223,7 @@ toml = [
 
 [[package]]
 name = "dj-angles"
-version = "0.14.0"
+version = "0.15.0.dev0"
 source = { editable = "." }
 dependencies = [
     { name = "django", marker = "python_full_version >= '3.10'" },
@@ -272,6 +273,7 @@ requires-dist = [
     { name = "toml", marker = "extra == 'docs'", specifier = ">=0" },
     { name = "types-toml", marker = "extra == 'docs'", specifier = ">=0" },
 ]
+provides-extras = ["docs", "bird"]
 
 [package.metadata.requires-dev]
 dev = [

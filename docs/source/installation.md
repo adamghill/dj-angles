@@ -7,6 +7,7 @@
 ```python
 # settings.py
 
+...
 TEMPLATES = [{
   "BACKEND": "django.template.backends.django.DjangoTemplates",
   # "APP_DIRS": True,  # this cannot be specified if OPTIONS.loaders is explicitly set
@@ -29,4 +30,38 @@ TEMPLATES = [{
       ],
   },
 }]
+```
+
+## Template Tags
+
+`dj-angles` includes regular Django template tags that can be used even if not using the `dj-angles` template loader. However, it must be registered so the template tags can be found.
+
+```python
+# settings.py
+
+...
+INSTALLED_APPS = [
+    ...
+    "dj_angles",
+]
+```
+
+They can loaded in any template using the `{% load dj_angles %}` tag. Or they can be added to `builtins` which makes them available in all templates automatically.
+
+```python
+# settings.py
+
+...
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "templates"],
+        "OPTIONS": {
+            ...
+            "builtins": [
+                "dj_angles.templatetags.dj_angles",
+            ],
+        },
+    },
+]
 ```

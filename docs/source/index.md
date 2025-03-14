@@ -57,7 +57,7 @@
   </dj-autoescape-off>  <!-- {% endautoescape %} -->
 
   <dj-csrf />  <!-- {% csrf_token %} -->
-  
+
   <dj-debug />  <!-- {% debug %} -->
 
   <dj-image src='img/django.jpg' />  <!-- <img src="{% static 'img/django.jpg' %}" /> -->
@@ -88,6 +88,15 @@ components
 tag-elements
 tag-attributes
 examples
+```
+
+```{toctree}
+:caption: Template Tags
+:maxdepth: 2
+:hidden:
+
+template-tags/call
+template-tags/model
 ```
 
 ```{toctree}
