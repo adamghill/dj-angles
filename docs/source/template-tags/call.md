@@ -153,6 +153,7 @@ def index(request):
 The template tag function argument tries to look as similar to normal Python code as possible. It is followed by the word "as" and then a variable name that will store the result of the function in the context for use later.
 
 ```html
+<!-- index.html -->
 {% call slugify('Hello Goodbye') as slug %}
 
 {{ slug }} <!-- hello-goodbye -->
@@ -173,12 +174,6 @@ def index(request):
 
 ### Objects
 
-```html
-{% call django.utils.text.slugify('Hello Goodbye') as slug %}
-
-{{ slug }} <!-- hello-goodbye -->
-```
-
 ```python
 # views.py
 from django.shortcuts import render
@@ -186,6 +181,12 @@ import django
 
 def index(request):
     return render(request, 'index.html', {'django': django})
+```
+
+```html
+{% call django.utils.text.slugify('Hello Goodbye') as slug %}
+
+{{ slug }} <!-- hello-goodbye -->
 ```
 
 ### Dictionaries
@@ -201,6 +202,7 @@ def index(request):
 ```
 
 ```html
+<!-- index.html -->
 {% call data.functions.slugify('Hello Goodbye') as slug %}
 
 {{ slug }} <!-- hello-goodbye -->
@@ -210,12 +212,6 @@ def index(request):
 
 Most Python primitives are supported as arguments, e.g. strings, ints, lists, dictionaries, etc. There is also special handling for strings that appear to be datetimes, dates, times, durations, or UUIDs.
 
-```html
-{% call add(2, 3) as result %}
-
-{{ result }} <!-- 5 -->
-```
-
 ```python
 # views.py
 from django.shortcuts import render
@@ -224,13 +220,14 @@ def index(request):
     return render(request, 'index.html', {'add': lambda a, b: a + b})
 ```
 
-### Datetimes
-
 ```html
-{% call add_day("2025-03-14") as next_day %}
+<!-- index.html -->
+{% call add(2, 3) as result %}
 
-{{ next_day }} <!-- 2025-03-15 -->
+{{ result }} <!-- 5 -->
 ```
+
+### Datetimes
 
 ```python
 # views.py
@@ -241,15 +238,16 @@ def index(request):
     return render(request, 'index.html', {'add_day': lambda dt: dt + timedelta(days=1)})
 ```
 
+```html
+<!-- index.html -->
+{% call add_day("2025-03-14") as next_day %}
+
+{{ next_day|date:"r" }} <!-- Wed, 13 Mar 2025 00:00:00 -->
+```
+
 ## Template variables
 
-Django template variables can be used for args or kwargs as long as they are available in the context.
-
-```html
-{% call add(number_one, number_two) as result %}
-
-{{ result }} <!-- 3 -->
-```
+Django template variables can be used for args or kwargs (as long as they are available in the context).
 
 ```python
 # views.py
@@ -259,28 +257,22 @@ def index(request):
     return render(request, 'index.html', {'add': lambda a, b: a + b, 'number_one': 1, 'number_two': 2})
 ```
 
+```html
+<!-- index.html -->
+{% call add(number_one, number_two) as result %}
+
+{{ result }} <!-- 3 -->
+```
+
 ```{note}
-If a variable is referred to, but is not available a VariableNotFound error will be raised.
+If a variable is referred to, but is not available in the context a `VariableDoesNotExist` error will be raised.
 ```
 
 ## Unpacking
 
-Args and kwargs can be unpacked using the `*` and `**` operators.
+Lists and dictionaries can be unpacked using the `*` and `**` operators.
 
 ### Args
-
-```html
-<!-- index.html -->
-{% call add(*[2, 3]) as result %}
-
-<!-- equivalent using template variable -->
-{% call add(*numbers) as result %}
-
-<!-- equivalent without unpacking -->
-{% call add(2, 3) as result %}
-
-{{ result }} <!-- 5 -->
-```
 
 ```python
 # views.py
@@ -290,20 +282,20 @@ def index(request):
     return render(request, 'index.html', {'add': lambda a, b: a + b, 'numbers': [2, 3]})
 ```
 
-### Kwargs
-
 ```html
 <!-- index.html -->
-{% call make_name(**{'first_name': 'Alice', 'last_name': 'Smith'}) as result %}
+{% call add(*[2, 3]) as result %}
 
-<!-- equivalent using template variable -->
-{% call make_name(**name) as result %}
+<!-- using template variable -->
+{% call add(*numbers) as result %}
 
-<!-- equivalent without unpacking -->
-{% call make_name(first_name='Alice', last_name='Smith') as result %}
+<!-- without unpacking -->
+{% call add(2, 3) as result %}
 
-{{ result }} <!-- Alice Smith -->
+{{ result }} <!-- 5 -->
 ```
+
+### Kwargs
 
 ```python
 # views.py
@@ -316,7 +308,30 @@ def index(request):
     return render(request, 'index.html', {'make_name': make_name, 'name': {'first_name': 'Alice', 'last_name': 'Smith'}})
 ```
 
+```html
+<!-- index.html -->
+{% call make_name(**{'first_name': 'Alice', 'last_name': 'Smith'}) as result %}
+
+<!-- using template variable -->
+{% call make_name(**name) as result %}
+
+<!-- without unpacking -->
+{% call make_name(first_name='Alice', last_name='Smith') as result %}
+
+{{ result }} <!-- Alice Smith -->
+```
+
 ## Querysets
+
+```python
+# views.py
+from django.shortcuts import render
+from book.models import Book
+
+def index(request):
+    books = Book.objects.all()
+    return render(request, 'index.html', {'books': books})
+```
 
 ```html
 <!-- index.html -->
@@ -327,14 +342,4 @@ def index(request):
 <li>{{ book }}</li>
 {% endfor %}
 </ul>
-```
-
-```python
-# views.py
-from django.shortcuts import render
-from book.models import Book
-
-def index(request):
-    books = Book.objects.all()
-    return render(request, 'index.html', {'books': books})
 ```
