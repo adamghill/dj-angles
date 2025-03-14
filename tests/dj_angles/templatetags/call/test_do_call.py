@@ -1,6 +1,7 @@
 import pytest
 from django.template.base import TemplateSyntaxError, Token, TokenType
 
+from dj_angles.evaluator import TemplateVariable
 from dj_angles.templatetags.call import do_call
 
 
@@ -80,4 +81,18 @@ def test_parens():
     assert actual.parsed_function.portions[0].name == "set_name"
     assert actual.parsed_function.portions[0].args == ["Hello", 8]
     assert actual.parsed_function.portions[0].kwargs == {}
+    assert actual.context_variable_name == "name"
+
+
+def test_template_variable():
+    token = Token(TokenType.BLOCK, contents="call set_name(hello, 8) as name")
+    actual = do_call(None, token)
+
+    portion = actual.parsed_function.portions[0]
+
+    assert portion.name == "set_name"
+    assert isinstance(portion.args[0], TemplateVariable)
+    assert portion.args[0].name == "hello"
+    assert portion.args[1] == 8
+    assert portion.kwargs == {}
     assert actual.context_variable_name == "name"

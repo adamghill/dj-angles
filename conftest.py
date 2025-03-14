@@ -2,10 +2,15 @@ import pytest
 from django.conf import settings
 
 from dj_angles.mappers.mapper import clear_tag_map
+from dj_angles.templatetags.model import clear_models
 
 
 def pytest_configure():
     settings.configure(
+        INSTALLED_APPS=[
+            "dj_angles",
+            "example.book.apps.Config",
+        ],
         TEMPLATES=[
             {
                 "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -15,6 +20,7 @@ def pytest_configure():
                 "OPTIONS": {
                     "builtins": [
                         "django_bird.templatetags.django_bird",
+                        "dj_angles.templatetags.dj_angles",
                     ],
                     "context_processors": [
                         "django.template.context_processors.debug",
@@ -37,6 +43,11 @@ def pytest_configure():
             },
         ],
         SECRET_KEY="this-is-a-secret",
+        DATABASES={
+            "default": {
+                "ENGINE": "django.db.backends.sqlite3",
+            }
+        },
         ANGLES={},
     )
 
@@ -46,8 +57,9 @@ def reset_settings(settings):
     # Make sure that ANGLES is empty before every test
     settings.ANGLES = {}
 
-    # Clear the tag map before every test
+    # Clear the caches before every test
     clear_tag_map()
+    clear_models()
 
     # Run test
     yield

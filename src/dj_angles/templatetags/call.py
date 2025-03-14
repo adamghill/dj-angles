@@ -2,9 +2,8 @@ import inspect
 import logging
 
 from django.template import Node, TemplateSyntaxError, Variable
-from django.template.base import VariableDoesNotExist
 
-from dj_angles.evaluator import ParsedFunction, eval_value
+from dj_angles.evaluator import ParsedFunction, TemplateVariable, eval_value
 from dj_angles.tokenizer import yield_tokens
 
 logger = logging.getLogger(__name__)
@@ -12,7 +11,8 @@ logger = logging.getLogger(__name__)
 
 def resolve(context, arg):
     """
-    Resolves a template variable based on the context.
+    Resolves a template variable based on the context if it's a `TemplateVariable`. Otherwise,
+    evaluate the arg.
 
     Args:
         param context: The template context.
@@ -22,11 +22,8 @@ def resolve(context, arg):
         The resolved value of the variable.
     """
 
-    if arg in context:
-        try:
-            return Variable(arg).resolve(context)
-        except VariableDoesNotExist:
-            pass
+    if isinstance(arg, TemplateVariable):
+        return Variable(arg.name).resolve(context)
 
     return eval_value(arg)
 
@@ -37,11 +34,30 @@ class CallNode(Node):
         self.context_variable_name = context_variable_name
 
     def resolve_args(self, context, portion):
-        if isinstance(portion.args, str):
+        args = portion.args
+
+        if isinstance(args, TemplateVariable):
+            args = resolve(context, args)
+
+        if isinstance(args, str):
             # A "string" for args means it's a splat
-            args = resolve(context, portion.args)
+            args = [resolve(context, args)]
         else:
-            args = [resolve(context, arg) for arg in portion.args]
+            resolved_args = []
+
+            for arg in args:
+                if isinstance(arg, dict):
+                    resolved_args.append(arg)
+
+                    for k, v in list(arg.items()):
+                        arg[resolve(context, k)] = resolve(context, v)
+                elif isinstance(arg, list):
+                    resolved_args.append([resolve(context, a) for a in arg])
+
+            if resolved_args:
+                args = resolved_args
+            else:
+                args = [resolve(context, arg) for arg in args]
 
         return args
 
@@ -49,12 +65,15 @@ class CallNode(Node):
         kwargs = {}
 
         for key, value in portion.kwargs.items():
+            # `None` key implies that the kwarg is a double splat
             if key is None:
-                # `None` key implies that the kwarg is a double splat
-                try:
-                    kwargs.update(resolve(context, value))
-                except TypeError:
-                    kwargs.update(value)
+                kwargs = {}
+
+                if isinstance(value, dict):
+                    for k, v in list(value.items()):
+                        kwargs[resolve(context, k)] = resolve(context, v)
+                else:
+                    kwargs = resolve(context, value)
             else:
                 kwargs[resolve(context, key)] = resolve(context, value)
 
@@ -68,12 +87,8 @@ class CallNode(Node):
 
         if obj is None:
             result = context[portion.name]
-        elif hasattr(obj, portion.name):
-            result = getattr(obj, portion.name)
         elif callable(obj):
             result = obj
-        elif portion.name in context:
-            result = resolve(context, portion.name)
 
         if inspect.ismethod(result) or inspect.isfunction(result):
             result = result(*args, **kwargs)
@@ -89,7 +104,6 @@ class CallNode(Node):
             if idx == 0:
                 obj = self.get_result(context, obj, portion)
             elif isinstance(obj, dict):
-                # TODO: make test for this
                 obj = obj[portion.name]
             elif hasattr(obj, portion.name):
                 obj = getattr(obj, portion.name)

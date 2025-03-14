@@ -13,16 +13,28 @@ Global storage of all available models.
 models = None
 
 
+def get_models() -> dict:
+    models = {}
+
+    for app_config in apps.get_app_configs():
+        for model in app_config.get_models():
+            # TODO: What if model names overlap?
+            models[model.__name__] = model
+
+    return models
+
+
+def clear_models() -> None:
+    global models  # noqa: PLW0603
+    models = None
+
+
 class ModelNode(CallNode):
     def render(self, context):
         global models  # noqa: PLW0603
 
         if models is None:
-            models = {}
-            for app_config in apps.get_app_configs():
-                for model in app_config.get_models():
-                    # TODO: What if model names overlap?
-                    models[model.__name__] = model
+            models = get_models()
 
         context["__dj_angles_models"] = models
 

@@ -125,7 +125,7 @@ ban-relative-imports = "all"
 "tests/**/*" = ["PLR2004", "S101", "TID252", "ARG001"]
 
 [tool.pytest.ini_options]
-addopts = "--quiet --failed-first -p no:warnings"
+addopts = "--quiet --failed-first -p no:warnings --no-migrations"
 testpaths = [
     "tests"
 ]

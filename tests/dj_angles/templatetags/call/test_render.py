@@ -1,8 +1,10 @@
 from datetime import datetime, time, timedelta
 from uuid import UUID
 
-from django.template.base import Token, TokenType
+import pytest
+from django.template.base import Token, TokenType, VariableDoesNotExist
 from django.template.context import RenderContext
+from example.book.models import Book
 
 from dj_angles.templatetags.call import do_call
 
@@ -55,6 +57,46 @@ def test_dictionary():
     node.render(context)
 
     assert context["name"] == "Hello"
+
+
+def test_dictionary_key_template_variable():
+    token = Token(TokenType.BLOCK, contents="call set_name({name_key: 'phil'}) as name")
+    node = do_call(None, token)
+
+    context = RenderContext({"name_key": "name", "set_name": lambda obj: obj["name"]})
+    node.render(context)
+
+    assert context["name"] == "phil"
+
+
+def test_dictionary_value_template_variable():
+    token = Token(TokenType.BLOCK, contents="call set_name({'name': name1}) as name")
+    node = do_call(None, token)
+
+    context = RenderContext({"name1": "greg", "set_name": lambda obj: obj["name"]})
+    node.render(context)
+
+    assert context["name"] == "greg"
+
+
+def test_list():
+    token = Token(TokenType.BLOCK, contents="call set_names(names) as names")
+    node = do_call(None, token)
+
+    context = RenderContext({"names": ["joe", "george"], "set_names": lambda obj: obj[0] + obj[1]})
+    node.render(context)
+
+    assert context["names"] == "joegeorge"
+
+
+def test_list_template_variable():
+    token = Token(TokenType.BLOCK, contents="call set_names([name1, name2]) as names")
+    node = do_call(None, token)
+
+    context = RenderContext({"name1": "ross", "name2": "rachel", "set_names": lambda obj: obj[0] + obj[1]})
+    node.render(context)
+
+    assert context["names"] == "rossrachel"
 
 
 def test_true():
@@ -139,6 +181,19 @@ def test_object():
     node.render(context)
 
     assert context["name"] == "Billy"
+
+
+def test_dictionary_function():
+    def get_name(value):
+        return f"{value}!"
+
+    token = Token(TokenType.BLOCK, contents="call dictionary.get_name('Sally') as name")
+    node = do_call(None, token)
+
+    context = RenderContext({"dictionary": {"get_name": get_name}})
+    node.render(context)
+
+    assert context["name"] == "Sally!"
 
 
 def test_object_function():
@@ -300,7 +355,7 @@ def test_args_ints_2():
     assert context["result"] == 8
 
 
-def test_kwargs():
+def test_kwargs_resolve_kwarg():
     def set_names(**kwargs):
         return kwargs["first_name"] + " " + kwargs["last_name"]
 
@@ -313,7 +368,7 @@ def test_kwargs():
     assert context["result"] == "sue smith"
 
 
-def test_kwargs_2():
+def test_kwargs_dictionary():
     def set_names(**kwargs):
         return kwargs["first_name"] + " " + kwargs["last_name"]
 
@@ -326,6 +381,34 @@ def test_kwargs_2():
     node.render(context)
 
     assert context["result"] == "rachel jones"
+
+
+def test_kwargs_resolve_values():
+    def set_names(**kwargs):
+        return kwargs["first"] + " " + kwargs["last"]
+
+    token = Token(TokenType.BLOCK, contents="call set_names(**{'first': first_name, 'last': last_name}) as result")
+    node = do_call(None, token)
+
+    context = RenderContext({"set_names": set_names, "first_name": "jerry", "last_name": "larks"})
+    node.render(context)
+
+    assert context["result"] == "jerry larks"
+
+
+def test_kwargs_resolve_keys():
+    def set_names(**kwargs):
+        return kwargs["first_name"] + " " + kwargs["last_name"]
+
+    token = Token(
+        TokenType.BLOCK, contents="call set_names(**{first_name_key: 'gerald', last_name_key: 'parks'}) as result"
+    )
+    node = do_call(None, token)
+
+    context = RenderContext({"set_names": set_names, "first_name_key": "first_name", "last_name_key": "last_name"})
+    node.render(context)
+
+    assert context["result"] == "gerald parks"
 
 
 def test_chained_functions():
@@ -348,11 +431,26 @@ def test_chained_functions():
     assert context["result"] == "rachel | jones!"
 
 
-# def test_model():
-#     token = Token(TokenType.BLOCK, contents="call Model.objects.filter(id=1).first() as result")
-#     node = do_call(None, token)
+@pytest.mark.django_db
+def test_model():
+    Book.objects.create(id=1, title="Tom Sawyer")
 
-#     context = RenderContext({"Model": Model})
-#     node.render(context)
+    token = Token(TokenType.BLOCK, contents="call Book.objects.filter(id=1).first() as book")
+    node = do_call(None, token)
 
-#     assert context["result"] == "rachel | jones!"
+    context = RenderContext({"Book": Book})
+    node.render(context)
+
+    assert "book" in context
+    assert isinstance(context["book"], Book)
+    assert context["book"].title == "Tom Sawyer"
+
+
+def test_missing_template_variable():
+    token = Token(TokenType.BLOCK, contents="call set_name(name) as name")
+    node = do_call(None, token)
+
+    context = RenderContext({"set_name": lambda obj: obj[0]})
+
+    with pytest.raises(VariableDoesNotExist):
+        node.render(context)

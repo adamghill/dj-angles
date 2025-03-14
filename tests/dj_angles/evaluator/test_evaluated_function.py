@@ -1,4 +1,5 @@
 from dj_angles.evaluator import EvaluatedFunction, eval_function
+from dj_angles.templatetags.call import TemplateVariable
 
 
 def test_no_args():
@@ -22,11 +23,14 @@ def test_str_arg():
     assert expected == actual
 
 
-def test_unknown_arg():
-    expected = EvaluatedFunction("set_name", ["request"], {})
+def test_template_variable():
     actual = eval_function("set_name(request)")
 
-    assert expected == actual
+    assert actual.function_name == "set_name"
+    assert len(actual.args) == 1
+    assert isinstance(actual.args[0], TemplateVariable)
+    assert actual.args[0].name == "request"
+    assert actual.kwargs == {}
 
 
 def test_int_arg():

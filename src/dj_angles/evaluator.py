@@ -17,13 +17,32 @@ from dj_angles.tokenizer import yield_tokens
 logger = logging.getLogger(__name__)
 
 
-CASTERS = {
-    datetime: parse_datetime,
-    time: parse_time,
-    date: parse_date,
-    timedelta: parse_duration,
-    UUID: UUID,
-}
+@dataclass
+class Caster:
+    CASTERS = {  # noqa: RUF012
+        datetime: parse_datetime,
+        time: parse_time,
+        date: parse_date,
+        timedelta: parse_duration,
+        UUID: UUID,
+    }
+
+    def __init__(self, value):
+        self.value = value
+
+    def cast(self):
+        """Try to cast a value."""
+
+        for caster in self.CASTERS.values():
+            try:
+                casted_value = caster(self.value)
+
+                if casted_value is not None:
+                    return casted_value
+            except (ValueError, TypeError, AttributeError):
+                pass
+
+        return self.value
 
 
 @dataclass
@@ -73,20 +92,22 @@ class ParsedFunction:
             self.portions.append(portion)
 
 
-def cast_value(value):
-    """Try to cast a value."""
+@dataclass
+class TemplateVariable:
+    name: str
 
-    for caster in CASTERS.values():
-        try:
-            casted_value = caster(value)
+    def __init__(self, name: ast.Name):
+        self._name = name
+        self.name = name.id
 
-            if casted_value:
-                value = casted_value
-                break
-        except ValueError:
-            pass
+    def __hash__(self):
+        return hash(self.name)
 
-    return value
+    def __eq__(self, other):
+        if isinstance(other, TemplateVariable):
+            return self.name == other.name
+
+        return False
 
 
 def eval_value(value):
@@ -97,18 +118,28 @@ def eval_value(value):
     date, time, duration, or UUID.
     """
 
+    if isinstance(value, ast.Name):
+        return TemplateVariable(value)
+
     if isinstance(value, ast.Starred):
-        value = value.value
+        value = eval_value(value.value)
+    elif isinstance(value, ast.Dict):
+        data = {}
+
+        for idx, key in enumerate(value.keys):
+            data[eval_value(key)] = eval_value(value.values[idx])
+
+        value = data
+    elif isinstance(value, ast.List):
+        value = [eval_value(v) for v in value.elts]
 
     try:
         value = ast.literal_eval(value)
     except SyntaxError:
-        value = cast_value(value)
+        value = Caster(value).cast()
     except ValueError:
-        # Handle Name node that represents a template variable since it does not "look" like a string that AST
-        # understands; this will get resolved when rendering the CallNode later
-        if isinstance(value, ast.Name):
-            value = value.id
+        # Ignore ValueError
+        pass
 
     return value
 
