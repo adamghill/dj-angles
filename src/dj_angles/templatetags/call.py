@@ -1,3 +1,4 @@
+import ast
 import inspect
 import logging
 
@@ -161,6 +162,10 @@ def do_call(parser, token) -> CallNode:  # noqa: ARG001
 
         # Handle arguments that are not handled by parsing the contents with `ParsedFunction`
         # i.e. arguments that are not inside parenthesis
+        # TODO: Decide if this is actually a good idea to allow this
+        tree = ast.parse(arg, "eval")
+        statement = tree.body[0].value
+        arg = eval_value(statement)
         parsed_function.portions[-1].args.append(arg)
 
     return CallNode(parsed_function, context_variable_name)
