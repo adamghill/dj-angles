@@ -348,3 +348,11 @@ def index(request):
 {% endfor %}
 </ul>
 ```
+
+## How does this work?
+
+The `call` template tag is a [custom template tag](https://docs.djangoproject.com/en/stable/howto/custom-template-tags/#advanced-custom-template-tags) which parses the first argument into Python AST and then evaluates it. After evaluation, the result is stored in the context with the name specified.
+
+```{note}
+If your first thought is "parsing a string into the AST is probably slow", then you might be right. However, usually network latency and database performance will be the actual bottleneck for most applications. However, (as always) it is up to each individual developer to decide if the potential performance implications are worth the trade-off of having less code to maintain.
+```
