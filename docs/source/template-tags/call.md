@@ -16,7 +16,6 @@ Let's say you have a `Book` model and you want to list all of the books, but add
 # models.py
 from django.db import models
 
-
 class Book(models.Model):
     title = models.CharField(max_length=100)
 
