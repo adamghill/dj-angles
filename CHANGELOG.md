@@ -2,7 +2,7 @@
 
 ## 0.15.0
 
-- Add `call` template tag.
+- Add `call` and `model` template tags.
 
 ## 0.14.1
 
