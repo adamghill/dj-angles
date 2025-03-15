@@ -141,8 +141,8 @@ def do_call(parser, token) -> CallNode:  # noqa: ARG001
 
     """
     Split the contents by whitespace. Examples:
-        - "execute model.some_function arg1 as output_variable"
-        - "execute model.some_function 'hello goodbye' as output_variable"
+        - "execute model.some_function('hello goodbye') as output_variable"
+        - "execute model.some_function('hello', 2) as output_variable"
         - "execute model.some_function(arg1, arg2) as output_variable"
     """
     contents = list(yield_tokens(token.contents, " ", handle_quotes=True, handle_parenthesis=True))

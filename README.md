@@ -34,8 +34,15 @@
 <dj-extends parent='base.html' />  <!-- {% extends 'base.html' %} -->
 
 <dj-block name='content'>  <!-- {% block content %} -->
+  <!-- components -->
+  <dj-partial />  <!-- {% include 'partial.html' %} -->
   <dj-include template='partial.html' />  <!-- {% include 'partial.html' %} -->
 
+  <!-- evaluate code from the template -->
+  <dj-call code='slugify("Hello Goodbye")' as='variable_name' />  <!-- {% call slugify("Hello Goodbye") as variable_name %} -->
+  <dj-model code='Book.objects.filter(id=1)' as='book' />  <!-- {% model Book.objects.filter(id=1) as book %} -->
+
+  <!-- conditional attributes -->
   <div dj-if="True">  <!-- {% if True %}<div> -->
     If
   </div>
@@ -63,20 +70,13 @@
   </dj-autoescape-off>  <!-- {% endautoescape %} -->
 
   <dj-csrf />  <!-- {% csrf_token %} -->
-  
+
   <dj-debug />  <!-- {% debug %} -->
 
+  <!-- static helpers -->
   <dj-image src='img/django.jpg' />  <!-- <img src="{% static 'img/django.jpg' %}" /> -->
   <dj-css href='css/styles.css' />  <!-- <link href="{% static 'css/styles.css' %}" rel="stylesheet" /> -->
 </dj-block>  <!-- {% endblock content %} -->
-```
-
-**partial.html**
-
-```html
-<div>
-  This is a partial: {{ now|date:"c" }}
-</div>
 ```
 
 ## 📖 Documentation

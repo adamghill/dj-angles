@@ -70,6 +70,16 @@ The tag can be self-closing if there is not default block content.
 {% endblock content %}
 ```
 
+## [`call`](template-tags/call.md)
+
+```
+<dj-call code='slugify("Hello Goodbye")' as='variable_name' />
+```
+
+```html
+{% call slugify("Hello Goodbye") as variable_name %}
+```
+
 ## [`csrf`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#csrf-token), [`csrf-token`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#csrf-token), [`csrf-input`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#csrf-token)
 
 ```html
@@ -153,6 +163,16 @@ The tag can be self-closing if there is not default block content.
 
 ```html
 <img src="{% static 'img/django.jpg' %}" />
+```
+
+## [`model`](template-tags/model.md)
+
+```
+<dj-model code='Book.objects.filter(id=1)' as='book' />
+```
+
+```html
+{% model Book.objects.filter(id=1) as book %}
 ```
 
 ## [`now`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#now)

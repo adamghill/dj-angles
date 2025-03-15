@@ -64,3 +64,36 @@ def map_angles_include(tag: "Tag") -> str:
     rendered_template = f"<{wrapping_tag_name}>{rendered_template}"
 
     return rendered_template
+
+
+def map_call(tag: "Tag", template_tag_name: str = "call") -> str:
+    """Mapper function for the dj-angles call template tag.
+
+    Args:
+        param tag: The tag to map.
+        param template_tag_name: The name of the template tag to use. Defaults to "call".
+    """
+
+    if tag.is_end:
+        return ""
+
+    code = dequotify(tag.get_attribute_value_or_first_key("code"))
+    context_template_variable = tag.attributes.get("as")
+
+    if context_template_variable:
+        if hasattr(context_template_variable, "value"):
+            context_template_variable = dequotify(context_template_variable.value)
+
+        return f"{{% {template_tag_name} {code} as {context_template_variable} %}}"
+
+    return f"{{% {template_tag_name} {code} %}}"
+
+
+def map_model(tag: "Tag") -> str:
+    """Mapper function for the dj-angles model template tag.
+
+    Args:
+        param tag: The tag to map.
+    """
+
+    return map_call(tag, template_tag_name="model")
