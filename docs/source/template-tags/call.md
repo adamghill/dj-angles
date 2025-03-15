@@ -35,7 +35,7 @@ class Reader(models.Model):
 There are a few different ways to show an icon if a book has been read.
 
 ```{note}
-All of these examples result in n+1 queries, but the code is kept simple just as an example.
+All of these examples probably result in n+1 queries 🤪, but the code is kept simple just as an example.
 ```
 
 #### Add an attribute to the model in the view
