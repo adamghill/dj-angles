@@ -78,13 +78,13 @@ def map_call(tag: "Tag", template_tag_name: str = "call") -> str:
         return ""
 
     code = dequotify(tag.get_attribute_value_or_first_key("code"))
-    context_template_variable = tag.attributes.get("as")
+    context_template_variable_attr = tag.attributes.get("as")
 
-    if context_template_variable:
-        if hasattr(context_template_variable, "value"):
-            context_template_variable = dequotify(context_template_variable.value)
+    if context_template_variable_attr is not None:
+        if hasattr(context_template_variable_attr, "value") and context_template_variable_attr.value:
+            context_template_variable = dequotify(context_template_variable_attr.value)
 
-        return f"{{% {template_tag_name} {code} as {context_template_variable} %}}"
+            return f"{{% {template_tag_name} {code} as {context_template_variable} %}}"
 
     return f"{{% {template_tag_name} {code} %}}"
 

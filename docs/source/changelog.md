@@ -1,8 +1,12 @@
 # Changelog
 
+## 0.16.0
+
+- Add `dj-call` and `dj-model` tags.
+
 ## 0.15.0
 
-- Add `call` template tag.
+- Add `call` and `model` template tags.
 
 ## 0.14.1
 
