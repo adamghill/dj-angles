@@ -8,7 +8,7 @@ Make sure to include `{% load dj_angles %}` in your template or add `dj_angles.t
 
 ## Example
 
-Lets say you have a `Book` model and you want to list all of the books, but add an icon if the book has been read by the current user.
+Let's say you have a `Book` model and you want to list all of the books, but add an icon if the book has been read by the current user.
 
 ### Models
 
