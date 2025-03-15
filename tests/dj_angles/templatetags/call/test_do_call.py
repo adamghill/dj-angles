@@ -59,7 +59,7 @@ def test_str_arg():
     actual = do_call(None, token)
 
     assert actual.parsed_function.portions[0].name == "set_name"
-    assert actual.parsed_function.portions[0].args == ["'Hello'"]
+    assert actual.parsed_function.portions[0].args == ["Hello"]
     assert actual.parsed_function.portions[0].kwargs == {}
     assert actual.context_variable_name == "name"
 
@@ -69,7 +69,7 @@ def test_multiple_args():
     actual = do_call(None, token)
 
     assert actual.parsed_function.portions[0].name == "set_name"
-    assert actual.parsed_function.portions[0].args == ["'Hello'", "8"]
+    assert actual.parsed_function.portions[0].args == ["Hello", 8]
     assert actual.parsed_function.portions[0].kwargs == {}
     assert actual.context_variable_name == "name"
 

@@ -8,6 +8,8 @@ from dj_angles.templatetags.model import clear_models
 def pytest_configure():
     settings.configure(
         INSTALLED_APPS=[
+            "django.contrib.auth",
+            "django.contrib.contenttypes",
             "dj_angles",
             "example.book.apps.Config",
         ],

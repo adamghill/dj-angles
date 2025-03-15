@@ -24,7 +24,17 @@ def resolve(context, arg):
     """
 
     if isinstance(arg, TemplateVariable):
-        return Variable(arg.name).resolve(context)
+        resolved = Variable(arg.name).resolve(context)
+
+        # If the template variable has portions, resolve them
+        if arg.portions:
+            for portion in arg.portions:
+                if hasattr(resolved, portion.name):
+                    resolved = getattr(resolved, portion.name)
+                else:
+                    raise TemplateSyntaxError(f"{arg.name} does not have attribute {portion.name}")
+
+        return resolved
 
     return eval_value(arg)
 
@@ -165,7 +175,7 @@ def do_call(parser, token) -> CallNode:  # noqa: ARG001
         # TODO: Decide if this is actually a good idea to allow this
         tree = ast.parse(arg, "eval")
         statement = tree.body[0].value
-        arg = eval_value(statement)
-        parsed_function.portions[-1].args.append(arg)
+        evaluated_arg = eval_value(statement)
+        parsed_function.portions[-1].args.append(evaluated_arg)
 
     return CallNode(parsed_function, context_variable_name)

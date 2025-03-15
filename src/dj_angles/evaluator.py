@@ -95,10 +95,12 @@ class ParsedFunction:
 @dataclass
 class TemplateVariable:
     name: str
+    portions: list[Portion] = field(default_factory=list)
 
     def __init__(self, name: ast.Name):
         self._name = name
         self.name = name.id
+        self.portions = []
 
     def __hash__(self):
         return hash(self.name)
@@ -118,9 +120,29 @@ def eval_value(value):
     date, time, duration, or UUID.
     """
 
+    # Handle AST name, attribute, or call first
     if isinstance(value, ast.Name):
         return TemplateVariable(value)
+    elif isinstance(value, ast.Attribute):
+        resolved = eval_value(value.value)
 
+        if isinstance(resolved, TemplateVariable):
+            resolved.portions.append(Portion(value.attr))
+
+        return resolved
+    elif isinstance(value, ast.Call):
+        resolved = eval_value(value.func)
+
+        # If it was an attribute, it should have been added to portions already,
+        # but we need to add args and kwargs to it (which we can find because
+        # it's the last portion)
+        if isinstance(value.func, ast.Attribute):
+            resolved.portions[-1].args = [eval_value(arg) for arg in value.args]
+            resolved.portions[-1].kwargs = {kw.arg: eval_value(kw.value) for kw in value.keywords}
+
+        return resolved
+
+    # Handle starred, dictionaries, and lists
     if isinstance(value, ast.Starred):
         value = eval_value(value.value)
     elif isinstance(value, ast.Dict):
@@ -133,6 +155,7 @@ def eval_value(value):
     elif isinstance(value, ast.List):
         value = [eval_value(v) for v in value.elts]
 
+    # Parse and cast any values
     try:
         value = ast.literal_eval(value)
     except SyntaxError:

@@ -1,4 +1,5 @@
 from datetime import datetime, time, timedelta
+from django.contrib.auth.models import User
 from uuid import UUID
 
 import pytest
@@ -429,6 +430,58 @@ def test_chained_functions():
     node.render(context)
 
     assert context["result"] == "rachel | jones!"
+
+
+def test_arg_attribute(rf, django_user_model):
+    request = rf.get("/")
+    request.user = User()
+
+    token = Token(TokenType.BLOCK, contents="call check_user(request.user) as result")
+    node = do_call(None, token)
+
+    context = RenderContext({"check_user": lambda user: user.is_anonymous, "request": request})
+    node.render(context)
+
+    assert context["result"] is False
+
+
+def test_arg_multiple_attributes(rf, django_user_model):
+    request = rf.get("/")
+    request.user = User()
+
+    token = Token(TokenType.BLOCK, contents="call check_user(request.user.is_anonymous) as result")
+    node = do_call(None, token)
+
+    context = RenderContext({"check_user": lambda t: t, "request": request})
+    node.render(context)
+
+    assert context["result"] is False
+
+
+def test_arg_multiple_attributes_id(rf, django_user_model):
+    request = rf.get("/")
+    request.user = User(id=3)
+
+    token = Token(TokenType.BLOCK, contents="call check_user(request.user.id) as result")
+    node = do_call(None, token)
+
+    context = RenderContext({"check_user": lambda t: t, "request": request})
+    node.render(context)
+
+    assert context["result"] == 3
+
+
+def test_arg_attribute_function(rf, django_user_model):
+    request = rf.get("/")
+    request.user = User(id=3)
+
+    token = Token(TokenType.BLOCK, contents="call check_user(request.user.get_user_permissions()) as result")
+    node = do_call(None, token)
+
+    context = RenderContext({"check_user": lambda t: t, "request": request})
+    node.render(context)
+
+    assert context["result"] == set()
 
 
 @pytest.mark.django_db

@@ -20,11 +20,11 @@ from django.db import models
 class Book(models.Model):
     title = models.CharField(max_length=100)
 
-    def is_read(self, request):
-        if request.user.is_anonymous:
+    def is_read(self, user):
+        if user.is_anonymous:
             return False
 
-        return self.readers.filter(user=request.user).exists()
+        return self.readers.filter(user=user).exists()
 
 class Reader(models.Model):
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
@@ -53,7 +53,7 @@ def index(request):
 
     # Loop over all books and add an attribute
     for book in books:
-        book.current_user_read = book.is_read(request)
+        book.current_user_read = book.is_read(request.user)
 
     return render(request, 'index.html', {'books': books})
 ```
@@ -96,7 +96,12 @@ register = template.Library()
 
 @register.simple_tag(takes_context=True)
 def current_user_read(context, book):
-    return book.is_read(context['request'])
+    request = context.get("request")
+
+    if request and not request.user.is_anonymous:
+        return book.is_read(request.user)
+
+    return False
 ```
 
 ```html
@@ -118,7 +123,7 @@ def current_user_read(context, book):
 
 #### Use the `call` template tag
 
-This is basically like a "pass-through" template tag, but without the extra hassle of creating a custom template tag every time.
+This is basically like a custom template tag, but without creating it every time.
 
 ```python
 # views.py
@@ -137,7 +142,7 @@ def index(request):
 <div>
   {{ book.title }}
 
-  {% call book.is_read(request) as current_user_read %}
+  {% call book.is_read(request.user) as current_user_read %}
 
   {% if current_user_read %}
   ✅
@@ -150,7 +155,7 @@ def index(request):
 
 ## Calling functions
 
-The template tag function argument tries to look as similar to normal Python code as possible. It is followed by the word "as" and then a variable name that will store the result of the function in the context for use later.
+The template tag function argument tries to look as similar to normal Python code as possible. It is followed by the word "as" and then a variable name that will store the result of the function in the context for later use.
 
 ```html
 <!-- index.html -->
