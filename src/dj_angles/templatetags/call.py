@@ -170,12 +170,4 @@ def do_call(parser, token) -> CallNode:  # noqa: ARG001
             context_variable_name = template_tag_arguments[idx + 1]
             break
 
-        # Handle arguments that are not handled by parsing the contents with `ParsedFunction`
-        # i.e. arguments that are not inside parenthesis
-        # TODO: Decide if this is actually a good idea to allow this
-        tree = ast.parse(arg, "eval")
-        statement = tree.body[0].value
-        evaluated_arg = eval_value(statement)
-        parsed_function.portions[-1].args.append(evaluated_arg)
-
     return CallNode(parsed_function, context_variable_name)

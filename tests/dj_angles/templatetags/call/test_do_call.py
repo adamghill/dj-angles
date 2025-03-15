@@ -55,7 +55,7 @@ def test_multiple_context_variables():
 
 
 def test_str_arg():
-    token = Token(TokenType.BLOCK, contents="call set_name 'Hello' as name")
+    token = Token(TokenType.BLOCK, contents="call set_name('Hello') as name")
     actual = do_call(None, token)
 
     assert actual.parsed_function.portions[0].name == "set_name"
@@ -65,16 +65,6 @@ def test_str_arg():
 
 
 def test_multiple_args():
-    token = Token(TokenType.BLOCK, contents="call set_name 'Hello' 8 as name")
-    actual = do_call(None, token)
-
-    assert actual.parsed_function.portions[0].name == "set_name"
-    assert actual.parsed_function.portions[0].args == ["Hello", 8]
-    assert actual.parsed_function.portions[0].kwargs == {}
-    assert actual.context_variable_name == "name"
-
-
-def test_parens():
     token = Token(TokenType.BLOCK, contents="call set_name('Hello', 8) as name")
     actual = do_call(None, token)
 

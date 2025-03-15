@@ -1,8 +1,8 @@
 from datetime import datetime, time, timedelta
-from django.contrib.auth.models import User
 from uuid import UUID
 
 import pytest
+from django.contrib.auth.models import User
 from django.template.base import Token, TokenType, VariableDoesNotExist
 from django.template.context import RenderContext
 from example.book.models import Book
@@ -21,7 +21,7 @@ def test_no_args():
 
 
 def test_str_arg():
-    token = Token(TokenType.BLOCK, contents="call set_name 'Bob' as name")
+    token = Token(TokenType.BLOCK, contents="call set_name('Bob') as name")
     node = do_call(None, token)
 
     context = RenderContext({"set_name": lambda s: s.upper()})
@@ -31,16 +31,6 @@ def test_str_arg():
 
 
 def test_multiple_args():
-    token = Token(TokenType.BLOCK, contents="call set_name_duplicate 'Jill' 3 as name")
-    node = do_call(None, token)
-
-    context = RenderContext({"set_name_duplicate": lambda s, n: s * n})
-    node.render(context)
-
-    assert context["name"] == "JillJillJill"
-
-
-def test_parens():
     token = Token(TokenType.BLOCK, contents="call set_name('Hello', 4) as name")
     node = do_call(None, token)
 
