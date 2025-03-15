@@ -1,8 +1,12 @@
 # Changelog
 
-## 0.14.1-dev
+## 0.15.0
 
-- Support conditional attributes on dj tags, e.g. `dj-include`
+- Add `call` template tag.
+
+## 0.14.1
+
+- Support conditional attributes on `dj` tags, e.g. `dj-include`.
 
 ## 0.14.0
 
