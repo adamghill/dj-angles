@@ -2,6 +2,15 @@
 
 Similar to the [`date` filter](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#date), but instead of using format strings derived from PHP, use the normal format strings for Python's [`strftime`](https://strftime.org).
 
+```{note}
+Make sure to [install `dj_angles`](../installation.md#template-tags) and include `{% load dj_angles %}` in your template if `"dj_angles.templatetags.dj_angles"` is not added to template built-ins.
+```
+
+```html
+<!-- index.html -->
+{{ book.published_at|dateformat:"%Y-%m-%d" }} <!-- 2023-03-15 -->
+```
+
 ## Format strings
 
 ### Day

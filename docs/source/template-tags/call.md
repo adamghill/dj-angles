@@ -3,7 +3,7 @@
 The `call` template tag allows functions to be called from within a template.
 
 ```{note}
-Make sure to include `{% load dj_angles %}` in your template or add `dj_angles.templatetags.dj_angles` to `TEMPLATES["OPTIONS"]["builtins"]`.
+Make sure to [install `dj_angles`](../installation.md#template-tags) and include `{% load dj_angles %}` in your template if `"dj_angles.templatetags.dj_angles"` is not added to template built-ins.
 ```
 
 ## Example

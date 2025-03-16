@@ -34,7 +34,7 @@ TEMPLATES = [{
 
 ## Template Tags
 
-`dj-angles` includes regular Django template tags that can be used even if not using the `dj-angles` template loader. However, it must be registered so the template tags can be found.
+`dj-angles` includes regular Django template tags that can be used even if not using the `dj-angles` template loader.
 
 ```python
 # settings.py
@@ -46,7 +46,7 @@ INSTALLED_APPS = [
 ]
 ```
 
-They can loaded in any template using the `{% load dj_angles %}` tag. Or they can be added to `builtins` which makes them available in all templates automatically.
+They can loaded in any template using the `{% load dj_angles %}` tag. Or `"dj_angles.templatetags.dj_angles"` can be added to template built-ins to make them available in all templates automatically.
 
 ```python
 # settings.py
