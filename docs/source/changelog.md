@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.17.0
+
+- Add `dateformat` filter.
+
 ## 0.16.0
 
 - Add `dj-call` and `dj-model` tags.

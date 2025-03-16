@@ -1,4 +1,5 @@
 from datetime import date, datetime, time
+from typing import Union
 
 from django import template
 
@@ -9,7 +10,7 @@ register = template.Library()
 
 
 @register.filter(name="dateformat")
-def dateformat(value: datetime | date | time, date_format: str):
+def dateformat(value: Union[datetime, date, time], date_format: str):
     return value.strftime(date_format)
 
 
