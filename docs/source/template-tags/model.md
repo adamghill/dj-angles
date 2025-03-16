@@ -1,4 +1,4 @@
-# Model
+# model
 
 The `model` template tag is a specialized version of the `call` template tag that automatically makes all database models available to be queried from the template without passing the model class into the context.
 

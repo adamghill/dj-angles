@@ -1,4 +1,4 @@
-# Call
+# call
 
 The `call` template tag allows functions to be called from within a template.
 

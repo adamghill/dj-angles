@@ -8,6 +8,8 @@
 - Wraps included templates in a custom element for easier debugging and targeted CSS styling
 - Support for making components with the [Shadow DOM](components.md#css-scoping)
 - Integrates with Django component libraries like [django-bird](https://django-bird.readthedocs.io)
+- [`call`](template-tags/call.md) and [`model`](template-tags/model.md) template tags to call functions directly from a template
+- [`dateformat`](filters/dateformat.md) filter to use Python [`strftime`](https://strftime.org) formats instead of PHP when formatting dates
 
 ## 💥 Example
 
@@ -84,6 +86,14 @@ components
 tag-elements
 tag-attributes
 examples
+```
+
+```{toctree}
+:caption: Filters
+:maxdepth: 2
+:hidden:
+
+filters/dateformat
 ```
 
 ```{toctree}
