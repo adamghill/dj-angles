@@ -14,6 +14,11 @@ def dateformat(value: Union[datetime, date, time], date_format: str):
     return value.strftime(date_format)
 
 
+@register.inclusion_tag("dj_angles/scripts.html")
+def dj_angles_scripts(*, ajax_form: bool = True):
+    return {"ajax_form": ajax_form}
+
+
 # Register custom template tags
 register.tag("call", do_call)
 register.tag("model", do_model)

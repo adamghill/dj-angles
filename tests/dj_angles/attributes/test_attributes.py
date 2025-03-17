@@ -109,3 +109,23 @@ def test_prepend_duplicate():
     assert len(actual._attributes) == 1
     assert actual._attributes[0].key == "rel"
     assert actual._attributes[0].value == "'stylesheet'"
+
+
+def test_pluck_value():
+    attributes = Attributes("'partial.html' rel='stylesheet'")
+    assert len(attributes._attributes) == 2
+
+    actual = attributes.pluck_value("rel")
+
+    assert len(attributes._attributes) == 1
+    assert actual == "'stylesheet'"
+
+
+def test_pluck_value_missing():
+    attributes = Attributes("'partial.html' rel='stylesheet'")
+    assert len(attributes._attributes) == 2
+
+    actual = attributes.pluck_value("invalid")
+
+    assert len(attributes._attributes) == 2
+    assert actual is None

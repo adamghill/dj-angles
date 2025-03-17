@@ -145,6 +145,60 @@ The tag can be self-closing if there is not default block content.
 {% filter ... %}
 ```
 
+## [`form`](custom-elements/ajax-form.md)
+
+### ajax
+
+Whether or not the form should be submitted via AJAX. Uses the [`ajax-form` custom element](custom-elements/ajax-form.md).
+
+```
+<dj-form action='/submit' method='POST' ajax>
+...
+</dj-form>
+```
+
+```html
+<ajax-form>
+  <form action='/submit' method='POST'>
+  ...
+  </form>
+</ajax-form>
+```
+
+#### swap
+
+Defines how the form should be replaced after submission. Valid values are `outerHTML` and `innerHTML`.
+
+```
+<dj-form action='/submit' method='POST' ajax swap='outerHTML'>
+...
+</dj-form>
+```
+
+```html
+<ajax-form>
+  <form action='/submit' method='POST'>
+  ...
+  </form>
+</ajax-form>
+```
+
+### csrf
+
+Whether or not the form should include a CSRF token.
+
+```
+<dj-form action='/submit' method='POST' csrf>
+...
+</dj-form>
+```
+
+```html
+<form action='/submit' method='POST'>{% csrf_token %}
+...
+</form>
+```
+
 ## [`lorem`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#lorem)
 
 ```html

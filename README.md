@@ -20,6 +20,7 @@
 - Integrates with Django component libraries like [django-bird](https://django-bird.readthedocs.io)
 - [`call`](template-tags/call.md) and [`model`](template-tags/model.md) template tags to call functions directly from a template
 - [`dateformat`](filters/dateformat.md) filter to use Python [`strftime`](https://strftime.org) formats instead of PHP when formatting dates
+- Submit forms via AJAX and swap in the resulting HTML
 
 ## 💥 Example
 
@@ -43,6 +44,11 @@
   <!-- evaluate code from the template -->
   <dj-call code='slugify("Hello Goodbye")' as='variable_name' />  <!-- {% call slugify("Hello Goodbye") as variable_name %} -->
   <dj-model code='Book.objects.filter(id=1)' as='book' />  <!-- {% model Book.objects.filter(id=1) as book %} -->
+
+  <!-- AJAX form submission -->
+  <dj-form action='/submit' method='POST' swap='outerHTML' ajax csrf> <!-- <ajax-form><form action='/submit' method='POST'>{% csrf_token %} -->
+    <button type='submit'>Submit</button>
+  </dj-form><!-- </form></ajax-form> -->
 
   <!-- conditional attributes -->
   <div dj-if="True">  <!-- {% if True %}<div> -->

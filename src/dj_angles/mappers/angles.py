@@ -97,3 +97,38 @@ def map_model(tag: "Tag") -> str:
     """
 
     return map_call(tag, template_tag_name="model")
+
+
+def map_form(tag: "Tag") -> str:
+    """Mapper function for the dj-angles form template tag.
+
+    Args:
+        param tag: The tag to map.
+    """
+
+    # TODO: support url, reverse, etc?
+
+    if tag.is_end:
+        if tag.start_tag and tag.start_tag.attributes.has("ajax"):
+            return "</ajax-form></form>"
+
+        return "</form>"
+
+    swap = tag.attributes.pluck_value("swap") or "'outerHTML'"
+    delay = tag.attributes.pluck_value("delay") or 0
+
+    if is_csrf := tag.attributes.has("csrf"):
+        tag.attributes.remove("csrf")
+
+    if is_ajax := tag.attributes.has("ajax"):
+        tag.attributes.remove("ajax")
+
+    html = f"<form {tag.attributes}>"
+
+    if is_ajax:
+        html = f"<ajax-form swap={swap} delay='{delay}'>{html}"
+
+    if is_csrf:
+        html = f"{html}{{% csrf_token %}}"
+
+    return html

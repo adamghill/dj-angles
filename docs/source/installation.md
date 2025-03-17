@@ -46,7 +46,7 @@ INSTALLED_APPS = [
 ]
 ```
 
-They can loaded in any template using the `{% load dj_angles %}` tag. Or `"dj_angles.templatetags.dj_angles"` can be added to template built-ins to make them available in all templates automatically.
+They can be loaded in any template by using `{% load dj_angles %}`. Or `"dj_angles.templatetags.dj_angles"` can be added to template built-ins in `settings.py` to make them available in all templates automatically.
 
 ```python
 # settings.py
@@ -64,4 +64,30 @@ TEMPLATES = [
         },
     },
 ]
+```
+
+## Middleware
+
+`dj-angles` includes middleware for checking the request method and whether the request is AJAX.
+
+```python
+# settings.py
+
+...
+MIDDLEWARE = [
+    ...
+    "dj_angles.middleware.RequestMethodMiddleware",
+    "dj_angles.middleware.RequestAJAXMiddleware",
+]
+```
+
+## Scripts
+
+Add scripts for custom elements.
+
+```html
+<!-- base.html -->
+{% load dj_angles %}
+
+{% dj_angles_scripts %}
 ```

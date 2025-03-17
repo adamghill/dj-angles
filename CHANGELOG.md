@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.18.0
+
+- Add `ajax-form` custom element.
+- Add `form` tag element.
+- Add `RequestMethodMiddleware` and `RequestAJAXMiddleware`.
+
 ## 0.17.0
 
 - Add `dateformat` filter.

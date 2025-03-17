@@ -50,6 +50,10 @@ def pytest_configure():
                 "ENGINE": "django.db.backends.sqlite3",
             }
         },
+        MIDDLEWARE=(
+            "dj_angles.middleware.RequestMethodMiddleware",
+            "dj_angles.middleware.RequestAJAXMiddleware",
+        ),
         ANGLES={},
     )
 

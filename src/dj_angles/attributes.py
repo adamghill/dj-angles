@@ -123,6 +123,21 @@ class Attributes(Sequence):
 
         self._attributes = _attributes
 
+    def pluck_value(self, name: str) -> Optional[str]:
+        """Get the value of an :obj:`~dj_angles.attributes.Attribute` by name and remove the attribute from the tag
+        attributes.
+
+        Args:
+            param name: The name of the attribute.
+        """
+
+        if (attribute := self.get(name)) is not None:
+            self._attributes.remove(attribute)
+
+            return attribute.value
+
+        return None
+
     def pop(self, index: SupportsIndex) -> Attribute:
         """Remove and return the last attribute."""
 
