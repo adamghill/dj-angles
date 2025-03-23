@@ -15,7 +15,7 @@ class NodeListRenderer:
         self.include_context = include_context
 
     def render(self, context: dict) -> str:
-        return self.nodelist.render(context)
+        return str(self.nodelist.render(context))
 
 
 class TemplateNode(Node):

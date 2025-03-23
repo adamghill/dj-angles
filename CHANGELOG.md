@@ -2,6 +2,10 @@
 
 ## 0.19.0
 
+- Fix `delay` in `ajax-form`.
+- Add `template` template tag.
+- Return a stringified result from `call` template tag.
+
 ### Breaking changes
 
 - Remove automatically casting strings to `UUID`, `datetime`, `date`, or `time`. That can be done manually in the function if needed and it's a little too magical.

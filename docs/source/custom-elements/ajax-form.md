@@ -84,7 +84,7 @@ Defines the delay in milliseconds before the form is submitted. Defaults to 0.
 
 [`HTMX`](https://htmx.org/) is a helpful, general solution for this use case as well.
 
-### Example
+### HTMX Example
 
 ```html
 <form id="actions">

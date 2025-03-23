@@ -109,6 +109,7 @@ filters/dateformat
 
 template-tags/call
 template-tags/model
+template-tags/template
 ```
 
 ```{toctree}
