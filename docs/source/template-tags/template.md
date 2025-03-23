@@ -28,36 +28,36 @@ Make sure to [install `dj_angles`](../installation.md#template-tags) and include
 
 The `template` looks like a regular Python function. The name of the function will be used to "call" it later to render the function. The arguments are passed to the function when it is called -- both args and kwargs are supported.
 
-```{warning}
+````{warning}
 There is not support for passing in an arg that would fallback to a kwarg. The number of arguments passed in to a `call` must be the same number of arguments defined in the `template`.
 
-````html
+```html
 <!-- this works -->
 {% template field(name, value='') %}
 ...
 {% endtemplate %}
 
 {% call field('first-name') %}
-````
+```
 
-````html
+```html
 <!-- this works -->
 {% template field(name='', value='') %}
 ...
 {% endtemplate %}
 
 {% call field(name='first-name') %}
-````
+```
 
-````html
+```html
 <!-- this does NOT work -->
 {% template field(name='', value='') %}
 ...
 {% endtemplate %}
 
 {% call field('first-name') %}
-````
 ```
+````
 
 ### Template variables
 
