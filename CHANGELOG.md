@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.19.0
+
+### Breaking changes
+
+- Remove automatically casting strings to `UUID`, `datetime`, `date`, or `time`. That can be done manually in the function if needed and it's a little too magical.
+
 ## 0.18.0
 
 - Add `ajax-form` custom element.

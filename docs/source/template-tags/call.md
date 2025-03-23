@@ -214,7 +214,7 @@ def index(request):
 
 ## Supported argument types
 
-Most Python primitives are supported as arguments, e.g. strings, ints, lists, dictionaries, etc. There is also special handling for strings that appear to be datetimes, dates, times, durations, or UUIDs.
+Most Python primitives are supported as arguments, e.g. strings, ints, lists, dictionaries, etc.
 
 ```python
 # views.py
@@ -233,13 +233,16 @@ def index(request):
 
 ### Datetimes
 
+There are a few helper methods available to parse datetimes from strings in the [django.utils.dateparse](https://docs.djangoproject.com/en/stable/ref/utils/#module-django.utils.dateparse) module.
+
 ```python
 # views.py
 from django.shortcuts import render
 from datetime import timedelta
+from django.utils.dateparse import parse_datetime
 
 def index(request):
-    return render(request, 'index.html', {'add_day': lambda dt: dt + timedelta(days=1)})
+    return render(request, 'index.html', {'add_day': lambda dt: parse_datetime(dt) + timedelta(days=1)})
 ```
 
 ```html
@@ -353,9 +356,10 @@ def index(request):
 The `call` template tag is a [custom template tag](https://docs.djangoproject.com/en/stable/howto/custom-template-tags/#advanced-custom-template-tags) which parses the first argument into Python AST and then evaluates it. After evaluation, the result is stored in the context with the name specified.
 
 ```{note}
-If your first thought is "parsing a string into the AST is probably slow", then you might be right. However, usually network latency and database performance will be the actual bottleneck for most applications. However, (as always) it is up to each individual developer to decide if the potential performance implications are worth the trade-off of having less code to maintain.
+If your first thought is "parsing a string into the AST is probably slow", then you might be right. However, usually network latency and database performance will be the actual bottleneck for most applications. However, as always, it is up to each individual to decide if the potential performance implications are worth the trade-off of having less custom code.
 ```
 
 ## Other approaches
 
 - https://djangosnippets.org/snippets/10633/
+- https://stackoverflow.com/a/7141173/1962

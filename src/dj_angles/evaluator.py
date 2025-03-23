@@ -1,48 +1,11 @@
 import ast
 import logging
 from dataclasses import dataclass, field
-from datetime import date, datetime, time, timedelta
 from functools import lru_cache
-from uuid import UUID
-
-from django.utils.dateparse import (
-    parse_date,
-    parse_datetime,
-    parse_duration,
-    parse_time,
-)
 
 from dj_angles.tokenizer import yield_tokens
 
 logger = logging.getLogger(__name__)
-
-
-@dataclass
-class Caster:
-    CASTERS = {  # noqa: RUF012
-        datetime: parse_datetime,
-        time: parse_time,
-        date: parse_date,
-        timedelta: parse_duration,
-        UUID: UUID,
-    }
-
-    def __init__(self, value):
-        self.value = value
-
-    def cast(self):
-        """Try to cast a value."""
-
-        for caster in self.CASTERS.values():
-            try:
-                casted_value = caster(self.value)
-
-                if casted_value is not None:
-                    return casted_value
-            except (ValueError, TypeError, AttributeError):
-                pass
-
-        return self.value
 
 
 @dataclass
@@ -158,10 +121,8 @@ def eval_value(value):
     # Parse and cast any values
     try:
         value = ast.literal_eval(value)
-    except SyntaxError:
-        value = Caster(value).cast()
-    except ValueError:
-        # Ignore ValueError
+    except (SyntaxError, ValueError):
+        # Ignore certain errors
         pass
 
     return value

@@ -121,43 +121,47 @@ def test_none():
 
 
 def test_date():
+    # Testing that the casters got removed
     token = Token(TokenType.BLOCK, contents="call add_day('2025-03-11') as d")
     node = do_call(None, token)
 
-    context = RenderContext({"add_day": lambda d: d + timedelta(days=1)})
+    context = RenderContext({"add_day": lambda d: d})
     node.render(context)
 
-    assert context["d"] == datetime(2025, 3, 12)  # noqa: DTZ001
+    assert context["d"] == "2025-03-11"
 
 
 def test_datetime():
+    # Testing that the casters got removed
     token = Token(TokenType.BLOCK, contents="call add_day('2025-03-11T01:02:03') as dt")
     node = do_call(None, token)
 
-    context = RenderContext({"add_day": lambda dt: dt + timedelta(days=1)})
+    context = RenderContext({"add_day": lambda dt: dt})
     node.render(context)
 
-    assert context["dt"] == datetime(2025, 3, 12, 1, 2, 3)  # noqa: DTZ001
+    assert context["dt"] == "2025-03-11T01:02:03"
 
 
 def test_time():
+    # Testing that the casters got removed
     token = Token(TokenType.BLOCK, contents="call set_time('01:02:03') as t")
     node = do_call(None, token)
 
-    context = RenderContext({"set_time": lambda t: t.replace(hour=2)})
+    context = RenderContext({"set_time": lambda t: t})
     node.render(context)
 
-    assert context["t"] == time(2, 2, 3)
+    assert context["t"] == "01:02:03"
 
 
 def test_uuid():
+    # Testing that the casters got removed
     token = Token(TokenType.BLOCK, contents="call set_uuid('ed997280-1ec8-4509-be83-f35426e1deff') as uuid")
     node = do_call(None, token)
 
     context = RenderContext({"set_uuid": lambda uuid: uuid})
     node.render(context)
 
-    assert context["uuid"] == UUID("ed997280-1ec8-4509-be83-f35426e1deff")
+    assert context["uuid"] == "ed997280-1ec8-4509-be83-f35426e1deff"
 
 
 def test_object():
