@@ -8,7 +8,7 @@ class AjaxForm extends HTMLElement {
     super()
 
     // Define options
-    this.delay = this.hasAttribute('delay') ? this.attributes['delay'].value : 0
+    this.delay = this.hasAttribute('delay') ? parseInt(this.attributes['delay'].value) : 0
     
     // TODO: Support other swap values from https://htmx.org/attributes/hx-swap/
     this.swap = this.hasAttribute('swap') ? this.attributes['swap'].value : "outerHTML"
@@ -53,39 +53,39 @@ class AjaxForm extends HTMLElement {
 
     this.disable()
 
-    try {
-      // Call the API via fetch
-      const { action, method } = this.form
-      const formData = this.serialize(event)
+    setTimeout(async () => {
+      try {
+        // Call the API via fetch
+        const { action, method } = this.form
+        const formData = this.serialize(event)
 
-      const response = await fetch(action, {
-        method,
-        body: formData,
-        headers: {
-          'Content-type': 'application/x-www-form-urlencoded',
-          'X-Requested-With': 'XMLHttpRequest'
+        const response = await fetch(action, {
+          method,
+          body: formData,
+          headers: {
+            'Content-type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+
+        // If there's an error, raise it
+        if (!response.ok) {
+          throw new Error(response.statusText)
         }
-      })
 
-      // If there's an error, raise it
-      if (!response.ok) {
-        throw new Error(response.statusText)
-      }
+        // Get the replacement HTML from the response
+        if (["outerHTML", "innerHTML"].includes(this.swap)) {
+          this.outerHTML = await response.text()
+        }
 
-      // Get the replacement HTML from the response
-      if (["outerHTML", "innerHTML"].includes(this.swap)) {
-        this[this.swap] = await response.text()
-      }
-
-      // Emit custom event
-      this.emit(formData)
-    } catch (error) {
-      console.warn(error)
-    } finally {
-      setTimeout(() => {
+        // Emit custom event
+        this.emit(formData)
+      } catch (error) {
+        console.warn(error)
+      } finally {
         this.enable()
-      }, this.delay)
-    }
+      }
+    }, parseInt(this.delay))
   }
 
   /**

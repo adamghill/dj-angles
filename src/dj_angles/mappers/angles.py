@@ -115,7 +115,18 @@ def map_form(tag: "Tag") -> str:
         return "</form>"
 
     swap = tag.attributes.pluck_value("swap") or "'outerHTML'"
+    if dequotify(swap) not in ("outerHTML", "innerHTML"):
+        raise ValueError(f"Invalid swap value: '{swap}'")
+
     delay = tag.attributes.pluck_value("delay") or 0
+
+    if isinstance(delay, str):
+        delay = dequotify(delay)
+
+    try:
+        delay = int(delay)
+    except ValueError as err:
+        raise ValueError(f"Delay must be an integer, got {delay}") from err
 
     if is_csrf := tag.attributes.has("csrf"):
         tag.attributes.remove("csrf")
