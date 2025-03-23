@@ -164,7 +164,7 @@ class CallNode(Node):
             return ""
 
         # Must render a string
-        return ""
+        return str(obj)
 
 
 def do_call(parser, token) -> CallNode:  # noqa: ARG001

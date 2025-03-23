@@ -154,7 +154,7 @@ def index(request):
 
 ## Calling functions
 
-The template tag function argument tries to look as similar to normal Python code as possible. It is followed by the word "as" and then a variable name that will store the result of the function in the context for later use.
+The template tag function argument tries to look as similar to normal Python code as possible. If it is followed by the word "as" and then a variable name, the result of the function will be stored in the context for later use.
 
 ```html
 <!-- index.html -->
@@ -172,6 +172,13 @@ from django.utils.text import slugify
 
 def index(request):
     return render(request, 'index.html', {'slugify': slugify})
+```
+
+If an "as" is not used, a stringified result of the function will be output directly in the template.
+
+```html
+<!-- index.html -->
+{% call slugify('Hello Goodbye') %} <!-- hello-goodbye -->
 ```
 
 ## Traversing
