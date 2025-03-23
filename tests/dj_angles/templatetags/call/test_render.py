@@ -1,6 +1,3 @@
-from datetime import datetime, time, timedelta
-from uuid import UUID
-
 import pytest
 from django.contrib.auth.models import User
 from django.template.base import Token, TokenType, VariableDoesNotExist

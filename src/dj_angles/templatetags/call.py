@@ -1,9 +1,10 @@
 import inspect
 import logging
 
-from django.template import Node, TemplateSyntaxError, Variable
+from django.template import Context, Node, TemplateSyntaxError, Variable
 
 from dj_angles.evaluator import ParsedFunction, TemplateVariable, eval_value
+from dj_angles.templatetags.template import NodeListRenderer
 from dj_angles.tokenizer import yield_tokens
 
 logger = logging.getLogger(__name__)
@@ -96,7 +97,7 @@ class CallNode(Node):
         result = None
 
         if obj is None:
-            result = context[portion.name]
+            result = context.get(portion.name)
         elif callable(obj):
             result = obj
 
@@ -120,9 +121,47 @@ class CallNode(Node):
 
             if callable(obj):
                 obj = self.get_result(context, obj, portion)
+            elif isinstance(obj, NodeListRenderer):
+                renderer = obj
+
+                if len(renderer.parsed_function.portions) > 1:
+                    raise TemplateSyntaxError("Invalid template renderer")
+
+                template_context = {}
+                template_last_portion = renderer.parsed_function.portions[-1]
+
+                for key, value in template_last_portion.kwargs.items():
+                    template_context[key] = resolve(context, value)
+
+                if len(self.parsed_function.portions) > 1:
+                    raise TemplateSyntaxError("Invalid template call")
+
+                call_last_portion = self.parsed_function.portions[-1]
+
+                if len(template_last_portion.args) != len(call_last_portion.args):
+                    raise TemplateSyntaxError("Invalid number of arguments")
+
+                for arg_idx, arg in enumerate(call_last_portion.args):
+                    arg_name = template_last_portion.args[arg_idx].name
+                    template_context[arg_name] = resolve(context, arg)
+
+                for key, value in call_last_portion.kwargs.items():
+                    template_context[key] = resolve(context, value)
+
+                node_list_context = Context({})
+
+                if renderer.include_context:
+                    node_list_context = context.__copy__()
+                else:
+                    node_list_context.template = context.template
+
+                node_list_context.update(template_context)
+
+                return renderer.render(node_list_context)
 
         if self.context_variable_name is not None:
-            context[self.context_variable_name] = obj
+            context.push({self.context_variable_name: obj})
+            return ""
 
         # Must render a string
         return ""
@@ -141,9 +180,9 @@ def do_call(parser, token) -> CallNode:  # noqa: ARG001
 
     """
     Split the contents by whitespace. Examples:
-        - "execute model.some_function('hello goodbye') as output_variable"
-        - "execute model.some_function('hello', 2) as output_variable"
-        - "execute model.some_function(arg1, arg2) as output_variable"
+        - "call model.some_function('hello goodbye') as output_variable"
+        - "call model.some_function('hello', 2) as output_variable"
+        - "call model.some_function(arg1, arg2) as output_variable"
     """
     contents = list(yield_tokens(token.contents, " ", handle_quotes=True, handle_parenthesis=True))
 

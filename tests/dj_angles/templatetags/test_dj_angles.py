@@ -3,19 +3,46 @@ from django.template import Context, Template
 from example.book.models import Book
 
 
-def test_call_tag():
-    def some_function():
-        return "expected output"
-
+def test_call_tag_with_context_variable():
     template = Template("""
 {% call some_function as result %}
 
 {{ result }}
 """)
-    context = Context({"some_function": some_function})
+    context = Context({"some_function": lambda: "expected output"})
     rendered = template.render(context)
 
     assert "expected output" in rendered
+
+
+def test_call_tag_with_context_variable_no_output():
+    template = Template("""
+{% call some_function as result %}
+""")
+    context = Context({"some_function": lambda: "expected output"})
+    rendered = template.render(context)
+
+    assert "expected output" not in rendered
+
+
+def test_call_tag():
+    template = Template("""
+{% call some_function %}
+""")
+    context = Context({"some_function": lambda: "expected output"})
+    rendered = template.render(context)
+
+    assert "expected output" in rendered
+
+
+def test_call_tag_obj():
+    template = Template("""
+{% call some_function %}
+""")
+    context = Context({"some_function": lambda: 123})
+    rendered = template.render(context)
+
+    assert "123" in rendered
 
 
 @pytest.mark.django_db
