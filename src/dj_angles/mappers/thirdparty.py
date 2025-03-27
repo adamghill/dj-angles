@@ -16,10 +16,11 @@ def map_bird(tag: "Tag") -> str:
 
     template_file = tag.tag_name
 
-    try:
-        template_file = tag.get_attribute_value_or_first_key("template")
-    except MissingAttributeError:
-        pass
+    if template_file == "bird":
+        try:
+            template_file = tag.get_attribute_value_or_first_key("template")
+        except MissingAttributeError:
+            pass
 
     django_template_tag = f"{{% bird {template_file}"
 

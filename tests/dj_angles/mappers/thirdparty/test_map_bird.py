@@ -127,3 +127,16 @@ def test_get_django_template_tag_is_end(settings):
     actual = tag.get_django_template_tag()
 
     assert expected == actual
+
+
+def test_get_django_template_tag_with_attributes(settings):
+    settings.ANGLES["default_mapper"] = "dj_angles.mappers.map_bird"
+
+    expected = "{% bird partial blob='test' %}"
+
+    html = "<dj-partial blob='test'>"
+
+    tag = create_tag(html)
+    actual = tag.get_django_template_tag()
+
+    assert expected == actual
