@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.20.0
+
+- Fix `django-bird` integration when using the default mapper. [#16](https://github.com/adamghill/dj-angles/pull/16) from [benbacardi](https://github.com/benbacardi).
+
 ## 0.19.0
 
 - Fix `delay` in `ajax-form`.
