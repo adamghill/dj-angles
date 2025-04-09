@@ -1,10 +1,12 @@
 import os
+import re
 
 from django.apps import apps
 from django.template import TemplateDoesNotExist
 from django.template.loaders.app_directories import Loader as AppDirectoriesLoader
 
 from dj_angles.regex_replacer import convert_template
+from dj_angles.settings import get_setting, get_tag_regex
 
 
 class Loader(AppDirectoriesLoader):
@@ -21,6 +23,17 @@ class Loader(AppDirectoriesLoader):
         """Gets the converted template contents."""
 
         template_string = self._get_template_string(origin.name)
+
+        initial_attribute_regex = get_setting("initial_attribute_regex", default=r"(dj-)")
+        attribute_pattern = (
+            rf"\s(?:(?:{initial_attribute_regex})(?:if|elif)=|(?:{initial_attribute_regex})(?:else| endif|fi))"
+        )
+
+        tag_regex = get_tag_regex()
+
+        if not re.search(attribute_pattern, template_string) and not tag_regex.search(template_string):
+            return template_string
+
         converted_template_string = convert_template(template_string)
 
         return converted_template_string
