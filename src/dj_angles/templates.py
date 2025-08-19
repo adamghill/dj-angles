@@ -1,5 +1,3 @@
-from typing import Optional
-
 from django.template import Template
 from django.template.exceptions import TemplateDoesNotExist
 from django.template.loader import select_template
@@ -7,7 +5,7 @@ from django.template.loader import select_template
 from dj_angles.strings import dequotify
 
 
-def get_template(template_file: str) -> Optional[Template]:
+def get_template(template_file: str) -> Template | None:
     """Check for the template file by looking for different template file variations.
 
     Currently, the only other variation is looking for the template file with an underscore

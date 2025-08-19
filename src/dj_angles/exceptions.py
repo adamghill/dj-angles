@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from dj_angles.tags import Tag
@@ -50,7 +50,7 @@ class InvalidAttributeError(Exception):
     name: str
     """The name of the attribute."""
 
-    def __init__(self, name: str, message: Optional[str] = None):
+    def __init__(self, name: str, message: str | None = None):
         super().__init__(message)
 
         self.name = name

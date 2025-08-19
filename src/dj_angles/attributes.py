@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from typing import Optional, SupportsIndex
+from typing import SupportsIndex
 
 from dj_angles.exceptions import DuplicateAttributeError, MissingAttributeError
 from dj_angles.tokenizer import yield_tokens
@@ -21,7 +21,7 @@ class Attribute:
     key: str
     """Key of the attribute. Always defined."""
 
-    value: Optional[str] = None
+    value: str | None = None
     """Optional value of the attribute. Defaults to `None`."""
 
     has_value: bool = False
@@ -88,7 +88,7 @@ class Attributes(Sequence):
 
         return self.get(name) is not None
 
-    def get(self, name: str) -> Optional[Attribute]:
+    def get(self, name: str) -> Attribute | None:
         """Get an :obj:`~dj_angles.attributes.Attribute` by name. Returns `None` if the attribute is missing.
 
         Args:
@@ -123,7 +123,7 @@ class Attributes(Sequence):
 
         self._attributes = _attributes
 
-    def pluck_value(self, name: str) -> Optional[str]:
+    def pluck_value(self, name: str) -> str | None:
         """Get the value of an :obj:`~dj_angles.attributes.Attribute` by name and remove the attribute from the tag
         attributes.
 

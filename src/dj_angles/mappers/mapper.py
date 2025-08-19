@@ -1,6 +1,6 @@
 from collections import UserDict
 from collections.abc import Callable
-from typing import Optional, Union
+from typing import Optional
 
 from django.utils.module_loading import import_string
 
@@ -10,7 +10,7 @@ from dj_angles.mappers.include import map_include
 from dj_angles.modules import is_module_available
 from dj_angles.settings import get_setting
 
-TAG_NAME_TO_DJANGO_TEMPLATE_TAG_MAP: dict[Optional[str], Union[Callable, str]] = {
+TAG_NAME_TO_DJANGO_TEMPLATE_TAG_MAP: dict[str | None, Callable | str] = {
     "extends": map_extends,
     "block": map_block,
     "verbatim": "verbatim",
@@ -43,7 +43,7 @@ class TagMap(UserDict):
     def __init__(self) -> None:
         super().__init__()
 
-        self.data: dict[Optional[str], Union[Callable, str]] = TAG_NAME_TO_DJANGO_TEMPLATE_TAG_MAP.copy()
+        self.data: dict[str | None, Callable | str] = TAG_NAME_TO_DJANGO_TEMPLATE_TAG_MAP.copy()
 
         # Add bird if installed
         self.add_module_mapper("django_bird", "bird", "dj_angles.mappers.map_bird")
@@ -86,7 +86,7 @@ class TagMap(UserDict):
                 except ImportError:
                     pass
 
-    def add_module_mapper(self, module: str, tag_name: str, mapper: Union[str, Callable]) -> None:
+    def add_module_mapper(self, module: str, tag_name: str, mapper: str | Callable) -> None:
         """Add module mappers depending on whether the module is installed or not."""
 
         if is_module_available(module):

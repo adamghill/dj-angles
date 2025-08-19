@@ -1,5 +1,4 @@
 import re
-from typing import Optional
 
 from dj_angles.tags import Tag
 
@@ -24,7 +23,7 @@ VOID_ELEMENTS = {
 }
 
 
-def get_outer_html(html: str, start_idx: int) -> Optional[Tag]:
+def get_outer_html(html: str, start_idx: int) -> Tag | None:
     """Get the outer HTML for just the tag at a given index.
 
     Will not return HTML before the beginning of the tag or after the ending tag.
@@ -42,7 +41,7 @@ def get_outer_html(html: str, start_idx: int) -> Optional[Tag]:
         Tag: The tag at the given index. The outer HTML is set on `tag.outer_html`.
     """
 
-    initial_tag: Optional[Tag] = None
+    initial_tag: Tag | None = None
     idx = start_idx
     tag_html = ""
     tag_name = ""
@@ -108,8 +107,8 @@ def get_outer_html(html: str, start_idx: int) -> Optional[Tag]:
 def find_character(
     html: str,
     start_idx: int,
-    character: Optional[str] = None,
-    character_regex: Optional[str] = None,
+    character: str | None = None,
+    character_regex: str | None = None,
     *,
     reverse: bool = False,
 ) -> int:
