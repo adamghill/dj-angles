@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.21.0
+
+- Add `no-wrap` attribute to [components](components.md).
+- Add `class` attribute to [components](components.md).
+
 ## 0.20.0
 
 - Fix `django-bird` integration when using the default mapper. [#16](https://github.com/adamghill/dj-angles/pull/16) from [benbacardi](https://github.com/benbacardi).
