@@ -57,6 +57,9 @@ class Tag:
     is_shadow: bool = False
     """Whether or not the tag should use the Shadow DOM."""
 
+    is_wrapped: bool = True
+    """Whether or not the tag is wrapped."""
+
     is_end: bool = False
     """Whether or not the tag is an end tag, i.e. starts with '</'."""
 
@@ -66,12 +69,12 @@ class Tag:
     start_tag: Optional["Tag"] = None
     """The associated start tag. Only set for end tags."""
 
-    outer_html: Optional[str] = None
+    outer_html: str | None = None
     """The outer HTML of the tag."""
 
     def __init__(
         self,
-        tag_map: Optional[TagMap] = None,
+        tag_map: TagMap | None = None,
         html: str = "",
         tag_name: str = "",
         template_tag_args: str = "",
@@ -91,6 +94,10 @@ class Tag:
             if self.attributes.has(SHADOW_ATTRIBUTE_KEY):
                 self.is_shadow = True
                 self.attributes.remove(SHADOW_ATTRIBUTE_KEY)
+
+        if self.attributes.has("no-wrap"):
+            self.is_wrapped = False
+            self.attributes.remove("no-wrap")
 
         if get_setting("lower_case_tag", default=False) is True:
             self.tag_name = self.tag_name.lower()
@@ -119,7 +126,7 @@ class Tag:
         if self.is_shadow and self.attributes.has(SHADOW_ATTRIBUTE_KEY):
             self.attributes.remove(SHADOW_ATTRIBUTE_KEY)
 
-    def get_django_template_tag(self, slots: Optional[list[tuple[str, Element]]] = None) -> str:
+    def get_django_template_tag(self, slots: list[tuple[str, Element]] | None = None) -> str:
         """Generate the Django template tag.
 
         Args:
@@ -145,7 +152,7 @@ class Tag:
 
         return f"{{% {self.django_template_tag} %}}"
 
-    def get_wrapping_tag_name(self, name: Optional[str] = None) -> str:
+    def get_wrapping_tag_name(self, name: str | None = None) -> str:
         """Get the wrapping tag name.
 
         Args:

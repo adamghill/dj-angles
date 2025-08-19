@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
-from dj_angles.exceptions import MissingAttributeError
+from dj_angles.exceptions import InvalidAttributeError, MissingAttributeError
+from dj_angles.strings import dequotify
 from dj_angles.templates import get_template
 
 if TYPE_CHECKING:
@@ -66,7 +67,10 @@ def map_include(tag: "Tag") -> str:
     wrapping_tag_name = tag.get_wrapping_tag_name(name=template_file)
 
     if tag.is_end:
-        return f"</{wrapping_tag_name}>"
+        if tag.is_wrapped:
+            return f"</{wrapping_tag_name}>"
+
+        return ""
 
     if ":" in template_file:
         colon_idx = template_file.index(":")
@@ -81,6 +85,19 @@ def map_include(tag: "Tag") -> str:
 
     replacement = ""
 
+    # Remove the `class` attribute (and store it for later) if it's there
+    if wrapper_classes := tag.attributes.pluck_value("class") or "":
+        if dequotify(wrapper_classes) and not tag.is_wrapped:
+            raise InvalidAttributeError(
+                name=tag.tag_name, message="`no-wrap` and `class` attributes cannot be used together"
+            )
+
+        wrapper_classes = f" class={wrapper_classes}"
+
+    # Remove the `no-wrap` attribute if it's there
+    if not tag.is_wrapped:
+        tag.attributes.remove("no-wrap")
+
     if tag.attributes:
         replacement = f"{{% include {template_file} {tag.attributes} %}}"
     else:
@@ -92,9 +109,10 @@ def map_include(tag: "Tag") -> str:
         if tag.is_self_closing:
             replacement = f"{replacement}</template>"
 
-    replacement = f"<{wrapping_tag_name}>{replacement}"
+    if tag.is_wrapped:
+        replacement = f"<{wrapping_tag_name}{wrapper_classes}>{replacement}"
 
-    if tag.is_self_closing:
-        replacement = f"{replacement}</{wrapping_tag_name}>"
+        if tag.is_self_closing:
+            replacement = f"{replacement}</{wrapping_tag_name}>"
 
     return replacement

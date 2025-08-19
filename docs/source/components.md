@@ -40,6 +40,20 @@ Underscores are used as a convention for partials in some frameworks, so that is
 <dj-partial />
 ```
 
+### Add class to wrapping element
+
+To add additional CSS classes to the wrapping element, add a `class` attribute to the element.
+
+```html
+<dj-partial class="mt-2" />
+```
+
+Would get compiled to the following Django template.
+
+```html
+<dj-partial class="mt-2">{% include 'partial.html' %}</dj-partial>
+```
+
 ### Wrapping element key
 
 Adding a colon and an identifier to the end of a template name allows for even more specific CSS styling.
@@ -51,7 +65,21 @@ Adding a colon and an identifier to the end of a template name allows for even m
 Would get compiled to the following Django template.
 
 ```html
-<dj-partial-1>{% include 'partial.html' }</dj-partial-1>
+<dj-partial-1>{% include 'partial.html' %}</dj-partial-1>
+```
+
+### Prevent wrapping element
+
+To prevent wrapping elements, add a `no-wrap` attribute to the element.
+
+```html
+<dj-partial no-wrap />
+```
+
+Would get compiled to the following Django template.
+
+```html
+{% include 'partial.html' %}
 ```
 
 ### Directories
