@@ -16,10 +16,10 @@
 - Can be sprinkled in as needed to enhance existing Django functionality
 - Since it looks like HTML, syntax highlighting mostly "just works"
 - Wraps included templates in a custom element for easier debugging and targeted CSS styling
-- Support for making components with the [Shadow DOM](https://dj-angles.adamghill.com/components/#CSS-scoping)
+- Support for making components with the [Shadow DOM](https://dj-angles.adamghill.com/en/latest/components.html#css-scoping)
 - Integrates with Django component libraries like [django-bird](https://django-bird.readthedocs.io)
-- [`call`](template-tags/call.md) and [`model`](template-tags/model.md) template tags to call functions directly from a template
-- [`dateformat`](filters/dateformat.md) filter to use Python [`strftime`](https://strftime.org) formats instead of PHP when formatting dates
+- [`call`](https://dj-angles.adamghill.com/en/latest/template-tags/call.html) and [`model`](https://dj-angles.adamghill.com/en/latest/template-tags/model.html) template tags to call functions directly from a template
+- [`dateformat`](https://dj-angles.adamghill.com/en/latest/filters/dateformat.html) filter to use Python [`strftime`](https://strftime.org) formats instead of PHP when formatting dates
 - Submit forms via AJAX and swap in the resulting HTML
 
 ## 💥 Example
