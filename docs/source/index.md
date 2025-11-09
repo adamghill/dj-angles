@@ -2,54 +2,32 @@
 
 ## ⭐ Features
 
-- Use HTML-like elements in Django templates, e.g. `<dj-partial />` instead of `{% include 'partial.html' %}`
+- Use HTML-like elements in Django templates, e.g. `<dj-some-partial />` instead of `{% include 'some-partial.html' %}`
 - Can be sprinkled in as needed to enhance existing Django functionality
 - Since it looks like HTML, syntax highlighting mostly "just works"
 - Wraps included templates in a custom element for easier debugging and targeted CSS styling
-- Support for making components with the [Shadow DOM](components.md#css-scoping)
-- Integrates with Django component libraries like [django-bird](https://django-bird.readthedocs.io)
-- [`call`](template-tags/call.md) and [`model`](template-tags/model.md) template tags to call functions directly from a template
-- [`dateformat`](filters/dateformat.md) filter to use Python [`strftime`](https://strftime.org) formats instead of PHP when formatting dates
+- Support for making components with [Shadow DOM](https://dj-angles.adamghill.com/components/#CSS-scoping)
+- Integrates with Django libraries like [django-bird](https://django-bird.readthedocs.io) and [django-template-partials](https://github.com/carltongibson/django-template-partials)
+- [`call`](template-tags/call.md) and [`model`](template-tags/model.md) to call functions directly from a template instead of creating custom template tags
+- [`dateformat`](filters/dateformat.md) filter to use Python [`strftime`](https://strftime.org) formats instead of PHP for formatting dates
 - Submit forms via AJAX and swap in the resulting HTML
 
-## 💥 Example
+## 💥 Examples
 
-**base.html**
-
-```
+```html
+<!-- base.html -->
 <dj-block name='content'>  <!-- {% block content %} -->
 </dj-block>  <!-- {% endblock content %} -->
 ```
 
-**index.html**
-
 ```html
+<!-- template-tags.html -->
 <dj-extends parent='base.html' />  <!-- {% extends 'base.html' %} -->
 
 <dj-block name='content'>  <!-- {% block content %} -->
   <!-- components -->
-  <dj-partial />  <!-- {% include 'partial.html' %} -->
-  <dj-include template='partial.html' />  <!-- {% include 'partial.html' %} -->
-
-  <!-- evaluate code from the template -->
-  <dj-call code='slugify("Hello Goodbye")' as='variable_name' />  <!-- {% call slugify("Hello Goodbye") as variable_name %} -->
-  <dj-model code='Book.objects.filter(id=1)' as='book' />  <!-- {% model Book.objects.filter(id=1) as book %} -->
-
-  <!-- AJAX form submission -->
-  <dj-form action='/submit' method='POST' swap='outerHTML' ajax csrf> <!-- <ajax-form><form action='/submit' method='POST'>{% csrf_token %} -->
-    <button type='submit'>Submit</button>
-  </dj-form><!-- </form></ajax-form> -->
-
-  <!-- conditional attributes -->
-  <div dj-if="True">  <!-- {% if True %}<div> -->
-    If
-  </div>
-  <div dj-elif="False">  <!-- {% elif False %}<div> -->
-    Elif
-  </div>
-  <div dj-else>  <!-- {% else %}<div> -->
-    Else
-  </div>  <!-- </div>{% endif %} -->
+  <dj-some-partial />  <!-- {% include 'test-partial.html' %} -->
+  <dj-include template='test-partial.html' />  <!-- {% include 'test-partial.html' %} -->
 
   <dj-verbatim>  <!-- {% verbatim %} -->
     This is verbatim: {% include %}
@@ -70,11 +48,45 @@
   <dj-csrf />  <!-- {% csrf_token %} -->
 
   <dj-debug />  <!-- {% debug %} -->
-
-  <!-- static helpers -->
-  <dj-image src='img/django.jpg' />  <!-- <img src="{% static 'img/django.jpg' %}" /> -->
-  <dj-css href='css/styles.css' />  <!-- <link href="{% static 'css/styles.css' %}" rel="stylesheet" /> -->
 </dj-block>  <!-- {% endblock content %} -->
+```
+
+```html
+<!-- static-helpers.html -->
+<dj-image src='img/django.jpg' />  <!-- <img src="{% static 'img/django.jpg' %}" /> -->
+<dj-css href='css/styles.css' />  <!-- <link href="{% static 'css/styles.css' %}" rel="stylesheet" /> -->
+```
+
+```html
+<!-- call-code-from-template.html -->
+<dj-call code='slugify("Hello Goodbye")' as='variable_name' />  <!-- {% call slugify("Hello Goodbye") as variable_name %} -->
+<dj-model code='Book.objects.filter(id=1)' as='book' />  <!-- {% model Book.objects.filter(id=1) as book %} -->
+```
+
+```html
+<!-- inline-expressions.html -->
+{{ request.user.username or request.user.email }}  <!-- {% if request.user.username %}{{ request.user.username }}{% else %}{{ request.user.email }}{% endif %} -->
+{{ request.user.username if request.user.is_authenticated else 'Unknown' }}  <!-- {% if request.user.is_authenticated %}{{ request.user.username }}{% else %}Unknown{% endif %} -->
+```
+
+```html
+<!-- ajax-form-submission.html -->
+<dj-form action='/submit' method='POST' swap='outerHTML' ajax csrf> <!-- <ajax-form><form action='/submit' method='POST'>{% csrf_token %} -->
+  <button type='submit'>Submit</button>
+</dj-form><!-- </form></ajax-form> -->
+```
+
+```html
+<!-- conditional-attributes.html -->
+<div dj-if="True">  <!-- {% if True %}<div> -->
+  If
+</div>
+<div dj-elif="False">  <!-- {% elif False %}<div> -->
+  Elif
+</div>
+<div dj-else>  <!-- {% else %}<div> -->
+  Else
+</div>  <!-- </div>{% endif %} -->
 ```
 
 ## ✨ Inspiration
@@ -90,6 +102,7 @@ self
 installation
 components
 tag-elements
+inline-expressions
 tag-attributes
 examples
 ```
@@ -135,6 +148,7 @@ middlewares/request-ajax
 :hidden:
 
 integrations/django-bird
+integrations/django-template-partials
 ```
 
 ```{toctree}

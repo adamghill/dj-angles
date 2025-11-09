@@ -7,26 +7,22 @@
 These are equivalent ways to include HTML files.
 
 ```text
-<dj-partial />
-<dj-include src='partial.html' />
-<dj-include src='partial' />
-<dj-include template='partial.html' />
-<dj-include template='partial' />
-<dj-include 'partial.html' />
-<dj-include 'partial' />
+<dj-example-partial />
+<dj-include template='example-partial' />
+<dj-include template='example-partial.html' />
 ```
 
 ```{note}
-The self-closing element is used in most examples, but explicit closing elements for all examples, e.g. `<dj-partial></dj-partial>`, also works.
+The self-closing element is used in most examples, but explicit closing elements for all examples, e.g. `<dj-example-partial></dj-example-partial>`, also works.
 ```
 
 They all compile to the following Django template.
 
 ```html
-<dj-partial>{% include 'partial.html' %}</dj-partial>
+<dj-example-partial>{% include 'example-partial.html' %}</dj-example-partial>
 ```
 
-The wrapping element, e.g. `dj-partial`, is a custom element which browsers will ignore. It allows for easier debugging when looking at the source code and also allows for targeted CSS styling.
+The wrapping element, e.g. `dj-example-partial`, is a custom element which browsers will ignore. It allows for easier debugging when looking at the source code and also allows for targeted CSS styling. However, it can be disabled by using the [`no-wrap` attribute](#prevent-wrapping-element).
 
 ```{warning}
 The built-in [tags](tag-elements.md) are considered reserved words. Template file names that conflict will not get loaded because reserved words take precedence. For example, if there is a template named "extends.html" `<dj-extends />` could not be used to include it; `<dj-include 'extends.html' />` would need to be used instead.
@@ -34,10 +30,10 @@ The built-in [tags](tag-elements.md) are considered reserved words. Template fil
 
 ### Underscored files
 
-Underscores are used as a convention for partials in some frameworks, so that is supported in `dj-angles`. The following would first look for `partial.html`. If it could not be found, it would then look for `_partial.html`.
+Underscores are used as a convention for partials in some frameworks, so that is supported in `dj-angles`. The following would first look for `example-partial.html`. If it could not be found, it would then look for `_example-partial.html`.
 
 ```html
-<dj-partial />
+<dj-example-partial />
 ```
 
 ### Add class to wrapping element
@@ -45,13 +41,13 @@ Underscores are used as a convention for partials in some frameworks, so that is
 To add additional CSS classes to the wrapping element, add a `class` attribute to the element.
 
 ```html
-<dj-partial class="mt-2" />
+<dj-example-partial class="mt-2" />
 ```
 
 Would get compiled to the following Django template.
 
 ```html
-<dj-partial class="mt-2">{% include 'partial.html' %}</dj-partial>
+<dj-example-partial class="mt-2">{% include 'example-partial.html' %}</dj-example-partial>
 ```
 
 ### Wrapping element key
@@ -59,13 +55,13 @@ Would get compiled to the following Django template.
 Adding a colon and an identifier to the end of a template name allows for even more specific CSS styling.
 
 ```html
-<dj-partial:1 />
+<dj-example-partial:1 />
 ```
 
 Would get compiled to the following Django template.
 
 ```html
-<dj-partial-1>{% include 'partial.html' %}</dj-partial-1>
+<dj-example-partial-1>{% include 'example-partial.html' %}</dj-example-partial-1>
 ```
 
 ### Prevent wrapping element
@@ -73,13 +69,13 @@ Would get compiled to the following Django template.
 To prevent wrapping elements, add a `no-wrap` attribute to the element.
 
 ```html
-<dj-partial no-wrap />
+<dj-example-partial no-wrap />
 ```
 
 Would get compiled to the following Django template.
 
 ```html
-{% include 'partial.html' %}
+{% include 'example-partial.html' %}
 ```
 
 ### Directories
@@ -88,10 +84,11 @@ Accessing templates in directories is supported even though technically forward-
 
 ```text
 <dj-directory/partial />
-<dj-include template='directory/partial.html' />
 <dj-include template='directory/partial' />
-<dj-include 'directory/partial.html' />
+<dj-include template='directory/partial.html' />
 <dj-include 'directory/partial' />
+<dj-include 'directory/partial.html' />
+
 
 ```
 
@@ -103,23 +100,21 @@ They all compile to the following Django template.
 
 ## CSS scoping
 
-To encapsulate component styles, the `dj-angles` can use the Shadow DOM. This will ensure that any `style` element in the include will be contained. The downside is that the Shadow DOM does not allow outside styles in (other than CSS variables).
+To encapsulate component styles, the `dj-angles` can utilize Shadow DOM. This will ensure that any `style` element in the include will be contained. The downside is that Shadow DOM does not allow outside styles in (other than CSS variables).
 
 These are all equivalent ways to use the Shadow DOM with an include.
 
 ```text
-<dj-partial! />
-<dj-partial shadow />
-<dj-include template='partial.html' shadow />
-<dj-include template='partial' shadow />
-<dj-include 'partial.html' shadow />
-<dj-include 'partial' shadow />
+<dj-example-partial! />
+<dj-example-partial shadow />
+<dj-include template='example-partial' shadow />
+<dj-include template='example-partial.html' shadow />
 ```
 
 They all compile to the following Django template syntax.
 
 ```html
-<dj-partial><template shadowrootmode='open'>{% include 'partial.html' %}</template></dj-partial>
+<dj-example-partial><template shadowrootmode='open'>{% include 'example-partial.html' %}</template></dj-example-partial>
 ```
 
 **More information about the Shadow DOM**

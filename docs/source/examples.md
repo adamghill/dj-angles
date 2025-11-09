@@ -1,4 +1,4 @@
-# Examples
+# Config Examples
 
 `dj-angles` is pretty flexible when determining what HTML to parse. Here are some examples to show what can be done. [Custom mappers](mappers.md) can also be setup to handle additional use cases.
 
