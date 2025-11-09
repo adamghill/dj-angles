@@ -198,7 +198,7 @@ toml = [
 
 [[package]]
 name = "dj-angles"
-version = "0.21.0"
+version = "0.22.0"
 source = { editable = "." }
 dependencies = [
     { name = "django" },
@@ -222,6 +222,9 @@ docs = [
     { name = "toml" },
     { name = "types-toml" },
 ]
+template-partials = [
+    { name = "django-template-partials" },
+]
 
 [package.dev-dependencies]
 dev = [
@@ -235,6 +238,7 @@ dev = [
 requires-dist = [
     { name = "django", specifier = ">=0" },
     { name = "django-bird", marker = "extra == 'bird'", specifier = ">=0" },
+    { name = "django-template-partials", marker = "extra == 'template-partials'", specifier = ">=0" },
     { name = "furo", marker = "extra == 'docs'", specifier = ">=0" },
     { name = "linkify-it-py", marker = "extra == 'docs'", specifier = ">=0" },
     { name = "minestrone", specifier = ">=0.8.0" },
@@ -248,7 +252,7 @@ requires-dist = [
     { name = "toml", marker = "extra == 'docs'", specifier = ">=0" },
     { name = "types-toml", marker = "extra == 'docs'", specifier = ">=0" },
 ]
-provides-extras = ["docs", "bird"]
+provides-extras = ["docs", "bird", "template-partials"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -282,6 +286,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/fc/40/b6a7475f53fcb7e511994b1376be4fb7b16245a65b3659d769b2d316517c/django_bird-0.1.0.tar.gz", hash = "sha256:9950210c4c28da057b150e9222fe2c90177bcc038f68c1b49b36949f6ed3ffa5", size = 99976 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/64/24/c33bf76575da08e97b234bf761e0dc43e39557a674290b33edc080e9a52f/django_bird-0.1.0-py3-none-any.whl", hash = "sha256:881b9a223c9a3f64558e896d01b8efc662aea1d88841e664873fdb3e2d9a0712", size = 11859 },
+]
+
+[[package]]
+name = "django-template-partials"
+version = "25.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/c1/7f/9eca482fbfd42f2ae19fa77fa231c0d2ba6ec7caf0ced16926480e1d746b/django_template_partials-25.2.tar.gz", hash = "sha256:55044e4a12d5d3adbc02df0758eb08fcd4e3451203e02a819f9853451696aef6", size = 17787 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/9f/30/96a9d0e70efd00af9b9c011111b5eba48d17914e5b3d39516d4a7cc7e7fb/django_template_partials-25.2-py2.py3-none-any.whl", hash = "sha256:4c4f6569bd2d016281700a215c09ba4b7a4bbd2da95ce15d8c1ae76d36da44b4", size = 9621 },
 ]
 
 [[package]]
