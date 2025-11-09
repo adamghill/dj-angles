@@ -104,7 +104,7 @@ def test_short_include_self_closing():
 
 
 def test_short_include_shadow_no_end_tag_shadow():
-    expected = "<dj-fake-partial><template shadowrootmode='open'>{% include 'fake-partial.html' %}</template></dj-fake-partial>"
+    expected = "<dj-fake-partial><template shadowrootmode='open'>{% include 'fake-partial.html' %}</template></dj-fake-partial>"  # noqa: E501
 
     template = "<dj-fake-partial!></dj-fake-partial>"
     actual = convert_template(template)
@@ -113,7 +113,7 @@ def test_short_include_shadow_no_end_tag_shadow():
 
 
 def test_short_include_shadow():
-    expected = "<dj-fake-partial><template shadowrootmode='open'>{% include 'fake-partial.html' %}</template></dj-fake-partial>"
+    expected = "<dj-fake-partial><template shadowrootmode='open'>{% include 'fake-partial.html' %}</template></dj-fake-partial>"  # noqa: E501
 
     template = "<dj-fake-partial!></dj-fake-partial!>"
     actual = convert_template(template)
@@ -122,7 +122,7 @@ def test_short_include_shadow():
 
 
 def test_short_include_self_closing_shadow_bang():
-    expected = "<dj-fake-partial><template shadowrootmode='open'>{% include 'fake-partial.html' %}</template></dj-fake-partial>"
+    expected = "<dj-fake-partial><template shadowrootmode='open'>{% include 'fake-partial.html' %}</template></dj-fake-partial>"  # noqa: E501
 
     template = "<dj-fake-partial! />"
     actual = convert_template(template)
@@ -692,7 +692,7 @@ def test_if_component_self_closing():
 
 
 def test_if_component_self_closing_extra_html():
-    expected = "<span></span>{% if True %}<dj-fake-partial>{% include 'fake-partial.html' %}</dj-fake-partial>{% endif %}<span></span>"
+    expected = "<span></span>{% if True %}<dj-fake-partial>{% include 'fake-partial.html' %}</dj-fake-partial>{% endif %}<span></span>"  # noqa: E501
 
     template = '<span></span><dj-fake-partial dj-if="True" /><span></span>'
     actual = convert_template(template)

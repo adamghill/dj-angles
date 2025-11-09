@@ -171,7 +171,7 @@ def test_no_extension(original, replacement):
         ),
         Params(
             original="<$directory/fake-partial />",
-            replacement="<dj-directory-fake-partial>{% include 'directory/fake-partial.html' %}</dj-directory-fake-partial>",
+            replacement="<dj-directory-fake-partial>{% include 'directory/fake-partial.html' %}</dj-directory-fake-partial>",  # noqa: E501
         ),
     ),
 )
