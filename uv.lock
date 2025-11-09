@@ -40,6 +40,15 @@ wheels = [
 ]
 
 [[package]]
+name = "attrs"
+version = "25.4.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/6b/5c/685e6633917e101e5dcb62b9dd76946cbb57c26e133bae9e0cd36033c0a9/attrs-25.4.0.tar.gz", hash = "sha256:16d5969b87f0859ef33a48b35d55ac1be6e42ae49d5e853b597db70c35c57e11", size = 934251 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3a/2a/7cc015f5b9f5db42b7d48157e23356022889fc354a2813c15934b7cb5c0e/attrs-25.4.0-py3-none-any.whl", hash = "sha256:adcf7e2a1fb3b36ac48d97835bb6d8ade15b8dcce26aba8bf1d14847b57a3373", size = 67615 },
+]
+
+[[package]]
 name = "babel"
 version = "2.16.0"
 source = { registry = "https://pypi.org/simple" }
@@ -209,7 +218,23 @@ dependencies = [
 bird = [
     { name = "django-bird" },
 ]
+template-partials = [
+    { name = "django-template-partials" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "coverage", extra = ["toml"] },
+    { name = "django-stubs" },
+    { name = "mypy" },
+    { name = "pytest" },
+    { name = "pytest-cov" },
+    { name = "pytest-django" },
+    { name = "sphinx-autobuild" },
+    { name = "types-toml" },
+]
 docs = [
+    { name = "attrs" },
     { name = "furo" },
     { name = "linkify-it-py" },
     { name = "myst-parser" },
@@ -220,18 +245,6 @@ docs = [
     { name = "sphinx-design" },
     { name = "sphinx-inline-tabs" },
     { name = "toml" },
-    { name = "types-toml" },
-]
-template-partials = [
-    { name = "django-template-partials" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "mypy" },
-    { name = "pytest" },
-    { name = "pytest-cov" },
-    { name = "pytest-django" },
 ]
 
 [package.metadata]
@@ -239,27 +252,33 @@ requires-dist = [
     { name = "django", specifier = ">=0" },
     { name = "django-bird", marker = "extra == 'bird'", specifier = ">=0" },
     { name = "django-template-partials", marker = "extra == 'template-partials'", specifier = ">=0" },
-    { name = "furo", marker = "extra == 'docs'", specifier = ">=0" },
-    { name = "linkify-it-py", marker = "extra == 'docs'", specifier = ">=0" },
     { name = "minestrone", specifier = ">=0.8.0" },
-    { name = "myst-parser", marker = "extra == 'docs'", specifier = ">=0" },
-    { name = "sphinx", marker = "extra == 'docs'", specifier = ">=0" },
-    { name = "sphinx-autoapi", marker = "extra == 'docs'", specifier = ">=0" },
-    { name = "sphinx-autobuild", marker = "extra == 'docs'", specifier = ">=0" },
-    { name = "sphinx-copybutton", marker = "extra == 'docs'", specifier = ">=0" },
-    { name = "sphinx-design", marker = "extra == 'docs'", specifier = ">=0" },
-    { name = "sphinx-inline-tabs", marker = "extra == 'docs'", specifier = ">=0" },
-    { name = "toml", marker = "extra == 'docs'", specifier = ">=0" },
-    { name = "types-toml", marker = "extra == 'docs'", specifier = ">=0" },
 ]
-provides-extras = ["docs", "bird", "template-partials"]
+provides-extras = ["bird", "template-partials"]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "coverage", extras = ["toml"], specifier = ">=6" },
+    { name = "django-stubs", specifier = ">=1" },
     { name = "mypy", specifier = ">=0" },
     { name = "pytest", specifier = "<9" },
     { name = "pytest-cov", specifier = ">=0" },
     { name = "pytest-django", specifier = ">=0" },
+    { name = "sphinx-autobuild", specifier = ">=2021.3.14" },
+    { name = "types-toml" },
+]
+docs = [
+    { name = "attrs", specifier = ">=21.4.0" },
+    { name = "furo", specifier = ">=2021.11.23" },
+    { name = "linkify-it-py", specifier = ">=1.0.3" },
+    { name = "myst-parser", specifier = ">=0.16.1" },
+    { name = "sphinx", specifier = ">=4.3.2" },
+    { name = "sphinx-autoapi", specifier = ">=0" },
+    { name = "sphinx-autobuild", specifier = ">=0" },
+    { name = "sphinx-copybutton", specifier = ">=0.4.0" },
+    { name = "sphinx-design", specifier = ">=0" },
+    { name = "sphinx-inline-tabs", specifier = ">=0" },
+    { name = "toml" },
 ]
 
 [[package]]
@@ -286,6 +305,35 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/fc/40/b6a7475f53fcb7e511994b1376be4fb7b16245a65b3659d769b2d316517c/django_bird-0.1.0.tar.gz", hash = "sha256:9950210c4c28da057b150e9222fe2c90177bcc038f68c1b49b36949f6ed3ffa5", size = 99976 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/64/24/c33bf76575da08e97b234bf761e0dc43e39557a674290b33edc080e9a52f/django_bird-0.1.0-py3-none-any.whl", hash = "sha256:881b9a223c9a3f64558e896d01b8efc662aea1d88841e664873fdb3e2d9a0712", size = 11859 },
+]
+
+[[package]]
+name = "django-stubs"
+version = "5.2.7"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+    { name = "django-stubs-ext" },
+    { name = "tomli", marker = "python_full_version < '3.11'" },
+    { name = "types-pyyaml" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/5d/a8/bc8c55212978f1e666486b60a4bfb0bc3a066de8212fa7389ff0f3dca639/django_stubs-5.2.7.tar.gz", hash = "sha256:2a07e47a8a867836a763c6bba8bf3775847b4fd9555bfa940360e32d0ee384a1", size = 257339 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ad/66/1c8063eee88a943f01d073dbbbda34ed093bf6e19738178506a66abbd5ad/django_stubs-5.2.7-py3-none-any.whl", hash = "sha256:2864e74b56ead866ff1365a051f24d852f6ed02238959664f558a6c9601c95bf", size = 507733 },
+]
+
+[[package]]
+name = "django-stubs-ext"
+version = "5.2.7"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/9b/6f/a0bab0e6a7676ab3ca02d51b459444e9bd6dd747e3a43b9c24cae6d0a1c6/django_stubs_ext-5.2.7.tar.gz", hash = "sha256:b690655bd4cb8a44ae57abb314e0995dc90414280db8f26fff0cb9fb367d1cac", size = 6524 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f8/c9/60445606e26706d3fccadf3b80ee1a9f32c1012683ff2ada7580937b2da9/django_stubs_ext-5.2.7-py3-none-any.whl", hash = "sha256:0466a7132587d49c5bbe12082ac9824d117a0dedcad5d0ada75a6e0d3aca6f60", size = 9979 },
 ]
 
 [[package]]
@@ -881,6 +929,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/94/d4/f8ac1f5bd22c15fad3b527e025ce219bd526acdbd903f52053df2baecc8b/tornado-6.4.1-cp38-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:a02a08cc7a9314b006f653ce40483b9b3c12cda222d6a46d4ac63bb6c9057698", size = 436882 },
     { url = "https://files.pythonhosted.org/packages/4b/3e/a8124c21cc0bbf144d7903d2a0cadab15cadaf683fa39a0f92bc567f0d4d/tornado-6.4.1-cp38-abi3-win32.whl", hash = "sha256:d9a566c40b89757c9aa8e6f032bcdb8ca8795d7c1a9762910c722b1635c9de4d", size = 438092 },
     { url = "https://files.pythonhosted.org/packages/d9/2f/3f2f05e84a7aff787a96d5fb06821323feb370fe0baed4db6ea7b1088f32/tornado-6.4.1-cp38-abi3-win_amd64.whl", hash = "sha256:b24b8982ed444378d7f21d563f4180a2de31ced9d8d84443907a0a64da2072e7", size = 438532 },
+]
+
+[[package]]
+name = "types-pyyaml"
+version = "6.0.12.20250915"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/7e/69/3c51b36d04da19b92f9e815be12753125bd8bc247ba0470a982e6979e71c/types_pyyaml-6.0.12.20250915.tar.gz", hash = "sha256:0f8b54a528c303f0e6f7165687dd33fafa81c807fcac23f632b63aa624ced1d3", size = 17522 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/bd/e0/1eed384f02555dde685fff1a1ac805c1c7dcb6dd019c916fe659b1c1f9ec/types_pyyaml-6.0.12.20250915-py3-none-any.whl", hash = "sha256:e7d4d9e064e89a3b3cae120b4990cd370874d2bf12fa5f46c97018dd5d3c9ab6", size = 20338 },
 ]
 
 [[package]]

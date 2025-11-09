@@ -38,20 +38,32 @@ Repository = "https://github.com/adamghill/dj-angles.git"
 Issues = "https://github.com/adamghill/dj-angles/discussions"
 Changelog = "https://dj-angles.adamghill.com/en/latest/changelog.html"
 
-[project.optional-dependencies]
-docs = [
-  "sphinx >= 0",
-  "linkify-it-py >= 0",
-  "myst-parser >= 0",
-  "sphinx-copybutton >= 0",
-  "furo >= 0",
-  "sphinx-autobuild >= 0",
-  "sphinx-inline-tabs >= 0",
-  "sphinx-design >= 0",
-  "sphinx-autoapi >= 0",
-  "toml >= 0",
-  "types-toml >= 0",
+[dependency-groups]
+dev = [
+    "pytest < 9",
+    "pytest-django >= 0",
+    "pytest-cov >= 0",
+    "mypy >= 0",
+    "sphinx-autobuild >= 2021.3.14",
+    "coverage[toml] >= 6",
+    "django-stubs >= 1",
+    "types-toml",
 ]
+docs = [
+    "Sphinx >= 4.3.2",
+    "linkify-it-py >= 1.0.3",
+    "myst-parser >= 0.16.1",
+    "furo >= 2021.11.23",
+    "sphinx-copybutton >= 0.4.0",
+    "toml",
+    "attrs >= 21.4.0",
+    "sphinx-autobuild >= 0",
+    "sphinx-inline-tabs >= 0",
+    "sphinx-design >= 0",
+    "sphinx-autoapi >= 0",
+]
+
+[project.optional-dependencies]
 bird = [
   "django-bird >= 0",
 ]
