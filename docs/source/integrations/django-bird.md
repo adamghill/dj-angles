@@ -17,7 +17,6 @@ Using the auto settings `django-bird` should not conflict with the two packages.
 ```python
 # settings.py
 
-
 DJANGO_BIRD = {
     "ENABLE_AUTO_CONFIG": False
 }  # this is optional for `django-bird`

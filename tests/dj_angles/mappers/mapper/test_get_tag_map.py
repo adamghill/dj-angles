@@ -5,7 +5,7 @@ def test_default():
     expected = "default_mapper"
     actual = get_tag_map()
 
-    assert len(actual) == 24
+    assert len(actual) == 25
     assert actual[None].__name__ == expected
 
 
@@ -14,5 +14,5 @@ def test_none_default_mapper(settings):
 
     actual = get_tag_map()
 
-    assert len(actual) == 23
+    assert len(actual) == 24
     assert actual.get(None) is None

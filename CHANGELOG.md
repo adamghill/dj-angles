@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.22.0-dev
+
+- Add integration with [`django-template-partials`](https://github.com/carltongibson/django-template-partials).
+
 ## 0.21.0
 
 - Add `no-wrap` attribute to [components](components.md).

@@ -45,8 +45,11 @@ class TagMap(UserDict):
 
         self.data: dict[str | None, Callable | str] = TAG_NAME_TO_DJANGO_TEMPLATE_TAG_MAP.copy()
 
-        # Add bird if installed
+        # Add bird if `django-bird` is installed
         self.add_module_mapper("django_bird", "bird", "dj_angles.mappers.map_bird")
+
+        # Add partialdef if `django-template-partial` is installed
+        self.add_module_mapper("template_partials", "partial", "dj_angles.mappers.map_partialdef")
 
         # Add custom mappers if they are defined in settings
         self.add_custom_mappers()

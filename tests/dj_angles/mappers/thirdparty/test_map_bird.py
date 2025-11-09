@@ -3,9 +3,9 @@ from tests.dj_angles.tags import create_tag
 
 
 def test_typical():
-    expected = "{% bird 'partial' %}"
+    expected = "{% bird 'bird-partial' %}"
 
-    html = "<dj-bird 'partial'>"
+    html = "<dj-bird 'bird-partial'>"
     tag = create_tag(html)
 
     actual = map_bird(tag=tag)
@@ -14,9 +14,9 @@ def test_typical():
 
 
 def test_typical_tag_name():
-    expected = "{% bird partial %}"
+    expected = "{% bird bird-partial %}"
 
-    html = "<dj-partial>"
+    html = "<dj-bird-partial>"
     tag = create_tag(html)
 
     actual = map_bird(tag=tag)
@@ -38,7 +38,7 @@ def test_is_closing():
 def test_is_closing_tag_name():
     expected = "{% endbird %}"
 
-    html = "</dj-partial>"
+    html = "</dj-bird-partial>"
     tag = create_tag(html)
 
     actual = map_bird(tag=tag)
@@ -47,9 +47,9 @@ def test_is_closing_tag_name():
 
 
 def test_self_closing():
-    expected = "{% bird 'partial' / %}"
+    expected = "{% bird 'bird-partial' / %}"
 
-    html = "<dj-bird 'partial' />"
+    html = "<dj-bird 'bird-partial' />"
     tag = create_tag(html)
 
     actual = map_bird(tag=tag)
@@ -58,9 +58,9 @@ def test_self_closing():
 
 
 def test_self_closing_tag_name():
-    expected = "{% bird partial / %}"
+    expected = "{% bird bird-partial / %}"
 
-    html = "<dj-partial />"
+    html = "<dj-bird-partial />"
     tag = create_tag(html)
 
     actual = map_bird(tag=tag)
@@ -69,9 +69,9 @@ def test_self_closing_tag_name():
 
 
 def test_template_attribute():
-    expected = "{% bird 'partial' / %}"
+    expected = "{% bird 'bird-partial' / %}"
 
-    html = "<dj-bird template='partial' />"
+    html = "<dj-bird template='bird-partial' />"
     tag = create_tag(html)
 
     actual = map_bird(tag=tag)
@@ -80,9 +80,9 @@ def test_template_attribute():
 
 
 def test_additional_attribute():
-    expected = "{% bird 'partial' blob='test' %}"
+    expected = "{% bird 'bird-partial' blob='test' %}"
 
-    html = "<dj-bird template='partial' blob='test'>"
+    html = "<dj-bird template='bird-partial' blob='test'>"
     tag = create_tag(html)
 
     actual = map_bird(tag=tag)
@@ -93,9 +93,9 @@ def test_additional_attribute():
 def test_get_django_template_tag(settings):
     settings.ANGLES["default_mapper"] = "dj_angles.mappers.map_bird"
 
-    expected = "{% bird partial %}"
+    expected = "{% bird bird-partial %}"
 
-    html = "<dj-partial>"
+    html = "<dj-bird-partial>"
     tag = create_tag(html)
 
     actual = tag.get_django_template_tag()
@@ -106,9 +106,9 @@ def test_get_django_template_tag(settings):
 def test_get_django_template_tag_self_closing(settings):
     settings.ANGLES["default_mapper"] = "dj_angles.mappers.map_bird"
 
-    expected = "{% bird partial / %}"
+    expected = "{% bird bird-partial / %}"
 
-    html = "<dj-partial />"
+    html = "<dj-bird-partial />"
 
     tag = create_tag(html)
     actual = tag.get_django_template_tag()
@@ -121,7 +121,7 @@ def test_get_django_template_tag_is_end(settings):
 
     expected = "{% endbird %}"
 
-    html = "</dj-partial>"
+    html = "</dj-bird-partial>"
 
     tag = create_tag(html)
     actual = tag.get_django_template_tag()
@@ -132,9 +132,9 @@ def test_get_django_template_tag_is_end(settings):
 def test_get_django_template_tag_with_attributes(settings):
     settings.ANGLES["default_mapper"] = "dj_angles.mappers.map_bird"
 
-    expected = "{% bird partial blob='test' %}"
+    expected = "{% bird bird-partial blob='test' %}"
 
-    html = "<dj-partial blob='test'>"
+    html = "<dj-bird-partial blob='test'>"
 
     tag = create_tag(html)
     actual = tag.get_django_template_tag()

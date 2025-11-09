@@ -10,11 +10,11 @@ def test_typical():
 {% block content %}
   <input />
 
-  <dj-partial>{% include 'partial.html' %}</dj-partial>
+  <dj-fake-partial>{% include 'fake-partial.html' %}</dj-fake-partial>
 
-  <dj-partial>{% include 'partial.html' %}</dj-partial>
+  <dj-fake-partial>{% include 'fake-partial.html' %}</dj-fake-partial>
 
-  <dj-partial>{% include 'partial.html' %}</dj-partial>
+  <dj-fake-partial>{% include 'fake-partial.html' %}</dj-fake-partial>
 
   <dj-another-directory-another-partial>{% include 'another-directory/another-partial.html' %}</dj-another-directory-another-partial>
 
@@ -26,11 +26,11 @@ def test_typical():
 <dj-block content>
   <input />
 
-  <dj-partial />
+  <dj-fake-partial />
 
-  <dj-include 'partial'></dj-include 'partial'>
+  <dj-include 'fake-partial'></dj-include 'fake-partial'>
 
-  <dj-include 'partial'></dj-include>
+  <dj-include 'fake-partial'></dj-include>
 
   <dj-another-directory/another-partial />
 
@@ -86,45 +86,45 @@ def test_block_missing_end_name():
 
 
 def test_short_include():
-    expected = "<dj-partial>{% include 'partial.html' %}</dj-partial>"
+    expected = "<dj-fake-partial>{% include 'fake-partial.html' %}</dj-fake-partial>"
 
-    template = "<dj-partial></dj-partial>"
+    template = "<dj-fake-partial></dj-fake-partial>"
     actual = convert_template(template)
 
     assert actual == expected
 
 
 def test_short_include_self_closing():
-    expected = "<dj-partial>{% include 'partial.html' %}</dj-partial>"
+    expected = "<dj-fake-partial>{% include 'fake-partial.html' %}</dj-fake-partial>"
 
-    template = "<dj-partial />"
+    template = "<dj-fake-partial />"
     actual = convert_template(template)
 
     assert actual == expected
 
 
 def test_short_include_shadow_no_end_tag_shadow():
-    expected = "<dj-partial><template shadowrootmode='open'>{% include 'partial.html' %}</template></dj-partial>"
+    expected = "<dj-fake-partial><template shadowrootmode='open'>{% include 'fake-partial.html' %}</template></dj-fake-partial>"
 
-    template = "<dj-partial!></dj-partial>"
+    template = "<dj-fake-partial!></dj-fake-partial>"
     actual = convert_template(template)
 
     assert actual == expected
 
 
 def test_short_include_shadow():
-    expected = "<dj-partial><template shadowrootmode='open'>{% include 'partial.html' %}</template></dj-partial>"
+    expected = "<dj-fake-partial><template shadowrootmode='open'>{% include 'fake-partial.html' %}</template></dj-fake-partial>"
 
-    template = "<dj-partial!></dj-partial!>"
+    template = "<dj-fake-partial!></dj-fake-partial!>"
     actual = convert_template(template)
 
     assert actual == expected
 
 
 def test_short_include_self_closing_shadow_bang():
-    expected = "<dj-partial><template shadowrootmode='open'>{% include 'partial.html' %}</template></dj-partial>"
+    expected = "<dj-fake-partial><template shadowrootmode='open'>{% include 'fake-partial.html' %}</template></dj-fake-partial>"
 
-    template = "<dj-partial! />"
+    template = "<dj-fake-partial! />"
     actual = convert_template(template)
 
     assert actual == expected
@@ -212,30 +212,30 @@ def test_include_template_extension_self_closing():
 
 
 def test_include_arguments_with_newlines():
-    expected = "<dj-partial>{% include 'partial.html' with blob=True stuff=True %}</dj-partial>"
+    expected = "<dj-fake-partial>{% include 'fake-partial.html' with blob=True stuff=True %}</dj-fake-partial>"
 
-    template = """<dj-partial with blob=True
-stuff=True></dj-partial>"""
+    template = """<dj-fake-partial with blob=True
+stuff=True></dj-fake-partial>"""
     actual = convert_template(template)
 
     assert actual == expected
 
 
 def test_include_arguments_with_newlines_and_extra_spaces():
-    expected = "<dj-partial>{% include 'partial.html' with blob=True stuff=True %}</dj-partial>"
+    expected = "<dj-fake-partial>{% include 'fake-partial.html' with blob=True stuff=True %}</dj-fake-partial>"
 
-    template = """<dj-partial with blob=True
-    stuff=True></dj-partial>"""
+    template = """<dj-fake-partial with blob=True
+    stuff=True></dj-fake-partial>"""
     actual = convert_template(template)
 
     assert actual == expected
 
 
 def test_include_arguments_with_newlines_and_tab():
-    expected = "<dj-partial>{% include 'partial.html' with blob=True stuff=True %}</dj-partial>"
+    expected = "<dj-fake-partial>{% include 'fake-partial.html' with blob=True stuff=True %}</dj-fake-partial>"
 
-    template = """<dj-partial with blob=True
-	stuff=True></dj-partial>"""
+    template = """<dj-fake-partial with blob=True
+	stuff=True></dj-fake-partial>"""
     actual = convert_template(template)
 
     assert actual == expected
@@ -247,12 +247,12 @@ def test_invalid_tag():
 <dj-block content>
 <input>
 
-<dj-partial>
+<dj-fake-partial>
 </dj-block content>""")
 
     assert e.exconly() == "dj_angles.exceptions.InvalidEndTagError"
     assert e.value.tag.tag_name == "block"
-    assert e.value.last_tag.tag_name == "partial"
+    assert e.value.last_tag.tag_name == "fake-partial"
 
 
 def test_extends():
@@ -683,18 +683,18 @@ def test_extra_else():
 
 
 def test_if_component_self_closing():
-    expected = "{% if True %}<dj-partial>{% include 'partial.html' %}</dj-partial>{% endif %}"
+    expected = "{% if True %}<dj-fake-partial>{% include 'fake-partial.html' %}</dj-fake-partial>{% endif %}"
 
-    template = '<dj-partial dj-if="True" />'
+    template = '<dj-fake-partial dj-if="True" />'
     actual = convert_template(template)
 
     assert actual == expected
 
 
 def test_if_component_self_closing_extra_html():
-    expected = "<span></span>{% if True %}<dj-partial>{% include 'partial.html' %}</dj-partial>{% endif %}<span></span>"
+    expected = "<span></span>{% if True %}<dj-fake-partial>{% include 'fake-partial.html' %}</dj-fake-partial>{% endif %}<span></span>"
 
-    template = '<span></span><dj-partial dj-if="True" /><span></span>'
+    template = '<span></span><dj-fake-partial dj-if="True" /><span></span>'
     actual = convert_template(template)
 
     assert actual == expected

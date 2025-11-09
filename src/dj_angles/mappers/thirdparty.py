@@ -2,6 +2,7 @@ import logging
 from typing import TYPE_CHECKING
 
 from dj_angles.exceptions import MissingAttributeError
+from dj_angles.mappers.django import map_block
 
 if TYPE_CHECKING:
     from dj_angles.tags import Tag
@@ -31,3 +32,7 @@ def map_bird(tag: "Tag") -> str:
         django_template_tag = f"{django_template_tag} /"
 
     return f"{django_template_tag} %}}"
+
+
+def map_partialdef(tag: "Tag") -> str:
+    return map_block(tag=tag, tag_name="partialdef")

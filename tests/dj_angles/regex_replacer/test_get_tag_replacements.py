@@ -13,7 +13,7 @@ Params = namedtuple(
 
 
 def _shadowify(s: str) -> str:
-    return f"<dj-partial><template shadowrootmode='open'>{s}</template></dj-partial>"
+    return f"<dj-fake-partial><template shadowrootmode='open'>{s}</template></dj-fake-partial>"
 
 
 @pytest.mark.parametrize(
@@ -28,28 +28,28 @@ def _shadowify(s: str) -> str:
             replacement="{% extends 'base.html' %}",
         ),
         Params(
-            original="<dj-include 'partial.html' />",
-            replacement="<dj-partial>{% include 'partial.html' %}</dj-partial>",
+            original="<dj-include 'fake-partial.html' />",
+            replacement="<dj-fake-partial>{% include 'fake-partial.html' %}</dj-fake-partial>",
         ),
         Params(
-            original="<dj-include 'partial.html' shadow />",
-            replacement=_shadowify("{% include 'partial.html' %}"),
+            original="<dj-include 'fake-partial.html' shadow />",
+            replacement=_shadowify("{% include 'fake-partial.html' %}"),
         ),
         Params(
-            original="<dj-include 'partial.html' test='hello' />",
-            replacement="<dj-partial>{% include 'partial.html' test='hello' %}</dj-partial>",
+            original="<dj-include 'fake-partial.html' test='hello' />",
+            replacement="<dj-fake-partial>{% include 'fake-partial.html' test='hello' %}</dj-fake-partial>",
         ),
         Params(
             original="<dj-include 'shadow-partial.html' />",
             replacement="<dj-shadow-partial>{% include 'shadow-partial.html' %}</dj-shadow-partial>",
         ),
         Params(
-            original="<dj-partial />",
-            replacement="<dj-partial>{% include 'partial.html' %}</dj-partial>",
+            original="<dj-fake-partial />",
+            replacement="<dj-fake-partial>{% include 'fake-partial.html' %}</dj-fake-partial>",
         ),
         Params(
-            original="<dj-partial test='hello' />",
-            replacement="<dj-partial>{% include 'partial.html' test='hello' %}</dj-partial>",
+            original="<dj-fake-partial test='hello' />",
+            replacement="<dj-fake-partial>{% include 'fake-partial.html' test='hello' %}</dj-fake-partial>",
         ),
         Params(
             original="<dj-shadow-partial />",
@@ -154,24 +154,24 @@ def test_no_extension(original, replacement):
     Params._fields,
     (
         Params(
-            original="<$partial />",
-            replacement="<dj-partial>{% include 'partial.html' %}</dj-partial>",
+            original="<$fake-partial />",
+            replacement="<dj-fake-partial>{% include 'fake-partial.html' %}</dj-fake-partial>",
         ),
         Params(
-            original="<$partial! />",
-            replacement=_shadowify("{% include 'partial.html' %}"),
+            original="<$fake-partial! />",
+            replacement=_shadowify("{% include 'fake-partial.html' %}"),
         ),
         Params(
-            original="<$partial!>",
-            replacement="<dj-partial><template shadowrootmode='open'>{% include 'partial.html' %}",
+            original="<$fake-partial!>",
+            replacement="<dj-fake-partial><template shadowrootmode='open'>{% include 'fake-partial.html' %}",
         ),
         Params(
-            original="</$partial!>",
-            replacement="</template></dj-partial>",
+            original="</$fake-partial!>",
+            replacement="</template></dj-fake-partial>",
         ),
         Params(
-            original="<$directory/partial />",
-            replacement="<dj-directory-partial>{% include 'directory/partial.html' %}</dj-directory-partial>",
+            original="<$directory/fake-partial />",
+            replacement="<dj-directory-fake-partial>{% include 'directory/fake-partial.html' %}</dj-directory-fake-partial>",
         ),
     ),
 )
@@ -212,8 +212,8 @@ def test_initial_tag_regex_for_react_style(original, replacement, settings):
     Params._fields,
     (
         Params(
-            original="<Partial />",
-            replacement="<dj-partial>{% include 'partial.html' %}</dj-partial>",
+            original="<Thing />",
+            replacement="<dj-thing>{% include 'thing.html' %}</dj-thing>",
         ),
     ),
 )
@@ -348,10 +348,10 @@ def test_no_prefix(settings):
 def test_no_prefix_with_default_mapper(settings):
     settings.ANGLES["initial_tag_regex"] = r"(?=\w)"
 
-    actual = get_tag_replacements("<partial />", raise_for_missing_start_tag=False)
+    actual = get_tag_replacements("<thing />", raise_for_missing_start_tag=False)
 
-    assert actual[0].original == "<partial />"
-    assert actual[0].replacement == "<dj-partial>{% include 'partial.html' %}</dj-partial>"
+    assert actual[0].original == "<thing />"
+    assert actual[0].replacement == "<dj-thing>{% include 'thing.html' %}</dj-thing>"
 
 
 def test_no_prefix_without_default_mapper(settings):
@@ -359,7 +359,7 @@ def test_no_prefix_without_default_mapper(settings):
     settings.ANGLES["initial_tag_regex"] = r"(?=\w)"
 
     expected = []
-    actual = get_tag_replacements("<partial />", raise_for_missing_start_tag=False)
+    actual = get_tag_replacements("<thing />", raise_for_missing_start_tag=False)
 
     assert actual == expected
 
@@ -369,6 +369,6 @@ def test_no_prefix_map_explicit_tags_only(settings):
     settings.ANGLES["initial_tag_regex"] = r"(?=\w)"
 
     expected = []
-    actual = get_tag_replacements("<partial />", raise_for_missing_start_tag=False)
+    actual = get_tag_replacements("<thing />", raise_for_missing_start_tag=False)
 
     assert actual == expected

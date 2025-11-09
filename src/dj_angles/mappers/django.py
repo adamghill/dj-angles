@@ -59,7 +59,7 @@ def map_css(tag: "Tag") -> str:
     return f'<link href="{{% static {href} %}}" {tag.attributes} />'
 
 
-def map_endblock(tag: "Tag") -> str:
+def map_endblock(tag: "Tag", tag_name: str = "block") -> str:
     """Mapper function for endblock tags. Not included in the default mappers and only called by `map_block`.
 
     Args:
@@ -82,7 +82,6 @@ def map_endblock(tag: "Tag") -> str:
                     raise InvalidEndTagError(tag, tag.start_tag)
             except MissingAttributeError:
                 pass
-
     except MissingAttributeError:
         pass
 
@@ -99,12 +98,12 @@ def map_endblock(tag: "Tag") -> str:
         # The block tag doesn't actually want/need quoted strings per se, so remove them
         name = dequotify(name)
 
-        return f"{{% endblock {name} %}}"
+        return f"{{% end{tag_name} {name} %}}"
 
-    return "{% endblock %}"
+    return f"{{% end{tag_name} %}}"
 
 
-def map_block(tag: "Tag") -> str:
+def map_block(tag: "Tag", tag_name: str = "block") -> str:
     """Mapper function for block tags.
 
     Args:
@@ -112,10 +111,10 @@ def map_block(tag: "Tag") -> str:
     """
 
     if tag.is_end:
-        return map_endblock(tag)
+        return map_endblock(tag, tag_name)
 
     if not tag.attributes:
-        raise Exception("Missing block name")
+        raise Exception("Missing name")
 
     name = tag.get_attribute_value_or_first_key("name")
 
@@ -123,9 +122,9 @@ def map_block(tag: "Tag") -> str:
     name = dequotify(name)
 
     if tag.is_self_closing:
-        return f"{{% block {name} %}}{{% endblock {name} %}}"
+        return f"{{% {tag_name} {name} %}}{{% end{tag_name} {name} %}}"
 
-    return f"{{% block {name} %}}"
+    return f"{{% {tag_name} {name} %}}"
 
 
 def map_extends(tag: "Tag") -> str:
