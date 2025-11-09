@@ -1,8 +1,10 @@
 # Changelog
 
-## 0.22.0-dev
+## 0.22.0
 
 - Add integration with [`django-template-partials`](https://github.com/carltongibson/django-template-partials).
+- Add support for [inline or expressions](inline-expressions.md).
+- Add support for [inline if expressions](inline-expressions.md).
 
 ## 0.21.0
 
