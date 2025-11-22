@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.23.0
+
+- Add support for [inline template partials](https://github.com/carltongibson/django-template-partials#outputting-inline).
+- Add support for [using named template partials](https://github.com/carltongibson/django-template-partials#fragment-re-use).
+
 ## 0.22.0
 
 - Add integration with [`django-template-partials`](https://github.com/carltongibson/django-template-partials).
