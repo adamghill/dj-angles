@@ -54,17 +54,15 @@ TEMPLATES = [
 
 ## Example
 
-**templates/index.html**
-
 ```html
+<!-- templates/index.html -->
 <dj-bird template='button' class='btn'>
   Click me!
 </dj-bird>
 ```
 
-**templates/bird/button.html**
-
-```
+```html
+<!-- templates/bird/button.html -->
 <button {{ attrs }}>
   {{ slot }}
 </button>
@@ -81,17 +79,15 @@ ANGLES = {
 }
 ```
 
-**templates/index.html**
-
 ```html
+<!-- templates/index.html -->
 <dj-button class='btn'>
   Click me!
 </dj-button>
 ```
 
-**templates/bird/button.html**
-
-```
+```html
+<!-- templates/bird/button.html -->
 <button {{ attrs }}>
   {{ slot }}
 </button>

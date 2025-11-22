@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 
 from dj_angles.exceptions import MissingAttributeError
 from dj_angles.mappers.django import map_block
+from dj_angles.strings import dequotify
 
 if TYPE_CHECKING:
     from dj_angles.tags import Tag
@@ -34,5 +35,11 @@ def map_bird(tag: "Tag") -> str:
     return f"{django_template_tag} %}}"
 
 
-def map_partialdef(tag: "Tag") -> str:
+def map_partial(tag: "Tag") -> str:
+    if tag.is_self_closing:
+        name = tag.get_attribute_value_or_first_key("name")
+        name = dequotify(name)
+
+        return f"{{% partial {name} %}}"
+
     return map_block(tag=tag, tag_name="partialdef")

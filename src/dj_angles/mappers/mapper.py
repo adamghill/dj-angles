@@ -49,7 +49,7 @@ class TagMap(UserDict):
         self.add_module_mapper("django_bird", "bird", "dj_angles.mappers.map_bird")
 
         # Add partialdef if `django-template-partial` is installed
-        self.add_module_mapper("template_partials", "partial", "dj_angles.mappers.map_partialdef")
+        self.add_module_mapper("template_partials", "partial", "dj_angles.mappers.map_partial")
 
         # Add custom mappers if they are defined in settings
         self.add_custom_mappers()

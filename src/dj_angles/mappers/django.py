@@ -121,10 +121,19 @@ def map_block(tag: "Tag", tag_name: str = "block") -> str:
     # The block tag doesn't actually want/need quoted strings per se, so remove them
     name = dequotify(name)
 
-    if tag.is_self_closing:
-        return f"{{% {tag_name} {name} %}}{{% end{tag_name} {name} %}}"
+    tag_str = f"{{% {tag_name} {name} "
 
-    return f"{{% {tag_name} {name} %}}"
+    # Handle extra attributes which are not needed for the block tag, but are needed
+    # for partialdef tags
+    if tag.attributes:
+        tag_str = f"{tag_str}{tag.attributes} "
+
+    tag_str = f"{tag_str}%}}"
+
+    if tag.is_self_closing:
+        return f"{tag_str}{{% end{tag_name} {name} %}}"
+
+    return tag_str
 
 
 def map_extends(tag: "Tag") -> str:

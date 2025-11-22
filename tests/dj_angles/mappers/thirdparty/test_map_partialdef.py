@@ -1,25 +1,25 @@
-from dj_angles.mappers.thirdparty import map_partialdef
+from dj_angles.mappers.thirdparty import map_partial
 from tests.dj_angles.tags import create_tag
 
 
-def test_typical():
+def test():
     expected = "{% partialdef test1 %}"
 
     html = "<dj-partial name='test1'>"
     tag = create_tag(html)
 
-    actual = map_partialdef(tag=tag)
+    actual = map_partial(tag=tag)
 
     assert actual == expected
 
 
-def test_typical_no_name():
+def test_no_name():
     expected = "{% partialdef test1 %}"
 
     html = "<dj-partial 'test1'>"
     tag = create_tag(html)
 
-    actual = map_partialdef(tag=tag)
+    actual = map_partial(tag=tag)
 
     assert actual == expected
 
@@ -30,13 +30,35 @@ def test_is_closing():
     html = "</dj-partial>"
     tag = create_tag(html)
 
-    actual = map_partialdef(tag=tag)
+    actual = map_partial(tag=tag)
+
+    assert actual == expected
+
+
+def test_use():
+    expected = "{% partial test1 %}"
+
+    html = "<dj-partial name='test1' />"
+    tag = create_tag(html)
+
+    actual = map_partial(tag=tag)
+
+    assert actual == expected
+
+
+def test_inline():
+    expected = "{% partialdef test1 inline %}"
+
+    html = "<dj-partial name='test1' inline>"
+    tag = create_tag(html)
+
+    actual = map_partial(tag=tag)
 
     assert actual == expected
 
 
 def test_get_django_template_tag(settings):
-    settings.ANGLES["default_mapper"] = "dj_angles.mappers.map_partialdef"
+    settings.ANGLES["default_mapper"] = "dj_angles.mappers.map_partial"
 
     expected = "{% partialdef test1 %}"
 
@@ -49,7 +71,7 @@ def test_get_django_template_tag(settings):
 
 
 def test_get_django_template_tag_is_end(settings):
-    settings.ANGLES["default_mapper"] = "dj_angles.mappers.map_partialdef"
+    settings.ANGLES["default_mapper"] = "dj_angles.mappers.map_partial"
 
     expected = "{% endpartialdef %}"
 

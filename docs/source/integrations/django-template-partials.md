@@ -51,7 +51,9 @@ TEMPLATES = [
 ]
 ```
 
-## Example
+## Define a partial
+
+Define a template partial.
 
 ```html
 <dj-partial name="test-partial">
@@ -63,6 +65,38 @@ is equivalent to:
 
 ```html
 {% partialdef test-partial %}
+  TEST-PARTIAL-CONTENT
+{% endpartialdef %}
+```
+
+## Use a partial
+
+Render a defined template partial.
+
+```html
+<dj-partial name="test-partial" />
+```
+
+is equivalent to:
+
+```html
+{% partial test-partial %}
+```
+
+## Define an inline partial
+
+Defines a template partial and renders it in-place.
+
+```html
+<dj-partial name="test-partial" inline>
+  TEST-PARTIAL-CONTENT
+</dj-partial>
+```
+
+is equivalent to:
+
+```html
+{% partialdef test-partial inline %}
   TEST-PARTIAL-CONTENT
 {% endpartialdef %}
 ```
