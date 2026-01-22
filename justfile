@@ -14,8 +14,6 @@ fetch:
 serve:
   uv run python3 example/manage.py runserver 0:8789
 
-# Run all the dev things
-dev:
-  just lint
-  just type
-  just coverage
+# Check the types in the project
+type *ARGS='.':
+  -uv run --all-extras ty check {{ ARGS }}
