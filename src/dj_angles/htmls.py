@@ -1,5 +1,6 @@
 import re
 
+from dj_angles.quote_utils import QuoteTracker
 from dj_angles.tags import Tag
 
 # List of void elements from: https://www.thoughtco.com/html-singleton-tags-3468620
@@ -46,8 +47,7 @@ def get_outer_html(html: str, start_idx: int) -> Tag | None:
     tag_html = ""
     tag_name = ""
 
-    in_double_quote = False
-    in_single_quote = False
+    quote_tracker = QuoteTracker()
 
     while range(start_idx, len(html)):
         if idx >= len(html):
@@ -64,11 +64,9 @@ def get_outer_html(html: str, start_idx: int) -> Tag | None:
 
         if not tag_name and c == " ":
             tag_name = tag_html[1:].strip()
-        elif c == '"':
-            in_double_quote = not in_double_quote
-        elif c == "'":
-            in_single_quote = not in_single_quote
-        elif not in_double_quote and not in_single_quote and c == ">":
+        elif QuoteTracker.is_quote_char(c):
+            quote_tracker.update(c)
+        elif not quote_tracker.inside_quotes and c == ">":
             if not tag_name:
                 tag_name = tag_html[1:-1].strip()
 
@@ -119,8 +117,7 @@ def find_character(
     if character_regex is not None:
         character_regex_re = re.compile(character_regex)
 
-    inside_single_quote = False
-    inside_double_quote = False
+    quote_tracker = QuoteTracker()
 
     indexes: range
 
@@ -133,13 +130,10 @@ def find_character(
         c = html[i]
 
         # Toggle the quote flags when encountering quotes
-        if c == "'" and not inside_double_quote:
-            inside_single_quote = not inside_single_quote
-        elif c == '"' and not inside_single_quote:
-            inside_double_quote = not inside_double_quote
+        quote_tracker.update(c)
 
         # If we find a '<' and we're not inside quotes, we've found the start of a tag
-        if not inside_single_quote and not inside_double_quote:
+        if not quote_tracker.inside_quotes:
             if character is not None and c == character:
                 return i
             elif character_regex_re is not None and character_regex_re.match(c):

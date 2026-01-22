@@ -1,5 +1,7 @@
 from collections.abc import Generator
 
+from dj_angles.quote_utils import QuoteTracker
+
 
 def yield_tokens(
     s: str, breaking_character: str, *, handle_quotes: bool = True, handle_parenthesis: bool = False
@@ -17,22 +19,19 @@ def yield_tokens(
         A generator of tokens.
     """
 
-    in_double_quote = False
-    in_single_quote = False
+    quote_tracker = QuoteTracker()
     parenthesis_count = 0
     token = ""
 
     for c in s:
-        if c == "'" and handle_quotes:
-            in_single_quote = not in_single_quote
-        elif c == '"' and handle_quotes:
-            in_double_quote = not in_double_quote
+        if handle_quotes and QuoteTracker.is_quote_char(c):
+            quote_tracker.update(c)
         elif c == "(" and handle_parenthesis:
             parenthesis_count += 1
         elif c == ")" and handle_parenthesis:
             parenthesis_count -= 1
 
-        if c == breaking_character and not in_single_quote and not in_double_quote and parenthesis_count == 0:
+        if c == breaking_character and not quote_tracker.inside_quotes and parenthesis_count == 0:
             yield token
             token = ""
         else:
