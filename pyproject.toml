@@ -75,14 +75,6 @@ template-partials = [
   "django-template-partials >= 0",
 ]
 
-[tool.uv]
-dev-dependencies = [
-  "pytest < 9",
-  "pytest-django >= 0",
-  "pytest-cov >= 0",
-  "mypy >= 0",
-]
-
 [tool.ruff]
 src = ["src"]
 exclude = []
@@ -147,8 +139,13 @@ ban-relative-imports = "all"
 # Tests can use magic values, assertions, and relative imports
 "tests/**/*" = ["PLR2004", "S101", "TID252", "ARG001"]
 
-[tool.pytest.ini_options]
-addopts = "--quiet --failed-first -p no:warnings --no-migrations"
+[tool.pytest]
+addopts = [
+    "--quiet",
+    "--failed-first",
+    "-p no:warnings",
+    "--no-migrations",
+]
 testpaths = [
     "tests"
 ]

@@ -61,7 +61,7 @@ TEMPLATES = [
 </dj-bird>
 ```
 
-```html
+```html+django
 <!-- templates/bird/button.html -->
 <button {{ attrs }}>
   {{ slot }}
@@ -86,7 +86,7 @@ ANGLES = {
 </dj-button>
 ```
 
-```html
+```html+django
 <!-- templates/bird/button.html -->
 <button {{ attrs }}>
   {{ slot }}
