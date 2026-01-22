@@ -2,6 +2,7 @@ from collections import UserDict
 from collections.abc import Callable
 from typing import Optional
 
+import django
 from django.utils.module_loading import import_string
 
 from dj_angles.mappers.angles import map_call, map_form, map_model
@@ -48,8 +49,9 @@ class TagMap(UserDict):
         # Add bird if `django-bird` is installed
         self.add_module_mapper("django_bird", "bird", "dj_angles.mappers.map_bird")
 
-        # Add partialdef if `django-template-partial` is installed
-        self.add_module_mapper("template_partials", "partial", "dj_angles.mappers.map_partial")
+        # Add partialdef if `django-template-partial` is installed or Django >= 6.0
+        if is_module_available("template_partials") or django.VERSION >= (6, 0):
+            self.data.update({"partial": "dj_angles.mappers.map_partial"})
 
         # Add custom mappers if they are defined in settings
         self.add_custom_mappers()
