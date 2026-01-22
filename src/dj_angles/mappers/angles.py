@@ -47,7 +47,7 @@ def map_angles_include(tag: "Tag") -> str:
     if template is None:
         return f"<{wrapping_tag_name}>"
 
-    rendered_template = str(template.render())
+    rendered_template = str(template.render({}))
     html = HTML(rendered_template)
 
     for element in html.query("slot"):

@@ -119,11 +119,12 @@ def eval_value(value):
         value = [eval_value(v) for v in value.elts]
 
     # Parse and cast any values
-    try:
-        value = ast.literal_eval(value)
-    except (SyntaxError, ValueError):
-        # Ignore certain errors
-        pass
+    if isinstance(value, str | ast.AST):
+        try:
+            value = ast.literal_eval(value)
+        except (SyntaxError, ValueError):
+            # Ignore certain errors
+            pass
 
     return value
 
@@ -149,7 +150,7 @@ def eval_function(function_string: str) -> EvaluatedFunction:
     statement = tree.body[0].value  # type: ignore
 
     if tree.body and isinstance(statement, ast.Call):
-        call = tree.body[0].value  # type: ignore
+        call = tree.body[0].value
         function_name = call.func.id
 
         if call.args and call.args[0] and isinstance(call.args[0], ast.Starred):

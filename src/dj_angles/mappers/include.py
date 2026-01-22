@@ -78,7 +78,7 @@ def map_include(tag: "Tag") -> str:
         template_file = template_file[0:colon_idx] + template_file[extension_idx:]
 
     if template := get_template(template_file):
-        template_file = f"'{template.template.name}'"
+        template_file = f"'{template.template.name}'"  # type: ignore[union-attr]
     else:
         # Ignore missing template because an exception will be thrown when the component is being rendered
         pass

@@ -47,11 +47,9 @@ dev = [
     "pytest < 9",
     "pytest-django >= 0",
     "pytest-cov >= 0",
-    "mypy >= 0",
+    "ty >= 0",
     "sphinx-autobuild >= 2021.3.14",
     "coverage[toml] >= 6",
-    "django-stubs >= 1",
-    "types-toml",
 ]
 docs = [
     "Sphinx >= 4.3.2",
@@ -163,11 +161,8 @@ skip_covered = true
 skip_empty = true
 sort = "cover"
 
-[tool.mypy]
-python_version = "3.10"
-warn_return_any = true
-warn_unused_configs = true
-ignore_missing_imports = true
+[tool.ty.environment]
+root = ["src"]
 
 [build-system]
 requires = ["uv_build>=0.8.12,<0.9.0"]

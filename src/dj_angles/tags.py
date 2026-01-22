@@ -220,7 +220,9 @@ class Tag:
     def is_include(self):
         """Whether the Django template tag is `include`."""
 
-        return callable(self.django_template_tag) and self.django_template_tag.__name__ == "map_include"
+        return (
+            callable(self.django_template_tag) and getattr(self.django_template_tag, "__name__", None) == "map_include"
+        )
 
     @property
     def can_be_void(self):
