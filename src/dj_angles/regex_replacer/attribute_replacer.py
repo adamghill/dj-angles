@@ -1,5 +1,6 @@
 import logging
 import re
+from functools import lru_cache
 
 from dj_angles.htmls import find_character, get_outer_html
 from dj_angles.regex_replacer.objects import Replacement
@@ -7,6 +8,20 @@ from dj_angles.settings import get_setting
 from dj_angles.strings import dequotify
 
 logger = logging.getLogger(__name__)
+
+
+@lru_cache(maxsize=8)
+def _get_attribute_regexes(initial_attribute_regex: str) -> tuple:
+    """Get compiled attribute regexes, cached by the initial_attribute_regex setting."""
+    return (
+        re.compile(rf"{initial_attribute_regex}if"),
+        re.compile(rf"{initial_attribute_regex}elif"),
+        re.compile(rf"{initial_attribute_regex}else"),
+        re.compile(rf"({initial_attribute_regex}endif|{initial_attribute_regex}fi)"),
+        re.compile(
+            rf"\s(({initial_attribute_regex}if|{initial_attribute_regex}elif)=|{initial_attribute_regex}else|{initial_attribute_regex}endif|{initial_attribute_regex}fi)"
+        ),
+    )
 
 
 def get_attribute_replacements(html: str) -> list[Replacement]:
@@ -23,15 +38,11 @@ def get_attribute_replacements(html: str) -> list[Replacement]:
     replacements: list[Replacement] = []
 
     initial_attribute_regex = get_setting("initial_attribute_regex", default=r"(dj-)")
-    if_attribute_regex = re.compile(rf"{initial_attribute_regex}if")
-    elif_attribute_regex = re.compile(rf"{initial_attribute_regex}elif")
-    else_attribute_regex = re.compile(rf"{initial_attribute_regex}else")
-    endif_attribute_regex = re.compile(rf"({initial_attribute_regex}endif|{initial_attribute_regex}fi)")
+    if_attribute_regex, elif_attribute_regex, else_attribute_regex, endif_attribute_regex, main_pattern = (
+        _get_attribute_regexes(initial_attribute_regex)
+    )
 
-    for match in re.finditer(
-        rf"\s(({initial_attribute_regex}if|{initial_attribute_regex}elif)=|{initial_attribute_regex}else|{initial_attribute_regex}endif|{initial_attribute_regex}fi)",
-        html,
-    ):
+    for match in re.finditer(main_pattern, html):
         dj_attribute = (match.groups()[1] or match.groups()[0]).strip()
 
         attribute_start_idx = match.start()
