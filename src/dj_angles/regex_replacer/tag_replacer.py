@@ -71,10 +71,13 @@ def get_tag_replacements(html: str, *, raise_for_missing_start_tag: bool = True)
         ):
             end_of_include_tag = match.end()
 
-            try:
-                # TODO: handle custom tag, not just /dj-
-                next_ending_tag_idx = html.index("</dj-", end_of_include_tag)
-                inner_html = html[end_of_include_tag:next_ending_tag_idx].strip()
+            # Find the next closing tag that matches the initial_tag_regex setting
+            initial_tag_regex = get_setting("initial_tag_regex", default=r"(dj-)")
+            closing_tag_pattern = rf"</{initial_tag_regex}"
+            closing_match = re.search(closing_tag_pattern, html[end_of_include_tag:])
+
+            if closing_match:
+                inner_html = html[end_of_include_tag : end_of_include_tag + closing_match.start()].strip()
 
                 if inner_html:
                     for element in HTML(inner_html).elements:
@@ -83,9 +86,6 @@ def get_tag_replacements(html: str, *, raise_for_missing_start_tag: bool = True)
 
                             # Remove slot from the current HTML because it will be injected into the include component
                             replacements.append(Replacement(original=inner_html, replacement="", tag=tag))
-            except ValueError:
-                # Ending tag could not be found, so skip getting the inner html
-                pass
 
         django_template_tag = tag.get_django_template_tag(slots=slots)
 
