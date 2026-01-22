@@ -230,6 +230,7 @@ dev = [
     { name = "pytest-django" },
     { name = "sphinx-autobuild" },
     { name = "ty" },
+    { name = "typing-extensions", marker = "python_full_version < '3.12'" },
 ]
 docs = [
     { name = "attrs" },
@@ -262,6 +263,7 @@ dev = [
     { name = "pytest-django", specifier = ">=0" },
     { name = "sphinx-autobuild", specifier = ">=2021.3.14" },
     { name = "ty", specifier = ">=0" },
+    { name = "typing-extensions", marker = "python_full_version < '3.12'", specifier = ">=4" },
 ]
 docs = [
     { name = "attrs", specifier = ">=21.4.0" },

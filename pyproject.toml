@@ -50,6 +50,7 @@ dev = [
     "ty >= 0",
     "sphinx-autobuild >= 2021.3.14",
     "coverage[toml] >= 6",
+    "typing_extensions >= 4; python_version < '3.12'",
 ]
 docs = [
     "Sphinx >= 4.3.2",
