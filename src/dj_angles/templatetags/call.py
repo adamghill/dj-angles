@@ -151,7 +151,7 @@ class CallNode(Node):
                 node_list_context = Context({})
 
                 if renderer.include_context:
-                    node_list_context = context.__copy__()
+                    node_list_context = Context(context.flatten())
                 else:
                     node_list_context.template = context.template
 
