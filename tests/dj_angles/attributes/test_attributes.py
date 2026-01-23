@@ -43,89 +43,89 @@ def test_get():
 def test_multiple_attributes():
     actual = Attributes("'partial.html' rel='stylesheet'")
 
-    assert len(actual._attributes) == 2
+    assert len(actual) == 2
 
-    assert "'partial.html'" == actual._attributes[0].key
-    assert actual._attributes[0].has_value is False
+    assert "'partial.html'" == actual[0].key
+    assert actual[0].has_value is False
 
-    assert "rel" == actual._attributes[1].key
-    assert actual._attributes[1].has_value is True
-    assert "'stylesheet'" == actual._attributes[1].value
+    assert "rel" == actual[1].key
+    assert actual[1].has_value is True
+    assert "'stylesheet'" == actual[1].value
 
 
 def test_duplicate_attributes():
     actual = Attributes("'partial.html' rel='stylesheet' rel='stylesheet2'")
 
-    assert len(actual._attributes) == 2
+    assert len(actual) == 2
 
-    assert "'partial.html'" == actual._attributes[0].key
-    assert actual._attributes[0].has_value is False
+    assert "'partial.html'" == actual[0].key
+    assert actual[0].has_value is False
 
-    assert "rel" == actual._attributes[1].key
-    assert actual._attributes[1].has_value is True
-    assert "'stylesheet'" == actual._attributes[1].value
+    assert "rel" == actual[1].key
+    assert actual[1].has_value is True
+    assert "'stylesheet'" == actual[1].value
 
 
 def test_remove():
     actual = Attributes("'partial.html' rel='stylesheet'")
-    assert len(actual._attributes) == 2
+    assert len(actual) == 2
 
     actual.remove("rel")
 
-    assert len(actual._attributes) == 1
+    assert len(actual) == 1
 
 
 def test_remove_missing():
     actual = Attributes("'partial.html' rel='stylesheet'")
-    assert len(actual._attributes) == 2
+    assert len(actual) == 2
 
     with pytest.raises(MissingAttributeError) as e:
         actual.remove("invalid-attribute")
 
     assert e.exconly() == "dj_angles.exceptions.MissingAttributeError"
 
-    assert len(actual._attributes) == 2
+    assert len(actual) == 2
 
 
 def test_prepend():
     actual = Attributes("rel='stylesheet'")
-    assert len(actual._attributes) == 1
+    assert len(actual) == 1
 
     actual.prepend("partial.html")
 
-    assert len(actual._attributes) == 2
-    assert actual._attributes[0].key == "partial.html"
+    assert len(actual) == 2
+    assert actual[0].key == "partial.html"
 
 
 def test_prepend_duplicate():
     actual = Attributes("rel='stylesheet'")
-    assert len(actual._attributes) == 1
+    assert len(actual) == 1
 
     with pytest.raises(DuplicateAttributeError) as e:
         actual.prepend("rel='invalid'")
 
     assert e.exconly() == "dj_angles.exceptions.DuplicateAttributeError"
 
-    assert len(actual._attributes) == 1
-    assert actual._attributes[0].key == "rel"
-    assert actual._attributes[0].value == "'stylesheet'"
+    assert len(actual) == 1
+    assert actual[0].key == "rel"
+    assert actual[0].value == "'stylesheet'"
 
 
-def test_pluck_value():
+def test_pop_value():
     attributes = Attributes("'partial.html' rel='stylesheet'")
-    assert len(attributes._attributes) == 2
+    assert len(attributes) == 2
 
-    actual = attributes.pluck_value("rel")
+    actual = attributes.pop_value("rel")
 
-    assert len(attributes._attributes) == 1
+    assert len(attributes) == 1
     assert actual == "'stylesheet'"
 
 
 def test_pluck_value_missing():
     attributes = Attributes("'partial.html' rel='stylesheet'")
-    assert len(attributes._attributes) == 2
+    assert len(attributes) == 2
 
     actual = attributes.pluck_value("invalid")
 
-    assert len(attributes._attributes) == 2
+    assert len(attributes) == 2
     assert actual is None

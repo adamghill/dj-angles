@@ -57,15 +57,13 @@ class Attributes(Sequence):
     """The original attributes as an unparsed string."""
 
     def __init__(self, template_tag_args: str = ""):
-        self._attributes: list[Attribute] = []
+        self._attributes: dict[str, Attribute] = {}
 
         self.template_tag_args = template_tag_args
         self.parse()
 
     def parse(self):
         """Parse the attributes string to generate a list of :obj:`~dj_angles.attributes.Attribute` objects."""
-
-        attribute_keys = set()
 
         for arg in yield_tokens(self.template_tag_args, " "):
             arg = arg.strip()  # noqa: PLW2901
@@ -75,9 +73,8 @@ class Attributes(Sequence):
 
             attribute = Attribute(arg)
 
-            if attribute.key not in attribute_keys:
-                self._attributes.append(attribute)
-                attribute_keys.add(attribute.key)
+            if attribute.key not in self._attributes:
+                self._attributes[attribute.key] = attribute
 
     def has(self, name: str) -> bool:
         """Whether or not an there is an :obj:`~dj_angles.attributes.Attribute` by name.
@@ -86,7 +83,7 @@ class Attributes(Sequence):
             param name: The name of the attribute.
         """
 
-        return self.get(name) is not None
+        return name in self._attributes
 
     def get(self, name: str) -> Attribute | None:
         """Get an :obj:`~dj_angles.attributes.Attribute` by name. Returns `None` if the attribute is missing.
@@ -96,11 +93,7 @@ class Attributes(Sequence):
             param default: What to return if the attribute is not available. Defaults to `None`.
         """
 
-        for attribute in self._attributes:
-            if attribute.key == name:
-                return attribute
-
-        return None
+        return self._attributes.get(name)
 
     def remove(self, key: str) -> None:
         """Removes an attribute from the list.
@@ -112,16 +105,11 @@ class Attributes(Sequence):
             :obj:`~dj_angles.exceptions.MissingAttributeError`: If the attribute is missing.
         """
 
-        _attributes = []
-
-        for attribute in self._attributes:
-            if attribute.key != key:
-                _attributes.append(attribute)
-
-        if self._attributes == _attributes:
+        if key in self._attributes:
+            del self._attributes[key]
+        else:
             raise MissingAttributeError("Attribute was not found.")
 
-        self._attributes = _attributes
 
     def pluck_value(self, name: str) -> str | None:
         """Get the value of an :obj:`~dj_angles.attributes.Attribute` by name and remove the attribute from the tag
@@ -132,7 +120,7 @@ class Attributes(Sequence):
         """
 
         if (attribute := self.get(name)) is not None:
-            self._attributes.remove(attribute)
+            del self._attributes[attribute.key]
 
             return attribute.value
 
@@ -141,7 +129,8 @@ class Attributes(Sequence):
     def pop(self, index: SupportsIndex) -> Attribute:
         """Remove and return the last attribute."""
 
-        return self._attributes.pop(index)
+        key = list(self._attributes.keys())[index]
+        return self._attributes.pop(key)
 
     def prepend(self, attribute_string: str) -> None:
         """Parse the attribute string as an `Attribute` and add it to the beginning of the list of attributes.
@@ -155,10 +144,10 @@ class Attributes(Sequence):
 
         _attribute = Attribute(attribute_string)
 
-        if self.get(_attribute.key):
+        if _attribute.key in self._attributes:
             raise DuplicateAttributeError("Already existing attribute key")
 
-        self._attributes.insert(0, _attribute)
+        self._attributes = {_attribute.key: _attribute, **self._attributes}
 
     def append(self, attribute_string: str) -> None:
         """Parse the attribute string as an `Attribute` and add it to the end of the list of attributes.
@@ -172,24 +161,24 @@ class Attributes(Sequence):
 
         _attribute = Attribute(attribute_string)
 
-        if self.get(_attribute.key):
+        if _attribute.key in self._attributes:
             raise DuplicateAttributeError("Already existing attribute key")
 
-        self._attributes.append(_attribute)
+        self._attributes[_attribute.key] = _attribute
 
     def __getitem__(self, index):
-        return self._attributes.__getitem__(index)
+        return list(self._attributes.values())[index]
 
     def __iter__(self):
-        return self._attributes.__iter__()
+        return iter(self._attributes.values())
 
     def __len__(self):
-        return self._attributes.__len__()
+        return len(self._attributes)
 
     def __str__(self):
         s = ""
 
-        for attribute in self._attributes:
+        for attribute in self._attributes.values():
             s = f"{s} {attribute}"
 
         return s.strip()
