@@ -182,7 +182,7 @@ class Tag:
 
         return wrapping_tag_name
 
-    def get_attribute_value_or_first_key(self, attribute_name: str) -> str:
+    def pop_attribute_value_or_first_key(self, attribute_name: str) -> str:
         """Gets the first attribute key or the first value for a particular attribute name.
 
         As a side effect of this function, if the attribute is found, it will be removed from

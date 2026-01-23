@@ -77,7 +77,7 @@ def map_call(tag: "Tag", template_tag_name: str = "call") -> str:
     if tag.is_end:
         return ""
 
-    code = dequotify(tag.get_attribute_value_or_first_key("code"))
+    code = dequotify(tag.pop_attribute_value_or_first_key("code"))
     context_template_variable_attr = tag.attributes.get("as")
 
     if context_template_variable_attr is not None:
@@ -114,11 +114,11 @@ def map_form(tag: "Tag") -> str:
 
         return "</form>"
 
-    swap = tag.attributes.pluck_value("swap") or "'outerHTML'"
+    swap = tag.attributes.pop_value("swap") or "'outerHTML'"
     if dequotify(swap) not in ("outerHTML", "innerHTML"):
         raise ValueError(f"Invalid swap value: '{swap}'")
 
-    delay = tag.attributes.pluck_value("delay") or 0
+    delay = tag.attributes.pop_value("delay") or 0
 
     if isinstance(delay, str):
         delay = dequotify(delay)

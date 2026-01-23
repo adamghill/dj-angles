@@ -110,8 +110,7 @@ class Attributes(Sequence):
         else:
             raise MissingAttributeError("Attribute was not found.")
 
-
-    def pluck_value(self, name: str) -> str | None:
+    def pop_value(self, name: str) -> str | None:
         """Get the value of an :obj:`~dj_angles.attributes.Attribute` by name and remove the attribute from the tag
         attributes.
 

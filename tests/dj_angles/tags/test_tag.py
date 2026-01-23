@@ -48,12 +48,12 @@ def test_default_mapping(settings):
     assert expected == actual
 
 
-def test_get_attribute_value_or_first_key():
+def test_pop_attribute_value_or_first_key():
     expected = "'test1'"
 
     html = "<dj-include template='test1'>"
 
     tag = create_tag(html)
-    actual = tag.get_attribute_value_or_first_key("template")
+    actual = tag.pop_attribute_value_or_first_key("template")
 
     assert expected == actual

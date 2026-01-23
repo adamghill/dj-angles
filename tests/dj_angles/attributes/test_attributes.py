@@ -121,11 +121,11 @@ def test_pop_value():
     assert actual == "'stylesheet'"
 
 
-def test_pluck_value_missing():
+def test_pop_value_missing():
     attributes = Attributes("'partial.html' rel='stylesheet'")
     assert len(attributes) == 2
 
-    actual = attributes.pluck_value("invalid")
+    actual = attributes.pop_value("invalid")
 
     assert len(attributes) == 2
     assert actual is None

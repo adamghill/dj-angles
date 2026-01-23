@@ -36,7 +36,7 @@ def map_image(tag: "Tag") -> str:
         param tag: The tag to map.
     """
 
-    src = tag.get_attribute_value_or_first_key("src")
+    src = tag.pop_attribute_value_or_first_key("src")
 
     if tag.attributes:
         return f'<img src="{{% static {src} %}}" {tag.attributes} />'
@@ -51,7 +51,7 @@ def map_css(tag: "Tag") -> str:
         param tag: The tag to map.
     """
 
-    href = tag.get_attribute_value_or_first_key("href")
+    href = tag.pop_attribute_value_or_first_key("href")
 
     if not tag.attributes.get("rel"):
         tag.attributes.append('rel="stylesheet"')
@@ -69,14 +69,14 @@ def map_endblock(tag: "Tag", tag_name: str = "block") -> str:
     name = None
 
     try:
-        name = tag.get_attribute_value_or_first_key("name")
+        name = tag.pop_attribute_value_or_first_key("name")
 
         # Check that the end tag name is the same as the start tag's name
         if tag.start_tag:
             tag.start_tag.parse_attributes()
 
             try:
-                start_name = tag.start_tag.get_attribute_value_or_first_key("name")
+                start_name = tag.start_tag.pop_attribute_value_or_first_key("name")
 
                 if name != start_name:
                     raise InvalidEndTagError(tag, tag.start_tag)
@@ -90,7 +90,7 @@ def map_endblock(tag: "Tag", tag_name: str = "block") -> str:
         tag.start_tag.parse_attributes()
 
         try:
-            name = tag.start_tag.get_attribute_value_or_first_key("name")
+            name = tag.start_tag.pop_attribute_value_or_first_key("name")
         except MissingAttributeError:
             pass
 
@@ -116,7 +116,7 @@ def map_block(tag: "Tag", tag_name: str = "block") -> str:
     if not tag.attributes:
         raise Exception("Missing name")
 
-    name = tag.get_attribute_value_or_first_key("name")
+    name = tag.pop_attribute_value_or_first_key("name")
 
     # The block tag doesn't actually want/need quoted strings per se, so remove them
     name = dequotify(name)
@@ -148,7 +148,7 @@ def map_extends(tag: "Tag") -> str:
 
     django_template_tag = "extends"
 
-    parent = tag.get_attribute_value_or_first_key("parent")
+    parent = tag.pop_attribute_value_or_first_key("parent")
 
     if "." not in parent:
         parent = dequotify(parent)

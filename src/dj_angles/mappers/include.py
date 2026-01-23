@@ -19,13 +19,13 @@ def get_include_template_file(tag: "Tag") -> str:
         template_file = None
 
         try:
-            template_file = tag.get_attribute_value_or_first_key("src")
+            template_file = tag.pop_attribute_value_or_first_key("src")
         except MissingAttributeError:
             # Re-parse attributes in case the previous call popped off an attribute
             tag.parse_attributes()
 
         if not template_file:
-            template_file = tag.get_attribute_value_or_first_key("template")
+            template_file = tag.pop_attribute_value_or_first_key("template")
     except MissingAttributeError:
         template_file = tag.tag_name
 
@@ -86,7 +86,7 @@ def map_include(tag: "Tag") -> str:
     replacement = ""
 
     # Remove the `class` attribute (and store it for later) if it's there
-    if wrapper_classes := tag.attributes.pluck_value("class") or "":
+    if wrapper_classes := tag.attributes.pop_value("class") or "":
         if dequotify(wrapper_classes) and not tag.is_wrapped:
             raise InvalidAttributeError(
                 name=tag.tag_name, message="`no-wrap` and `class` attributes cannot be used together"

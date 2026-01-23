@@ -20,7 +20,7 @@ def map_bird(tag: "Tag") -> str:
 
     if template_file == "bird":
         try:
-            template_file = tag.get_attribute_value_or_first_key("template")
+            template_file = tag.pop_attribute_value_or_first_key("template")
         except MissingAttributeError:
             pass
 
@@ -37,7 +37,7 @@ def map_bird(tag: "Tag") -> str:
 
 def map_partial(tag: "Tag") -> str:
     if tag.is_self_closing:
-        name = tag.get_attribute_value_or_first_key("name")
+        name = tag.pop_attribute_value_or_first_key("name")
         name = dequotify(name)
 
         return f"{{% partial {name} %}}"
