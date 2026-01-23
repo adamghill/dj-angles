@@ -1,3 +1,4 @@
+import re
 from typing import TYPE_CHECKING, Optional
 
 from minestrone import Element
@@ -161,15 +162,16 @@ class Tag:
 
         name = name or self.tag_name
 
-        wrapping_tag_name = (
-            name.replace("/", "-")
-            .replace("'", "")
-            .replace('"', "")
-            .replace("--", "-")
-            .replace(" ", "-")
-            .replace(":", "-")
-        ).lower()
-        wrapping_tag_name = f"dj-{wrapping_tag_name}"
+        # Remove quotes
+        name = name.replace("'", "").replace('"', "")
+
+        # Replace separators with hyphens
+        name = re.sub(r"[/: ]+", "-", name)
+
+        # Collapse multiple hyphens
+        name = re.sub(r"-+", "-", name)
+
+        wrapping_tag_name = f"dj-{name.lower()}"
 
         # Remove extensions
         if "." in wrapping_tag_name:
