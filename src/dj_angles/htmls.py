@@ -43,22 +43,26 @@ def get_outer_html(html: str, start_idx: int) -> Tag | None:
     """
 
     initial_tag: Tag | None = None
+    initial_tag_start_idx = -1
+    depth = 0
+
     idx = start_idx
     tag_html = ""
     tag_name = ""
+    current_tag_start_idx = -1
 
     quote_tracker = QuoteTracker()
 
-    while range(start_idx, len(html)):
-        if idx >= len(html):
-            break
-
+    while idx < len(html):
         c = html[idx]
 
         # Skip text that aren't tags, e.g. inner text
         if not tag_html and c != "<":
             idx += 1
             continue
+
+        if not tag_html and c == "<":
+            current_tag_start_idx = idx
 
         tag_html += c
 
@@ -76,28 +80,33 @@ def get_outer_html(html: str, start_idx: int) -> Tag | None:
             tag = Tag(html=tag_html, tag_name=tag_name)
 
             if not initial_tag:
+                initial_tag = tag
+                initial_tag_start_idx = current_tag_start_idx
+
                 if tag.is_self_closing:
                     tag.outer_html = tag_html
-
                     return tag
 
-                initial_tag = tag
-            elif initial_tag and initial_tag.tag_name == tag.tag_name:
-                if tag.is_end:
-                    end_of_tag_idx = idx + 1
-                    initial_tag.outer_html = html[start_idx:end_of_tag_idx]
+                if tag.can_be_void or tag.is_end:
+                    tag.outer_html = tag.html
+                    return tag
 
-                    return initial_tag
+                depth = 1
+            elif initial_tag.tag_name == tag.tag_name:
+                if tag.is_end:
+                    depth -= 1
+                elif not tag.is_self_closing:
+                    depth += 1
+
+            if initial_tag and depth == 0:
+                end_of_tag_idx = idx + 1
+                initial_tag.outer_html = html[initial_tag_start_idx:end_of_tag_idx]
+                return initial_tag
 
             tag_html = ""
             tag_name = ""
 
         idx += 1
-
-    if initial_tag and (initial_tag.can_be_void or initial_tag.is_end):
-        initial_tag.outer_html = initial_tag.html
-
-        return initial_tag
 
     return None
 
