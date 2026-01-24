@@ -34,8 +34,10 @@ def _get_template_does_not_exist_exception(
 
 class TestErrorBoundary:
     @patch("dj_angles.replacers.tags._validate_template")
-    def test_missing(self, _validate_template):
+    def test_missing(self, _validate_template, settings):
         _validate_template.side_effect = _get_template_does_not_exist_exception()
+
+        settings.ANGLES = {"error_boundaries": {"enabled": True}}
 
         expected = """
 <dj-error-boundary>
@@ -68,6 +70,7 @@ class TestErrorBoundary:
             name="missing1.html", message="missing1.html"
         )
 
+        settings.ANGLES = {"error_boundaries": {"enabled": True}}
         settings.DEBUG = True
         expected = """
 <dj-error-boundary>
@@ -101,6 +104,7 @@ class TestErrorBoundary:
             name="missing.html", message="missing.html"
         )
 
+        settings.ANGLES = {"error_boundaries": {"enabled": True}}
         settings.DEBUG = True
         expected = """
 <dj-error-boundary>
@@ -128,7 +132,9 @@ class TestErrorBoundary:
 
         assert actual == expected
 
-    def test_invalid(self):
+    def test_invalid(self, settings):
+        settings.ANGLES = {"error_boundaries": {"enabled": True}}
+
         template = """
 <dj-error-boundary>
     <dj-include src="invalid_variable.html" />
@@ -141,7 +147,9 @@ class TestErrorBoundary:
 
 
 class TestBlockBoundary:
-    def test_invalid(self):
+    def test_invalid(self, settings):
+        settings.ANGLES = {"error_boundaries": {"enabled": True}}
+
         template = """
 <dj-block name='content' error-boundary>
     <dj-include src="invalid_variable.html" />
@@ -164,7 +172,9 @@ def test_invalid_no_boundary():
         replace_django_template_tags(template)
 
 
-def test_two_error_boundaries():
+def test_two_error_boundaries(settings):
+    settings.ANGLES = {"error_boundaries": {"enabled": True}}
+
     expected = """
 {% block content %}
   <dj-error-boundary>

@@ -18,6 +18,7 @@
 - Wraps components in a custom HTML element for easier debugging and targeted CSS styling
 - Support for the [Shadow DOM](https://dj-angles.adamghill.com/en/latest/components/#css-scoping) to encapsulate component styles
 - Lightweight way to submit forms via AJAX and swap in the resulting HTML
+- Error boundaries to catch and display template errors
 
 ### Component library integrations
 

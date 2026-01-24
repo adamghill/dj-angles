@@ -78,7 +78,7 @@ Settings for [error boundaries](error-boundaries.md) functionality. `dict` which
 
 ### `enabled`
 
-Enables error boundaries. `Boolean` which defaults to `False`.
+Enables error boundaries. `Boolean` which defaults to `True`.
 
 ### `shadow`
 
@@ -95,6 +95,6 @@ The style to apply to error boundaries. `String` which defaults to `"border: 1px
 ```python
 # settings.py
 ANGLES = {
-  "error_boundaries": {"enabled": False, "shadow": True, "class": "", "style": "border: 1px red solid; padding: 0 24px 0 24px;"}
+  "error_boundaries": {"enabled": True, "shadow": True, "class": "", "style": "border: 1px red solid; padding: 0 24px 0 24px;"}
 }
 ```
