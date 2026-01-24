@@ -16,7 +16,7 @@ from dj_angles.tags import Tag
 logger = logging.getLogger(__name__)
 
 
-def _validate_template(html: str, origin: Optional[Origin] = None) -> None:
+def _validate_template(html: str, origin: Origin | None = None) -> None:
     """Validate template syntax by parsing and rendering with empty context."""
     # Parse the inner HTML and create a template to check for syntax errors
     inner_html_template = Template(html, origin=origin)
@@ -26,7 +26,7 @@ def _validate_template(html: str, origin: Optional[Origin] = None) -> None:
     inner_html_template.render(context=Context())
 
 
-def replace_tags(html: str, *, origin: Optional[Origin] = None, raise_for_missing_start_tag: bool = True) -> str:
+def replace_tags(html: str, *, origin: Origin | None = None, raise_for_missing_start_tag: bool = True) -> str:
     """Get a list of tag replacements based on the template HTML.
 
     Args:
