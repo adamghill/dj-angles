@@ -26,6 +26,9 @@ def map_autoescape(tag: "Tag") -> str:
     else:
         django_template_tag = django_template_tag.replace("-", " ")
 
+        if tag.attributes:
+            return f"{{% {django_template_tag} {tag.attributes} %}}"
+
     return f"{{% {django_template_tag} %}}"
 
 
