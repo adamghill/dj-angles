@@ -1,4 +1,5 @@
 import logging
+import re
 
 from dj_angles.replacers.attributes import replace_attributes
 from dj_angles.replacers.tags import replace_tags
@@ -18,6 +19,22 @@ def convert_template(html: str, *, origin=None) -> str:
         The converted template HTML string.
     """
 
+    # 0. Mask comments
+    comments = []
+
+    def mask_match(match):
+        comments.append(match.group(0))
+        return f"__DJ_ANGLES_COMMENT_{len(comments) - 1}__"
+
+    # Django single line comments {# ... #}
+    html = re.sub(r"\{#.*?#\}", mask_match, html, flags=re.DOTALL)
+
+    # Django block comments {% comment %}...{% endcomment %}
+    html = re.sub(r"\{%\s*comment\s*%\}.*?\{%\s*endcomment\s*%\}", mask_match, html, flags=re.DOTALL | re.IGNORECASE)
+
+    # Custom dj-comment Tags <dj-comment>...</dj-comment>
+    html = re.sub(r"<dj-comment>.*?</dj-comment>", mask_match, html, flags=re.DOTALL | re.IGNORECASE)
+
     # 1. Replace attributes, e.g. `<div dj-if="condition">`
     html = replace_attributes(html)
 
@@ -26,5 +43,9 @@ def convert_template(html: str, *, origin=None) -> str:
 
     # 3. Replace tags, e.g. `<dj-include />`
     html = replace_tags(html, origin=origin)
+
+    # 4. Unmask comments
+    for i, comment in enumerate(comments):
+        html = html.replace(f"__DJ_ANGLES_COMMENT_{i}__", comment)
 
     return html
