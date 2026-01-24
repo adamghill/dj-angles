@@ -7,6 +7,7 @@ from minestrone import Element
 from dj_angles.attributes import Attributes
 from dj_angles.caseconverter import kebabify
 from dj_angles.exceptions import MissingAttributeError
+from dj_angles.htmls import VOID_ELEMENTS
 from dj_angles.mappers.angles import map_angles_include
 from dj_angles.mappers.mapper import TagMap, get_tag_map
 from dj_angles.settings import get_setting
@@ -15,27 +16,6 @@ from dj_angles.templates import get_template
 
 if TYPE_CHECKING:
     from collections import deque
-
-
-# List of void elements from: https://www.thoughtco.com/html-singleton-tags-3468620
-VOID_ELEMENTS = {
-    "area",
-    "base",
-    "br",
-    "col",
-    "command",
-    "embed",
-    "hr",
-    "img",
-    "input",
-    "keygen",
-    "link",
-    "meta",
-    "param",
-    "source",
-    "track",
-    "wbr",
-}
 
 
 SHADOW_ATTRIBUTE_KEY = "shadow"
