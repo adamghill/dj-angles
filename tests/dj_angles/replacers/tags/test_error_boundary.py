@@ -181,7 +181,9 @@ def test_invalid_no_boundary():
 def test_two_error_boundaries():
     expected = """
 {% block content %}
-  <div><template shadowrootmode="open"><div style='border: 1px red solid; padding: 0 24px 0 24px;' class=''><em>invalid.html</em></div></template></div>
+  <dj-error-boundary>
+    <div><template shadowrootmode="open"><div style='border: 1px red solid; padding: 0 24px 0 24px;' class=''><em>invalid.html</em></div></template></div>
+  </dj-error-boundary>
 {% endblock content %}
 """
 

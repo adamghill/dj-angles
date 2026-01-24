@@ -92,10 +92,11 @@ def replace_tags(html: str, *, origin: Optional[Origin] = None, raise_for_missin
             end_of_include_tag = match.end()
 
             # Find the next closing tag
+            initial_tag_regex = get_setting("initial_tag_regex", default=r"(dj-)")
+
             if getattr(tag, "is_error_boundary", False):
-                closing_tag_pattern = rf"</{tag.tag_name}"
+                closing_tag_pattern = rf"</{initial_tag_regex}{tag.tag_name}"
             else:
-                initial_tag_regex = get_setting("initial_tag_regex", default=r"(dj-)")
                 closing_tag_pattern = rf"</{initial_tag_regex}"
 
             closing_match = re.search(closing_tag_pattern, html[end_of_include_tag:])
@@ -172,7 +173,13 @@ def replace_tags(html: str, *, origin: Optional[Origin] = None, raise_for_missin
                                 )
                             )
 
-        django_template_tag = tag.get_django_template_tag(slots=slots)
+        try:
+            django_template_tag = tag.get_django_template_tag(slots=slots)
+        except (TemplateDoesNotExist, TemplateSyntaxError) as e:
+            if getattr(tag, "is_error_boundary", False):
+                django_template_tag = tag.get_error_html(e)
+            else:
+                raise e
 
         if django_template_tag:
             edits.append(

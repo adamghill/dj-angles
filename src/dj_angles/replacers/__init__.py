@@ -7,11 +7,12 @@ from dj_angles.replacers.variables import replace_variables
 logger = logging.getLogger(__name__)
 
 
-def convert_template(html: str) -> str:
+def convert_template(html: str, *, origin=None) -> str:
     """Convert a dj-angles template string to Django template syntax.
 
     Args:
         html: The template HTML string to convert.
+        origin: The origin of the template.
 
     Returns:
         The converted template HTML string.
@@ -24,6 +25,6 @@ def convert_template(html: str) -> str:
     html = replace_variables(html)
 
     # 3. Replace tags, e.g. `<dj-include />`
-    html = replace_tags(html)
+    html = replace_tags(html, origin=origin)
 
     return html
