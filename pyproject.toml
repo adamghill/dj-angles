@@ -51,6 +51,7 @@ dev = [
     "sphinx-autobuild >= 2021.3.14",
     "coverage[toml] >= 6",
     "typing_extensions >= 4; python_version < '3.12'",
+    "pluggy>=1.6.0",  # fixes syntax warning in 3.14
 ]
 docs = [
     "Sphinx >= 4.3.2",
