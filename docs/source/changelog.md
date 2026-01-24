@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.25.0
+
+- Add error boundaries.
+- Add `django-components` integration.
+- Faster and more reliable replacement strategy.
+- Improve examples and documentation.
+- Fix bugs with slots.
+- Fix bugs with attributes.
+
 ## 0.24.0
 
 - Add support for [Django 6.0 template partials](https://docs.djangoproject.com/en/6.0/releases/6.0/#template-partials).
