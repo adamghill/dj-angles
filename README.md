@@ -16,7 +16,7 @@
 - Can be sprinkled in as needed to enhance existing Django functionality
 - Since it looks like HTML, syntax highlighting mostly "just works"
 - Wraps included templates in a custom element for easier debugging and targeted CSS styling
-- Support for making components with [Shadow DOM](https://dj-angles.adamghill.com/components/#CSS-scoping)
+- Support for making components with [Shadow DOM](https://dj-angles.adamghill.com/components/#css-scoping)
 - Integrates with Django libraries like [django-bird](https://django-bird.readthedocs.io) and [django-template-partials](https://github.com/carltongibson/django-template-partials)
 - [`call`](template-tags/call.md) and [`model`](template-tags/model.md) to call functions directly from a template instead of creating custom template tags
 - [`dateformat`](filters/dateformat.md) filter to use Python [`strftime`](https://strftime.org) formats instead of PHP for formatting dates
