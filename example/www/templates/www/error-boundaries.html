@@ -1,29 +1,36 @@
 <dj-extends parent='www/base.html' />
 
+<!-- Error boundary on block -->
 <dj-block name='content' error-boundary>
   <dj-include src="www/components/include-bad.html" />
 </dj-block>
 
 <dj-block name='extra-content'>
+  <h2>Fallback template</h2>
   <dj-error-boundary default='www/components/error-fallback.html'>
     <dj-include src="www/components/include-bad.html" />
   </dj-error-boundary>
 
+  <h2>Fallback string</h2>
   <dj-error-boundary default='This is an error fallback string'>
     <dj-include src="www/components/include-bad.html" />
   </dj-error-boundary>
 
+  <h2>Include w/ bad variable</h2>
   <dj-error-boundary>
     <dj-include src="www/components/include-bad.html" />
   </dj-error-boundary>
 
+  <h2>Missing</h2>
   <dj-error-boundary>
     <dj-include src="missing.html" />
   </dj-error-boundary>
 
+  <h2>Valid include</h2>
   <dj-error-boundary>
     <dj-include src="www/components/include.html" />
   </dj-error-boundary>
 
+  <h2>Valid include w/o error boundary</h2>
   <dj-include src="www/components/include.html" />
 </dj-block>
