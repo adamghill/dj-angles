@@ -148,6 +148,7 @@ middlewares/request-ajax
 :hidden:
 
 integrations/django-bird
+integrations/django-components
 integrations/django-template-partials
 ```
 
