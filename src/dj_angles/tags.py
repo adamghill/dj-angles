@@ -103,7 +103,7 @@ class Tag:
 
         if self.is_error_boundary:
             if attribute := self.attributes.get(DEFAULT_ATTRIBUTE_KEY):
-                self.error_fallback = dequotify(attribute.value)
+                self.error_fallback = dequotify(attribute.value or "")
                 self.attributes.remove(DEFAULT_ATTRIBUTE_KEY)
 
         if get_setting("lower_case_tag", default=False) is True:
