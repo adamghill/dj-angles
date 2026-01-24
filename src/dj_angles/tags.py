@@ -101,10 +101,10 @@ class Tag:
             self.is_error_boundary = True
             self.attributes.remove(ERROR_BOUNDARY_ATTRIBUTE_KEY)
 
-        if self.is_error_boundary and self.attributes.has(DEFAULT_ATTRIBUTE_KEY):
-            attribute = self.attributes[DEFAULT_ATTRIBUTE_KEY]
-            self.error_fallback = dequotify(attribute.value)
-            self.attributes.remove(DEFAULT_ATTRIBUTE_KEY)
+        if self.is_error_boundary:
+            if attribute := self.attributes.get(DEFAULT_ATTRIBUTE_KEY):
+                self.error_fallback = dequotify(attribute.value)
+                self.attributes.remove(DEFAULT_ATTRIBUTE_KEY)
 
         if get_setting("lower_case_tag", default=False) is True:
             self.tag_name = self.tag_name.lower()
