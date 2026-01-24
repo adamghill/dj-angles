@@ -53,3 +53,12 @@ def apply_edits(html: str, edits: list[AtomicEdit]) -> str:
         result_parts.append(html[last_pos:])
 
     return "".join(result_parts)
+
+
+@dataclass
+class Replacement:
+    original: str
+    replacement: str
+    tag: Tag | None = None
+    keep_endif: bool = False
+    tag_start_idx: int = -1
