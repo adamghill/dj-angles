@@ -1,0 +1,15 @@
+[project]
+name = "example"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "dj-angles",
+    "django>=6",
+    "django-bird>=0.1.0",
+    "django-components>=0.146.0",
+]
+
+[tool.uv.sources]
+dj-angles = { workspace = true, editable = true }
