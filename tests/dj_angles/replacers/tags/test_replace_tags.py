@@ -3,7 +3,7 @@ from collections import namedtuple
 import pytest
 
 from dj_angles.mappers.mapper import clear_tag_map
-from dj_angles.regex_replacer import get_tag_replacements
+from dj_angles.replacers.tags import replace_tags
 
 # Structure to store parameterize data
 Params = namedtuple(
@@ -126,11 +126,8 @@ def _shadowify(s: str) -> str:
     ),
 )
 def test_typical(original, replacement):
-    actual = get_tag_replacements(original, raise_for_missing_start_tag=False)
-
-    for tag_replacement in actual:
-        assert tag_replacement.original == original
-        assert tag_replacement.replacement == replacement
+    actual = replace_tags(original, raise_for_missing_start_tag=False)
+    assert actual == replacement
 
 
 @pytest.mark.parametrize(
@@ -143,11 +140,8 @@ def test_typical(original, replacement):
     ),
 )
 def test_no_extension(original, replacement):
-    actual = get_tag_replacements(original, raise_for_missing_start_tag=False)
-
-    for tag_replacement in actual:
-        assert tag_replacement.original == original
-        assert tag_replacement.replacement == replacement
+    actual = replace_tags(original, raise_for_missing_start_tag=False)
+    assert actual == replacement
 
 
 @pytest.mark.parametrize(
@@ -178,11 +172,8 @@ def test_no_extension(original, replacement):
 def test_initial_tag_regex(original, replacement, settings):
     settings.ANGLES = {"initial_tag_regex": r"(dj-|\$)"}
 
-    actual = get_tag_replacements(original, raise_for_missing_start_tag=False)
-
-    for tag_replacement in actual:
-        assert tag_replacement.original == original
-        assert tag_replacement.replacement == replacement
+    actual = replace_tags(original, raise_for_missing_start_tag=False)
+    assert actual == replacement
 
 
 @pytest.mark.parametrize(
@@ -201,11 +192,8 @@ def test_initial_tag_regex_for_react_style(original, replacement, settings):
         "kebab_case_tag": False,
     }
 
-    actual = get_tag_replacements(original, raise_for_missing_start_tag=False)
-
-    for tag_replacement in actual:
-        assert tag_replacement.original == original
-        assert tag_replacement.replacement == replacement
+    actual = replace_tags(original, raise_for_missing_start_tag=False)
+    assert actual == replacement
 
 
 @pytest.mark.parametrize(
@@ -220,11 +208,8 @@ def test_initial_tag_regex_for_react_style(original, replacement, settings):
 def test_lower_case_tag(original, replacement, settings):
     settings.ANGLES = {"initial_tag_regex": r"(dj-|(?=[A-Z]))", "lower_case_tag": True}
 
-    actual = get_tag_replacements(original, raise_for_missing_start_tag=False)
-
-    for tag_replacement in actual:
-        assert tag_replacement.original == original
-        assert tag_replacement.replacement == replacement
+    actual = replace_tags(original, raise_for_missing_start_tag=False)
+    assert actual == replacement
 
 
 @pytest.mark.parametrize(
@@ -243,11 +228,8 @@ def test_lower_case_tag(original, replacement, settings):
 def test_kebab_case_tag(original, replacement, settings):
     settings.ANGLES = {"initial_tag_regex": r"(?=[A-Z])", "kebab_case_tag": True}
 
-    actual = get_tag_replacements(original, raise_for_missing_start_tag=False)
-
-    for tag_replacement in actual:
-        assert tag_replacement.original == original
-        assert tag_replacement.replacement == replacement
+    actual = replace_tags(original, raise_for_missing_start_tag=False)
+    assert actual == replacement
 
 
 @pytest.mark.parametrize(
@@ -268,11 +250,8 @@ def test_mappers_string(original, replacement, settings):
     }
     clear_tag_map()
 
-    actual = get_tag_replacements(original, raise_for_missing_start_tag=False)
-
-    for tag_replacement in actual:
-        assert tag_replacement.original == original
-        assert tag_replacement.replacement == replacement
+    actual = replace_tags(original, raise_for_missing_start_tag=False)
+    assert actual == replacement
 
 
 @pytest.mark.parametrize(
@@ -291,11 +270,8 @@ def test_mappers_callable(original, replacement, settings):
     }
     clear_tag_map()
 
-    actual = get_tag_replacements(original, raise_for_missing_start_tag=False)
-
-    for tag_replacement in actual:
-        assert tag_replacement.original == original
-        assert tag_replacement.replacement == replacement
+    actual = replace_tags(original, raise_for_missing_start_tag=False)
+    assert actual == replacement
 
 
 @pytest.mark.parametrize(
@@ -312,11 +288,8 @@ def test_mappers_callable(original, replacement, settings):
     ),
 )
 def test_image(original, replacement):
-    actual = get_tag_replacements(original, raise_for_missing_start_tag=False)
-
-    for tag_replacement in actual:
-        assert tag_replacement.original == original
-        assert tag_replacement.replacement == replacement
+    actual = replace_tags(original, raise_for_missing_start_tag=False)
+    assert actual == replacement
 
 
 @pytest.mark.parametrize(
@@ -329,38 +302,30 @@ def test_image(original, replacement):
     ),
 )
 def test_css(original, replacement):
-    actual = get_tag_replacements(original, raise_for_missing_start_tag=False)
-
-    for tag_replacement in actual:
-        assert tag_replacement.original == original
-        assert tag_replacement.replacement == replacement
+    actual = replace_tags(original, raise_for_missing_start_tag=False)
+    assert actual == replacement
 
 
 def test_no_prefix(settings):
     settings.ANGLES["initial_tag_regex"] = r"(?=\w)"
 
-    actual = get_tag_replacements("<block name='content'>", raise_for_missing_start_tag=False)
-
-    assert actual[0].original == "<block name='content'>"
-    assert actual[0].replacement == "{% block content %}"
+    actual = replace_tags("<block name='content'>", raise_for_missing_start_tag=False)
+    assert actual == "{% block content %}"
 
 
 def test_no_prefix_with_default_mapper(settings):
     settings.ANGLES["initial_tag_regex"] = r"(?=\w)"
 
-    actual = get_tag_replacements("<thing />", raise_for_missing_start_tag=False)
-
-    assert actual[0].original == "<thing />"
-    assert actual[0].replacement == "<dj-thing>{% include 'thing.html' %}</dj-thing>"
+    actual = replace_tags("<thing />", raise_for_missing_start_tag=False)
+    assert actual == "<dj-thing>{% include 'thing.html' %}</dj-thing>"
 
 
 def test_no_prefix_without_default_mapper(settings):
     settings.ANGLES["default_mapper"] = None
     settings.ANGLES["initial_tag_regex"] = r"(?=\w)"
 
-    expected = []
-    actual = get_tag_replacements("<thing />", raise_for_missing_start_tag=False)
-
+    expected = "<thing />"
+    actual = replace_tags("<thing />", raise_for_missing_start_tag=False)
     assert actual == expected
 
 
@@ -368,7 +333,6 @@ def test_no_prefix_map_explicit_tags_only(settings):
     settings.ANGLES["map_explicit_tags_only"] = True
     settings.ANGLES["initial_tag_regex"] = r"(?=\w)"
 
-    expected = []
-    actual = get_tag_replacements("<thing />", raise_for_missing_start_tag=False)
-
+    expected = "<thing />"
+    actual = replace_tags("<thing />", raise_for_missing_start_tag=False)
     assert actual == expected

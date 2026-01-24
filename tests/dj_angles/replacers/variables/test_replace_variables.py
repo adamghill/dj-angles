@@ -2,7 +2,7 @@ from collections import namedtuple
 
 import pytest
 
-from dj_angles.regex_replacer import get_django_tag_replacements
+from dj_angles.replacers.variables import replace_variables
 
 # Structure to store parameterize data
 Params = namedtuple(
@@ -37,12 +37,8 @@ Params = namedtuple(
     ),
 )
 def test_or(original, replacement):
-    replacements = get_django_tag_replacements(original)
-    assert len(replacements) == 1
-
-    for tag_replacement in replacements:
-        assert tag_replacement.original == original
-        assert tag_replacement.replacement == replacement
+    actual = replace_variables(original)
+    assert actual == replacement
 
 
 @pytest.mark.parametrize(
@@ -99,12 +95,8 @@ def test_or(original, replacement):
     ),
 )
 def test_inline_if(original, replacement):
-    replacements = get_django_tag_replacements(original)
-    assert len(replacements) == 1
-
-    for tag_replacement in replacements:
-        assert tag_replacement.original == original
-        assert tag_replacement.replacement == replacement
+    actual = replace_variables(original)
+    assert actual == replacement
 
 
 @pytest.mark.parametrize(
@@ -121,13 +113,51 @@ def test_inline_if(original, replacement):
     ),
 )
 def test_negative_non_matching(original):
-    replacements = get_django_tag_replacements(original)
-    assert len(replacements) == 0
+    actual = replace_variables(original)
+    assert actual == original
 
 
 def test_or_with_quotes():
-    actual = get_django_tag_replacements("{{ 'a or b' }}")
-    assert len(actual) == 0
+    actual = replace_variables("{{ 'a or b' }}")
+    assert actual == "{{ 'a or b' }}"
 
-    actual = get_django_tag_replacements('{{ "a or b" }}')
-    assert len(actual) == 0
+    actual = replace_variables('{{ "a or b" }}')
+    assert actual == '{{ "a or b" }}'
+
+
+@pytest.mark.parametrize(
+    Params._fields,
+    (
+        Params(
+            original="{{ 'if' if cond else 'else' }}",
+            replacement="{% if cond %}if{% else %}else{% endif %}",
+        ),
+        Params(
+            original='{{ "if" if cond else "else" }}',
+            replacement="{% if cond %}if{% else %}else{% endif %}",
+        ),
+        Params(
+            original="{{ 'or' or 'else' }}",
+            replacement="{% if 'or' %}{{ 'or' }}{% else %}else{% endif %}",
+        ),
+        Params(
+            original="{{ 'this or that' or 'default' }}",
+            replacement="{% if 'this or that' %}{{ 'this or that' }}{% else %}default{% endif %}",
+        ),
+        Params(
+            original="{{ 'A if B else C' if cond else 'D' }}",
+            replacement="{% if cond %}A if B else C{% else %}D{% endif %}",
+        ),
+        Params(
+            original="{{ var or 'default with or' }}",
+            replacement="{% if var %}{{ var }}{% else %}default with or{% endif %}",
+        ),
+        Params(
+            original="{{ 'ends with or' or default }}",
+            replacement="{% if 'ends with or' %}{{ 'ends with or' }}{% else %}{{ default }}{% endif %}",
+        ),
+    ),
+)
+def test_stress_cases(original, replacement):
+    actual = replace_variables(original)
+    assert actual == replacement

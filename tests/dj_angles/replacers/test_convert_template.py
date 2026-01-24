@@ -1,7 +1,7 @@
 import pytest
 
 from dj_angles.exceptions import InvalidEndTagError
-from dj_angles.regex_replacer import convert_template
+from dj_angles.replacers import convert_template
 
 
 def test_typical():
@@ -267,15 +267,15 @@ def test_slot(settings):
 
     expected = """
 <dj-slot><div>
-<slot name="test1"><span slot="test1">new slot1</span></slot>
-<slot name="test2">slot2</slot>
+  <slot name="test1"><span slot="test1">new slot1</span></slot>
+  <slot name="test2">slot2</slot>
 </div>
 
 </dj-slot>
 
 <dj-slot><div>
-<slot name="test1">slot1</slot>
-<slot name="test2"><span slot="test2">new slot2</span></slot>
+  <slot name="test1">slot1</slot>
+  <slot name="test2"><span slot="test2">new slot2</span></slot>
 </div>
 
 </dj-slot>
@@ -647,7 +647,7 @@ def test_elif_with_no_if():
     with pytest.raises(AssertionError) as e:
         convert_template(template)
 
-    assert e.exconly() == "AssertionError: Invalid use of dj-elif outside of a conditional block"
+    assert e.exconly() == "AssertionError: Invalid use of dj-elif attribute"
 
 
 def test_else_with_no_if():
@@ -660,7 +660,7 @@ def test_else_with_no_if():
     with pytest.raises(AssertionError) as e:
         convert_template(template)
 
-    assert e.exconly() == "AssertionError: Invalid use of dj-else outside of a conditional block"
+    assert e.exconly() == "AssertionError: Invalid use of dj-else attribute"
 
 
 def test_extra_else():
@@ -807,6 +807,41 @@ def test_if_nested():
 </div>
 <p dj-else>
 </p>
+"""
+    actual = convert_template(template)
+
+    assert actual == expected
+
+
+def test_if_nested_same_tag_bug():
+    """Test case for nested same-tag conditionals."""
+
+    expected = """
+{% if outer %}<div>
+  {% if inner %}<div>
+    <p>Inner true</p>
+  </div>
+  {% else %}<div>
+    <p>Inner false</p>
+  </div>{% endif %}
+</div>
+{% else %}<div>
+  <p>Outer false</p>
+</div>{% endif %}
+"""
+
+    template = """
+<div dj-if="outer">
+  <div dj-if="inner">
+    <p>Inner true</p>
+  </div>
+  <div dj-else>
+    <p>Inner false</p>
+  </div>
+</div>
+<div dj-else>
+  <p>Outer false</p>
+</div>
 """
     actual = convert_template(template)
 

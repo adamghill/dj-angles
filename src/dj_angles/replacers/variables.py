@@ -1,25 +1,23 @@
 import logging
 import re
 
-from dj_angles.regex_replacer.objects import Replacement
+from dj_angles.replacers.objects import AtomicEdit, apply_edits
 from dj_angles.strings import dequotify
-from dj_angles.tags import Tag
 
 logger = logging.getLogger(__name__)
 
 
-def get_django_tag_replacements(html: str) -> list[Replacement]:
-    """Get a list of django tag replacements based on the template HTML.
+def replace_variables(html: str) -> str:
+    """Replace Django-like tags (or-expressions and inline-ifs) with standard Django tags.
 
     Args:
-        param html: Template HTML.
+        html: Template HTML.
 
     Returns:
-        A list of `Replacement` where `original` is the existing element, e.g. "{{ blob or 'hello' }}"
-        and `replacement` is the replacement string, e.g. "{% if blob %}{{ blob }}{% else %}'hello'{% endif %}".
+        The converted template HTML.
     """
 
-    replacements: list[Replacement] = []
+    edits: list[AtomicEdit] = []
 
     # Match Django template variables with 'or' expressions
     # This matches or_patterns like {{ var or "default" }} or {{ var|filter or default_value }}
@@ -49,12 +47,8 @@ def get_django_tag_replacements(html: str) -> list[Replacement]:
         # Create the replacement with if/else logic
         replacement = f"{{% if {variable_part} %}}{{{{ {variable_part} }}}}{{% else %}}{default_value}{{% endif %}}"
 
-        # Create a minimal Tag object for the replacement
-        # The actual tag content isn't critical for this replacement
-        tag = Tag(html=original)
-
-        replacements.append(
-            Replacement(original=original, replacement=replacement, tag=tag, tag_start_idx=or_match.start())
+        edits.append(
+            AtomicEdit(position=or_match.start(), content=replacement, is_insert=False, end_position=or_match.end())
         )
 
     # Match Django template variables with a inline if expression
@@ -81,11 +75,10 @@ def get_django_tag_replacements(html: str) -> list[Replacement]:
         # Create the replacement with if/else logic
         replacement = f"{{% if {condition} %}}{true_value}{{% else %}}{false_value}{{% endif %}}"
 
-        # Create a minimal Tag object for the replacement
-        tag = Tag(html=original)
-
-        replacements.append(
-            Replacement(original=original, replacement=replacement, tag=tag, tag_start_idx=ternary_match.start())
+        edits.append(
+            AtomicEdit(
+                position=ternary_match.start(), content=replacement, is_insert=False, end_position=ternary_match.end()
+            )
         )
 
-    return replacements
+    return apply_edits(html, edits)
