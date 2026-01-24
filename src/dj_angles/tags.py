@@ -83,10 +83,10 @@ class Tag:
     is_error_boundary: bool = False
     """Whether or not the tag should handle errors."""
 
-    error_fallback: Optional[str] = ""
+    error_fallback: str | None = ""
     """What to display if there is an error. Can be a string or a template."""
 
-    inner_html: Optional[str] = None
+    inner_html: str | None = None
 
     def __init__(
         self,

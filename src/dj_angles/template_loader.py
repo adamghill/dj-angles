@@ -21,11 +21,7 @@ class Loader(AppDirectoriesLoader):
         """Gets the converted template contents."""
 
         template_string = self._get_template_string(origin.name)
-<<<<<<< HEAD
-        converted_template_string = convert_template(template_string)
-=======
-        converted_template_string = replace_django_template_tags(template_string, origin=origin)
->>>>>>> b8109bf (Remove support for boundary from includes, add new tag and add support to blocks.)
+        converted_template_string = convert_template(template_string, origin=origin)
 
         return converted_template_string
 

@@ -1,14 +1,7 @@
 from typing import TYPE_CHECKING
 
-<<<<<<< HEAD
-from django.template import TemplateDoesNotExist, TemplateSyntaxError
-
 from dj_angles.exceptions import InvalidAttributeError, MissingAttributeError
-from dj_angles.settings import get_setting
 from dj_angles.strings import dequotify
-=======
-from dj_angles.exceptions import MissingAttributeError
->>>>>>> b8109bf (Remove support for boundary from includes, add new tag and add support to blocks.)
 from dj_angles.templates import get_template
 
 if TYPE_CHECKING:
