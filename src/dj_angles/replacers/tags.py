@@ -1,7 +1,6 @@
 import logging
 import re
 from collections import deque
-from typing import Optional
 
 from django.template import Context, Origin, Template, TemplateDoesNotExist, TemplateSyntaxError
 from minestrone import HTML

@@ -172,6 +172,9 @@ root = ["src"]
 [tool.ty.src]
 exclude = ["tests", "example", "docs"]
 
+[tool.uv.workspace]
+members = ["example"]
+
 [build-system]
 requires = ["uv_build>=0.8.12,<0.9.0"]
 build-backend = "uv_build"

@@ -1,11 +1,12 @@
-from django.template import Template
+from typing import Any
+
 from django.template.exceptions import TemplateDoesNotExist
 from django.template.loader import select_template
 
 from dj_angles.strings import dequotify
 
 
-def get_template(template_file: str, *, raise_exception: bool = False) -> Template | None:
+def get_template(template_file: str, *, raise_exception: bool = False) -> Any:
     """Check for the template file by looking for different template file variations.
 
     Variations:

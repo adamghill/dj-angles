@@ -131,7 +131,7 @@ class TestErrorBoundary:
     def test_invalid(self):
         expected = """
 <dj-error-boundary>
-    <div><template shadowrootmode="open"><div style='border: 1px red solid; padding: 0 24px 0 24px;' class=''><em>Could not parse the remainder: ' variable' from 'invalid variable'</em></div></template></div>
+    <div><template shadowrootmode="open"><div style='border: 1px red solid; padding: 0 24px 0 24px;' class=''><em>Template: /Users/adam/Source/adamghill/dj-angles/tests/templates/invalid_variable.html, Could not parse the remainder: ' variable' from 'invalid variable'</em></div></template></div>
 </dj-error-boundary>
         """  # noqa: E501
 
@@ -150,7 +150,7 @@ class TestBlockBoundary:
     def test_invalid(self):
         expected = """
 {% block content %}
-    <div><template shadowrootmode="open"><div style='border: 1px red solid; padding: 0 24px 0 24px;' class=''><em>Could not parse the remainder: ' variable' from 'invalid variable'</em></div></template></div>
+    <div><template shadowrootmode="open"><div style='border: 1px red solid; padding: 0 24px 0 24px;' class=''><em>Template: /Users/adam/Source/adamghill/dj-angles/tests/templates/invalid_variable.html, Could not parse the remainder: ' variable' from 'invalid variable'</em></div></template></div>
 {% endblock content %}
     """  # noqa: E501
 

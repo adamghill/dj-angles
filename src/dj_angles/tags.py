@@ -1,5 +1,5 @@
 import re
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, cast
 
 from django.conf import settings
 from minestrone import Element
@@ -102,7 +102,8 @@ class Tag:
             self.attributes.remove(ERROR_BOUNDARY_ATTRIBUTE_KEY)
 
         if self.is_error_boundary and self.attributes.has(DEFAULT_ATTRIBUTE_KEY):
-            self.error_fallback = dequotify(self.attributes.get(DEFAULT_ATTRIBUTE_KEY).value)
+            attribute = self.attributes[DEFAULT_ATTRIBUTE_KEY]
+            self.error_fallback = dequotify(attribute.value)
             self.attributes.remove(DEFAULT_ATTRIBUTE_KEY)
 
         if get_setting("lower_case_tag", default=False) is True:
@@ -138,14 +139,14 @@ class Tag:
 
         if self.error_fallback:
             if fallback_template := get_template(self.error_fallback, raise_exception=False):
-                return fallback_template.render()
+                return fallback_template.render({})
 
             return self.error_fallback
 
         html = ""
 
         if hasattr(exception, "template_debug"):
-            template_debug = exception.template_debug
+            template_debug = cast(dict, exception.template_debug)
             source = template_debug["name"]
 
             if hasattr(settings, "BASE_DIR"):
@@ -173,7 +174,7 @@ class Tag:
                     error = f"Could not find the template: '{error}'"
 
                     if exception.tried:
-                        error = f"{error}: {', '.join(exception.tried)}"
+                        error = f"{error}: {', '.join(cast(list[str], exception.tried))}"
 
                 if not error.endswith("."):
                     error = f"{error}."
