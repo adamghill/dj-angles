@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, cast
 
 from dj_angles.exceptions import InvalidAttributeError, MissingAttributeError
 from dj_angles.strings import dequotify
@@ -78,7 +78,7 @@ def map_include(tag: "Tag") -> str:
         template_file = template_file[0:colon_idx] + template_file[extension_idx:]
 
     if template := get_template(template_file, raise_exception=False):
-        template_file = f"'{template.template.name}'"
+        template_file = f"'{cast(Any, template).template.name}'"
 
     replacement = ""
 
