@@ -17,6 +17,15 @@
         "test",
         "doc"
       ]
+    },
+    {
+      "login": "jasalt",
+      "name": "Jarkko Saltiola",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2306521?v=4",
+      "profile": "https://jasalt.dev",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
