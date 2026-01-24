@@ -45,6 +45,15 @@ def pytest_configure():
             },
         ],
         SECRET_KEY="this-is-a-secret",
+        DATABASES={
+            "default": {
+                "ENGINE": "django.db.backends.sqlite3",
+            }
+        },
+        MIDDLEWARE=(
+            "dj_angles.middleware.RequestMethodMiddleware",
+            "dj_angles.middleware.RequestAJAXMiddleware",
+        ),
         ANGLES={
             "IS_IN_UNIT_TEST": True,
         },

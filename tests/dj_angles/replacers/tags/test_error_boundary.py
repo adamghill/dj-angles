@@ -1,6 +1,7 @@
 from typing import Optional
 from unittest.mock import patch
 
+import pytest
 from django.template import TemplateDoesNotExist, TemplateSyntaxError
 
 from dj_angles.replacers.tags import replace_tags as replace_django_template_tags
@@ -19,7 +20,7 @@ def _get_template_does_not_exist_exception(
     name: str = "index.html",
     during: str = "during",
     message: str = "missing.html",
-    tried: Optional[list[str]] = None,
+    tried: list[str] | None = None,
 ) -> Exception:
     exception = TemplateDoesNotExist(msg="")
     exception.template_debug = {"name": name, "during": during, "message": message}
@@ -62,7 +63,13 @@ class TestErrorBoundary:
 
         assert actual == expected
 
-    def test_missing_multiple(self):
+    @patch("dj_angles.replacers.tags._validate_template")
+    def test_missing_multiple(self, _validate_template, settings):
+        _validate_template.side_effect = _get_template_does_not_exist_exception(
+            name="missing1.html", message="missing1.html"
+        )
+
+        settings.DEBUG = True
         expected = """
 <dj-error-boundary>
     <div><template shadowrootmode="open"><div style='border: 1px red solid; padding: 0 24px 0 24px;' class=''><h2>
@@ -72,7 +79,7 @@ class TestErrorBoundary:
   <em>Could not find the template: 'missing1.html'.</em>
 </p>
 <p>
-  {% include "missing1.html" %}
+  <pre><code>{% verbatim %}during{% endverbatim %}</code></pre>
 </p>
 </div></template></div>
 </dj-error-boundary>
@@ -90,14 +97,25 @@ class TestErrorBoundary:
 
         assert actual == expected
 
-    def test_missing_multiple_same(self):
+    @patch("dj_angles.replacers.tags._validate_template")
+    def test_missing_multiple_same(self, _validate_template, settings):
+        _validate_template.side_effect = _get_template_does_not_exist_exception(
+            name="missing.html", message="missing.html"
+        )
+
+        settings.DEBUG = True
         expected = """
 <dj-error-boundary>
-    <div><template shadowrootmode="open"><div style='border: 1px red solid; padding: 0 24px 0 24px;' class=''>\
-<h1>error-boundary</h1>\
-<p>missing.html</p>\
-</div></template>\
-</div>
+    <div><template shadowrootmode="open"><div style='border: 1px red solid; padding: 0 24px 0 24px;' class=''><h2>
+  missing.html
+</h2>
+<p>
+  <em>Could not find the template: 'missing.html'.</em>
+</p>
+<p>
+  <pre><code>{% verbatim %}during{% endverbatim %}</code></pre>
+</p>
+</div></template></div>
 </dj-error-boundary>
     """
 
@@ -115,11 +133,7 @@ class TestErrorBoundary:
     def test_invalid(self):
         expected = """
 <dj-error-boundary>
-    <div><template shadowrootmode="open">\
-<div style='border: 1px red solid; padding: 0 24px 0 24px;' class=''>\
-<h1>error-boundary</h1>\
-<p>Could not parse the remainder: ' variable' from 'invalid variable'</p>\
-</div></template></div>
+    <div><template shadowrootmode="open"><div style='border: 1px red solid; padding: 0 24px 0 24px;' class=''><em>Could not parse the remainder: ' variable' from 'invalid variable'</em></div></template></div>
 </dj-error-boundary>
         """
 
@@ -133,10 +147,6 @@ class TestErrorBoundary:
         print(actual)
 
         assert actual == expected
-
-
-import pytest
-from django.template.exceptions import TemplateSyntaxError
 
 
 class TestBlockBoundary:
@@ -159,11 +169,7 @@ class TestBlockBoundary:
     def test_invalid(self):
         expected = """
 {% block content %}
-    <div><template shadowrootmode="open">\
-<div style='border: 1px red solid; padding: 0 24px 0 24px;' class=''>\
-<h1>invalid_variable.html</h1>\
-<p>Could not parse the remainder: ' variable' from 'invalid variable'</p>\
-</div></template></div>
+    <div><template shadowrootmode="open"><div style='border: 1px red solid; padding: 0 24px 0 24px;' class=''><em>Could not parse the remainder: ' variable' from 'invalid variable'</em></div></template></div>
 {% endblock content %}
     """
 
@@ -208,7 +214,7 @@ def test_two_error_boundaries():
 """
 
     # with pytest.raises(TemplateDoesNotExist):
-    a = replace_django_template_tags(template)
-    print(a)
+    from django.template import Origin
 
-    assert 0 == 1
+    origin = Origin("test.html")
+    a = replace_django_template_tags(template, origin=origin)

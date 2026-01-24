@@ -8,6 +8,7 @@ def test_default():
     actual = get_tag_map()
 
     assert len(actual) == 26
+<<<<<<< HEAD
 
     # Check for optional mappers
     assert "partial" in actual.keys()
@@ -15,6 +16,8 @@ def test_default():
     assert "component" in actual.keys()
 
     # Check for default mapper
+=======
+>>>>>>> 07cac27 (Merge.)
     assert actual[None].__name__ == expected
 
 
@@ -30,7 +33,7 @@ def test_none_default_mapper(settings):
     assert "bird" in actual.keys()
     assert "component" in actual.keys()
 
-    # Check there is no default mapper
+    # Check that there is no default mapper
     assert actual.get(None) is None
 
 

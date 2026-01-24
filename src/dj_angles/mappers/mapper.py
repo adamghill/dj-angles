@@ -31,13 +31,10 @@ TAG_NAME_TO_DJANGO_TEMPLATE_TAG_MAP: dict[str | None, Callable | str] = {
     "templatetag": "templatetag",
     "image": map_image,
     "css": map_css,
-<<<<<<< HEAD
     "model": map_model,
     "call": map_call,
     "form": map_form,
-=======
     "error-boundary": lambda tag: "",  # noqa: ARG005  # the inner_html gets handled in `regex_replacer`
->>>>>>> b8109bf (Remove support for boundary from includes, add new tag and add support to blocks.)
 }
 """Default mappings for tag names to Django template tags."""
 
