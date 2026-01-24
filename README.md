@@ -141,6 +141,7 @@ There are a growing number of component libraries for Django. A non-complete lis
   <tbody>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="http://www.levit.be"><img src="https://avatars.githubusercontent.com/u/1215070?v=4?s=100" width="100px;" alt="Emmanuelle Delescolle"/><br /><sub><b>Emmanuelle Delescolle</b></sub></a><br /><a href="https://github.com/adamghill/dj-angles/commits?author=nanuxbe" title="Code">💻</a> <a href="https://github.com/adamghill/dj-angles/commits?author=nanuxbe" title="Tests">⚠️</a> <a href="https://github.com/adamghill/dj-angles/commits?author=nanuxbe" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://jasalt.dev"><img src="https://avatars.githubusercontent.com/u/2306521?v=4?s=100" width="100px;" alt="Jarkko Saltiola"/><br /><sub><b>Jarkko Saltiola</b></sub></a><br /><a href="https://github.com/adamghill/dj-angles/commits?author=jasalt" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
