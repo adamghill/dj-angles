@@ -43,3 +43,29 @@ def map_partial(tag: "Tag") -> str:
         return f"{{% partial {name} %}}"
 
     return map_block(tag=tag, tag_name="partialdef")
+
+
+def map_component(tag: "Tag") -> str:
+    """Map dj-angles tags to django-components syntax.
+
+    Transforms <dj-component name="calendar"> to {% component 'calendar' %}.
+    """
+    if tag.is_end:
+        return "{% endcomponent %}"
+
+    try:
+        component_name = tag.pop_attribute_value_or_first_key("name")
+    except MissingAttributeError as err:
+        raise MissingAttributeError("dj-component requires a 'name' attribute") from err
+
+    component_name = dequotify(component_name)
+
+    django_template_tag = f"{{% component '{component_name}'"
+
+    if tag.attributes:
+        django_template_tag = f"{django_template_tag} {tag.attributes}"
+
+    if tag.is_self_closing:
+        django_template_tag = f"{django_template_tag} /"
+
+    return f"{django_template_tag} %}}"

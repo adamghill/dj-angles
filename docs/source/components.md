@@ -174,4 +174,5 @@ Would be rendered as the following.
 For other approaches to components in Django, `dj-angles` integrates with other Django libraries. The currently supported external libraries include:
 
 - [`django-bird`](integrations/django-bird.md)
+- [`django-components`](integrations/django-components.md)
 - [`django-template-partials`](integrations/django-template-partials.md)

@@ -47,7 +47,10 @@ class TagMap(UserDict):
         self.data: dict[str | None, Callable | str] = TAG_NAME_TO_DJANGO_TEMPLATE_TAG_MAP.copy()
 
         # Add bird if `django-bird` is installed
-        self.add_module_mapper("django_bird", "bird", "dj_angles.mappers.map_bird")
+        self.add_module_mapper("django_bird", "bird", "dj_angles.mappers.thirdparty.map_bird")
+
+        # Add component if `django-components` is installed
+        self.add_module_mapper("django_components", "component", "dj_angles.mappers.thirdparty.map_component")
 
         # Add partialdef if `django-template-partial` is installed or Django >= 6.0
         if is_module_available("template_partials") or django.VERSION >= (6, 0):
