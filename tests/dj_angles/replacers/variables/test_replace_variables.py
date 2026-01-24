@@ -107,14 +107,30 @@ def test_inline_if(original, replacement):
         "{{ if var else 'y' }}",  # invalid pythonic ternary
         "{{ 'if' in str }}",  # contains 'if' in expression but not ternary
         "{{ \"'if' in str\" }}",  # quoted string containing 'if'
-        "{{ '{{ x }}' if cond else 'y' }}",  # braces inside quoted branch value
-        "{{ 'x' if cond else '{{ y }}' }}",  # braces inside quoted branch value
-        "{{ var or '{{ x }}' }}",  # braces in default value
     ),
 )
 def test_negative_non_matching(original):
     actual = replace_variables(original)
     assert actual == original
+
+
+def test_nested_braces_in_strings():
+    # Valid syntax where braces appear inside strings - previously unsupported, now supported
+
+    # 1. Braces in true branch
+    original = "{{ '{{ x }}' if cond else 'y' }}"
+    expected = "{% if cond %}{% verbatim %}{{ x }}{% endverbatim %}{% else %}y{% endif %}"
+    assert replace_variables(original) == expected
+
+    # 2. Braces in false branch
+    original = "{{ 'x' if cond else '{{ y }}' }}"
+    expected = "{% if cond %}x{% else %}{% verbatim %}{{ y }}{% endverbatim %}{% endif %}"
+    assert replace_variables(original) == expected
+
+    # 3. Braces in 'or' default
+    original = "{{ var or '{{ x }}' }}"
+    expected = "{% if var %}{{ var }}{% else %}{% verbatim %}{{ x }}{% endverbatim %}{% endif %}"
+    assert replace_variables(original) == expected
 
 
 def test_or_with_quotes():
