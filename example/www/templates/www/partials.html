@@ -1,0 +1,44 @@
+<dj-extends parent='www/base.html' />
+
+<dj-block name='content'>
+  <h3>Django Template Partials</h3>
+
+  <p>
+    Demonstrate how <code>dj-angles</code> integrates with Django 6.0 template partials.
+  </p>
+
+  <h4>Define a Partial</h4>
+
+  <pre>&lt;dj-partial name="my-partial"&gt;
+  &lt;p&gt;This is inside a partial.&lt;/p&gt;
+&lt;/dj-partial&gt;
+
+&lt;dj-partial name="my-partial" /&gt;</pre>
+
+  <dj-partial name="my-partial">
+    <p>This is inside a partial.</p>
+  </dj-partial>
+
+  <dj-partial name="my-partial" />
+
+  <h4>Use an Already Defined Partial</h4>
+
+  <pre>&lt;dj-partial name="my-partial" /&gt;</pre>
+
+  <dj-partial name="my-partial" />
+
+  <h4>Inline Partial</h4>
+
+  <pre>&lt;dj-partial name="inline-partial" inline&gt;
+  &lt;p&gt;This is an inline partial.&lt;/p&gt;
+&lt;/dj-partial&gt;
+
+&lt;dj-partial name="inline-partial" /&gt;</pre>
+
+  <dj-partial name="inline-partial" inline>
+    <p>This is an inline partial.</p>
+  </dj-partial>
+
+  <dj-partial name="inline-partial" />
+
+</dj-block>

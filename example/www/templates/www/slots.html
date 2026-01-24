@@ -1,0 +1,75 @@
+<dj-extends parent='www/base.html' />
+
+<dj-block name='content'>
+  <style>
+    div {
+      border: 1px solid red;
+      margin: 5px 0 5px 0;
+    }
+
+    div p {
+      color: blue;
+      margin: 0;
+    }
+  </style>
+
+  <p>
+    Demonstrate how <code>slots</code> work in components.
+  </p>
+
+  <!-- include -->
+  <h3>www/components/include-slot.html</h3>
+
+  <pre>&lt;div&gt;
+  &lt;p&gt;
+    This is a slot include.
+  &lt;/p&gt;
+
+  &lt;slot name='test1'&gt;This is the &lt;strong&gt;default&lt;/strong&gt; slot.&lt;/slot&gt;
+&lt;/div&gt;</pre>
+
+
+  <!-- default slot -->
+  <h4>Default slot</h4>
+
+  <p>
+    If no slot is provided, the default content is rendered.
+  </p>
+
+  <pre>&lt;dj-include template='www/components/include-slot.html' /&gt;</pre>
+
+  <dj-include template='www/components/include-slot.html' />
+
+
+  <!-- overridden slot -->
+  <h4>Overridden slot</h4>
+
+  <p>
+    The slot content is replaced by the provided content.
+  </p>
+
+  <pre>&lt;dj-include template='www/components/include-slot.html'&gt;
+  &lt;span slot="test1"&gt;This is the &lt;strong&gt;new&lt;/strong&gt; slot.&lt;/span&gt;
+&lt;/dj-include&gt;</pre>
+
+  <dj-include template='www/components/include-slot.html'>
+    <span slot="test1">This is the <strong>new</strong> slot.</span>
+  </dj-include>
+
+
+  <!-- missing slot -->
+  <h4>Missing slot</h4>
+
+  <p>
+    If a slot is provided that doesn't exist in the component, it is ignored, and the default content for the existing slot is rendered.
+  </p>
+
+  <pre>&lt;dj-include template='www/components/include-slot.html'&gt;
+  &lt;span slot="test2"&gt;This is the new slot.&lt;/span&gt;
+&lt;/dj-include&gt;</pre>
+
+  <dj-include template='www/components/include-slot.html'>
+    <span slot="test2">This is the new slot.</span>
+  </dj-include>
+
+</dj-block>
