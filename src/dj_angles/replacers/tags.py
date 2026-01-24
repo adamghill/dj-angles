@@ -100,8 +100,9 @@ def replace_tags(html: str, *, raise_for_missing_start_tag: bool = True) -> str:
                             found_slot = True
 
                     if found_slot:
-                        # Remove slot content from the current HTML because it will be injected into the include component
-                        # We use calculated inner_start_pos and inner_end_pos to precisely target the stripped content
+                        # Remove slot content from the current HTML because it will be injected into the include
+                        # component; use calculated inner_start_pos and inner_end_pos to precisely target the
+                        # stripped content
                         edits.append(
                             AtomicEdit(
                                 position=inner_start_pos, content="", is_insert=False, end_position=inner_end_pos

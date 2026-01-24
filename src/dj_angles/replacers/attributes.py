@@ -53,7 +53,7 @@ def replace_attributes(html: str) -> str:
         return html
 
     # Step 2: Link chains using ALL elements (for proper hierarchy detection)
-    _link_chains(elements, html)
+    _link_chains(elements)
 
     # Step 3: Compute and apply atomic edits
     return _apply_atomic_edits(elements, html)
@@ -66,7 +66,7 @@ def _find_conditional_elements(html: str, prefix: str) -> list[ConditionalElemen
     # Group 1: attribute name (prefix + type)
     # Named groups v1/v2/v3 used for value to robustly handle capturing groups in prefix
     attr_pattern = (
-        rf'\s({prefix}(?:if|elif|else|endif|fi))(?:=(?:"(?P<v1>[^"]*)"|' + r"'(?P<v2>[^']*)'" + rf"|(?P<v3>[^\s>]+)))?"
+        rf'\s({prefix}(?:if|elif|else|endif|fi))(?:=(?:"(?P<v1>[^"]*)"|' + r"'(?P<v2>[^']*)'" + r"|(?P<v3>[^\s>]+)))?"
     )
 
     elements = []
@@ -159,7 +159,7 @@ def _find_element_end(html: str, tag_start: int, tag_end: int) -> int:
     return pos
 
 
-def _link_chains(elements: list[ConditionalElement], html: str) -> None:
+def _link_chains(elements: list[ConditionalElement]) -> None:
     """Link if-elif-else elements into chains based on sibling relationships.
 
     Two elements are siblings if:
