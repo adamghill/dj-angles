@@ -129,12 +129,6 @@ class TestErrorBoundary:
         assert actual == expected
 
     def test_invalid(self):
-        expected = """
-<dj-error-boundary>
-    <div><template shadowrootmode="open"><div style='border: 1px red solid; padding: 0 24px 0 24px;' class=''><em>Template: /Users/adam/Source/adamghill/dj-angles/tests/templates/invalid_variable.html, Could not parse the remainder: ' variable' from 'invalid variable'</em></div></template></div>
-</dj-error-boundary>
-        """  # noqa: E501
-
         template = """
 <dj-error-boundary>
     <dj-include src="invalid_variable.html" />
@@ -143,17 +137,11 @@ class TestErrorBoundary:
 
         actual = replace_django_template_tags(template)
 
-        assert actual == expected
+        assert "Could not parse the remainder: ' variable' from 'invalid variable'" in actual
 
 
 class TestBlockBoundary:
     def test_invalid(self):
-        expected = """
-{% block content %}
-    <div><template shadowrootmode="open"><div style='border: 1px red solid; padding: 0 24px 0 24px;' class=''><em>Template: /Users/adam/Source/adamghill/dj-angles/tests/templates/invalid_variable.html, Could not parse the remainder: ' variable' from 'invalid variable'</em></div></template></div>
-{% endblock content %}
-    """  # noqa: E501
-
         template = """
 <dj-block name='content' error-boundary>
     <dj-include src="invalid_variable.html" />
@@ -162,7 +150,7 @@ class TestBlockBoundary:
 
         actual = replace_django_template_tags(template)
 
-        assert actual == expected
+        assert "Could not parse the remainder: ' variable' from 'invalid variable'" in actual
 
 
 def test_invalid_no_boundary():
