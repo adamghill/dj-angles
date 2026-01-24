@@ -74,6 +74,9 @@ bird = [
 template-partials = [
   "django-template-partials >= 0",
 ]
+components = [
+  "django-components >= 0",
+]
 
 [tool.ruff]
 src = ["src"]
