@@ -2,11 +2,15 @@
 
 Settings can be configured via an `ANGLES` dictionary in `settings.py`.
 
+```python
+# settings.py
+
+ANGLES = {}
+```
+
 ## `default_mapper`
 
 A default mapper. Useful for tighter integration with other component libraries. `String` which is an import path. Defaults to `"dj_angles.mappers.angles.default_mapper"`.
-
-Example settings:
 
 ```python
 # settings.py
@@ -19,25 +23,25 @@ ANGLES = {
 ### `"dj_angles.mappers.angles.default_mapper"` (the default)
 
 ```html
-<dj-partial />
+<dj-blob />
 ```
 
 Would be transpiled to the following.
 
 ```html
-<dj-partial>{% include 'partial.html' %}</dj-partial>
+<dj-blob>{% include 'blob.html' %}</dj-blob>
 ```
 
 ### `"dj_angles.mappers.thirdparty.map_bird"`
 
 ```html
-<dj-partial />
+<dj-blob />
 ```
 
 Would be transpiled to the following.
 
 ```html
-<dj-partial>{% bird partial / %}</dj-partial>
+<dj-blob>{% bird blob / %}</dj-blob>
 ```
 
 ## `initial_attribute_regex`
@@ -67,3 +71,30 @@ Custom additional mappers. `Dictionary` which defaults to `{}`. More details abo
 ## `slots_enabled`
 
 Enables [slots](components.md#slots) functionality for components. `Boolean` which defaults to `False`.
+
+## `error_boundaries`
+
+Settings for [error boundaries](error-boundaries.md) functionality. `dict` which defaults to `{}`.
+
+### `enabled`
+
+Enables error boundaries. `Boolean` which defaults to `False`.
+
+### `shadow`
+
+Encapsulates error boundary errors with Shadow DOM. `Boolean` which defaults to `True`.
+
+### `class`
+
+The class to apply to error boundaries. `String` which defaults to `""`.
+
+### `style`
+
+The style to apply to error boundaries. `String` which defaults to `"border: 1px red solid; padding: 0 24px 0 24px;"`.
+
+```python
+# settings.py
+ANGLES = {
+  "error_boundaries": {"enabled": False, "shadow": True, "class": "", "style": "border: 1px red solid; padding: 0 24px 0 24px;"}
+}
+```

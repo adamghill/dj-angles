@@ -104,6 +104,7 @@ components
 tag-elements
 inline-expressions
 tag-attributes
+error-boundaries
 examples
 ```
 

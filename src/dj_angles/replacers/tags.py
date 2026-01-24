@@ -120,7 +120,7 @@ def replace_tags(html: str, *, origin: Origin | None = None, raise_for_missing_s
 
                     if (
                         getattr(tag, "is_error_boundary", False)
-                        and get_setting(key_path="error_boundaries", setting_name="enabled", default=True) is True
+                        and get_setting(key_path="error_boundaries", setting_name="enabled", default=False) is True
                     ):
                         # Skip processing the inner tags in the main loop since we are handling them recursively/here
                         matches_to_skip = len(re.findall(tag_regex, raw_inner))
