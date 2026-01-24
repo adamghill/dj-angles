@@ -1,8 +1,7 @@
-from typing import Optional
 from unittest.mock import patch
 
 import pytest
-from django.template import TemplateDoesNotExist, TemplateSyntaxError
+from django.template import Origin, TemplateDoesNotExist, TemplateSyntaxError
 
 from dj_angles.replacers.tags import replace_tags as replace_django_template_tags
 
@@ -150,22 +149,6 @@ class TestErrorBoundary:
 
 
 class TestBlockBoundary:
-    def test_invalid_no_boundary(self):
-        #         expected = """
-        # {% block content %}
-        #     {% include 'invalid.html' %}
-        # {% endblock content %}
-        #     """
-
-        template = """
-<dj-block name='content'>
-    <dj-include src="invalid_variable.html" />
-</dj-block>
-    """
-
-        with pytest.raises(TemplateSyntaxError):
-            replace_django_template_tags(template)
-
     def test_invalid(self):
         expected = """
 {% block content %}
@@ -180,18 +163,11 @@ class TestBlockBoundary:
     """
 
         actual = replace_django_template_tags(template)
-        print(actual)
 
         assert actual == expected
 
 
 def test_invalid_no_boundary():
-    #         expected = """
-    # {% block content %}
-    #     {% include 'invalid.html' %}
-    # {% endblock content %}
-    #     """
-
     template = """
 <dj-block name='content'>
     <dj-include src="invalid_variable.html" />
@@ -203,7 +179,11 @@ def test_invalid_no_boundary():
 
 
 def test_two_error_boundaries():
-    """This shouldn't fail, but it currently does so this documents that fact"""
+    expected = """
+{% block content %}
+  <div><template shadowrootmode="open"><div style='border: 1px red solid; padding: 0 24px 0 24px;' class=''><em>invalid.html</em></div></template></div>
+{% endblock content %}
+"""
 
     template = """
 <dj-block name='content' error-boundary>
@@ -213,8 +193,7 @@ def test_two_error_boundaries():
 </dj-block>
 """
 
-    # with pytest.raises(TemplateDoesNotExist):
-    from django.template import Origin
-
     origin = Origin("test.html")
-    a = replace_django_template_tags(template, origin=origin)
+    actual = replace_django_template_tags(template, origin=origin)
+
+    assert actual == expected
