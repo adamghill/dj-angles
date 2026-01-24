@@ -1,3 +1,6 @@
+import pytest
+
+from dj_angles.exceptions import MissingAttributeError
 from tests.dj_angles.tags import create_tag
 
 
@@ -57,3 +60,41 @@ def test_pop_attribute_value_or_first_key():
     actual = tag.pop_attribute_value_or_first_key("template")
 
     assert expected == actual
+
+
+def test_tag_repr():
+    tag = create_tag(html="<dj-div>")
+    assert str(tag) == "<dj-div>"
+
+
+def test_wrapping_tag_name_with_bang():
+    tag = create_tag(html="<dj-div>")
+    wrapping = tag.get_wrapping_tag_name(name="foo!")
+    assert wrapping == "dj-foo"
+
+
+def test_component_name_property():
+    tag = create_tag(html="<dj-test>")
+    assert tag.component_name == "test"
+
+
+def test_is_wrapped_attribute():
+    tag = create_tag(html="<dj-test no-wrap>")
+    assert tag.is_wrapped is False
+
+
+def test_shadow_attribute():
+    tag = create_tag(html="<dj-test shadow>")
+    assert tag.is_shadow is True
+
+
+def test_shadow_bang():
+    tag = create_tag(html="<dj-test!>")
+    assert tag.is_shadow is True
+    assert tag.tag_name == "test"
+
+
+def test_missing_attribute_error_from_pop_attribute():
+    tag = create_tag(html="<dj-test>")
+    with pytest.raises(MissingAttributeError):
+        tag.pop_attribute_value_or_first_key("missing")

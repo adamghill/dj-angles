@@ -46,3 +46,13 @@ def test_missing_parent_throws_exception():
         map_extends(tag=tag)
 
     assert e.value.name == "parent"
+
+
+def test_missing_attributes_throws_exception():
+    html = "<dj-extends>"
+    tag = create_tag(html)
+
+    with pytest.raises(MissingAttributeError) as e:
+        map_extends(tag=tag)
+
+    assert e.value.name == "parent"
