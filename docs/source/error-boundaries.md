@@ -1,6 +1,10 @@
 # Error Boundaries
 
-Error boundaries are a way to handle errors in included templates. Instead of the yellow screen of death that shows an entire traceback, the error will be contained to the error boundary.
+Error boundaries are a way to handle errors in included templates. Instead of the normal Django yellow screen of death when `DEBUG=True`, an error message will be shown instead.
+
+```{note}
+Must be enabled by adding [`error_boundaries`](settings.md#error_boundaries) to the `ANGLES` settings.
+```
 
 ## Block
 
@@ -28,12 +32,12 @@ A default template to render if an error occurs. This can be a string or a templ
 
 ```html
 <dj-error-boundary default="There was an error!">
-    <dj-include src="missing-template.html" />
+  <dj-include src="missing-template.html" />
 </dj-error-boundary>
 ```
 
 ```html
 <dj-error-boundary default="error-template.html">
-    <dj-include src="missing-template.html" />
+  <dj-include src="missing-template.html" />
 </dj-error-boundary>
 ```

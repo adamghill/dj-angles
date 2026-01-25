@@ -25,7 +25,7 @@
 - Support for Django 6.0 [template partials](https://docs.djangoproject.com/en/stable/ref/templates/language/#template-partials)
 - [django-components](https://django-components.github.io/django-components/)
 - [django-bird](https://django-bird.readthedocs.io)
-- [django-template-partials](https://github.com/carltongibson/django-template-partials) for Django <6.0
+- [django-template-partials](https://github.com/carltongibson/django-template-partials)
 
 ### Template tags
 
@@ -90,6 +90,17 @@
 <!-- inline-expressions.html -->
 {{ request.user.username or request.user.email }}  <!-- {% if request.user.username %}{{ request.user.username }}{% else %}{{ request.user.email }}{% endif %} -->
 {{ request.user.username if request.user.is_authenticated else 'Unknown' }}  <!-- {% if request.user.is_authenticated %}{{ request.user.username }}{% else %}Unknown{% endif %} -->
+```
+
+```html
+<!-- error-boundaries.html -->
+<dj-block name='content' error-boundary>
+  <dj-include template='missing-template.html' />
+</dj-block>
+
+<dj-error-boundary>
+  <dj-include template='missing-template.html' />
+</dj-error-boundary>
 ```
 
 ```html
