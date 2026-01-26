@@ -36,7 +36,7 @@ TEMPLATES = [
                 )
             ],
             "builtins": [
-                "django_components.templatetags.component_tags",  # required for `django-components`
+                "django_components.templatetags.component_tags",  # optional for `django-components`
             ],
         },
     },

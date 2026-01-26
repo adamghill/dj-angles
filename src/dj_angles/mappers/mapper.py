@@ -53,6 +53,11 @@ class TagMap(UserDict):
         # Add component if `django-components` is installed
         self.add_module_mapper("django_components", "component", "dj_angles.mappers.thirdparty.map_component")
 
+        # Add viewcomponent if `django-viewcomponent` is installed
+        self.add_module_mapper(
+            "django_viewcomponent", "viewcomponent", "dj_angles.mappers.thirdparty.map_viewcomponent"
+        )
+
         # Add partialdef if `django-template-partial` is installed or Django >= 6.0
         if is_module_available("template_partials") or django.VERSION >= (6, 0):
             self.data.update({"partial": "dj_angles.mappers.map_partial"})

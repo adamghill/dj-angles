@@ -24,6 +24,7 @@
 
 - Support for Django 6.0 [template partials](https://docs.djangoproject.com/en/stable/ref/templates/language/#template-partials)
 - [django-components](https://django-components.github.io/django-components/)
+- [django-viewcomponent](https://github.com/rails-inspire-django/django-viewcomponent)
 - [django-bird](https://django-bird.readthedocs.io)
 - [django-template-partials](https://github.com/carltongibson/django-template-partials)
 

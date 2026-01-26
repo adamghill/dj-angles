@@ -277,6 +277,18 @@ wheels = [
 ]
 
 [[package]]
+name = "django-viewcomponent"
+version = "1.0.11"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/83/8a/596e501a193d1897b616e4e8481bf614c7b336718a520c03ed9782efb966/django_viewcomponent-1.0.11.tar.gz", hash = "sha256:21c535af2fadde494f830e38fd4807ce6ccf12f2501f83c3f62a4b43288909f2", size = 10006, upload-time = "2025-01-07T02:15:58.405Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/cb/45/0d8830cdc9f097f1aa09fca21960b1b64e097d8f0275722af533aed96c62/django_viewcomponent-1.0.11-py3-none-any.whl", hash = "sha256:aa4f1bf93ab2fc153a73ae9ad73ce85fd22fd3d225bd89f9274d10e1a03934d0", size = 14077, upload-time = "2025-01-07T02:15:56.388Z" },
+]
+
+[[package]]
 name = "djc-core"
 version = "1.2.2"
 source = { registry = "https://pypi.org/simple" }
@@ -360,6 +372,7 @@ dependencies = [
     { name = "django" },
     { name = "django-bird" },
     { name = "django-components" },
+    { name = "django-viewcomponent" },
 ]
 
 [package.metadata]
@@ -368,6 +381,7 @@ requires-dist = [
     { name = "django", specifier = ">=6" },
     { name = "django-bird", specifier = ">=0.1.0" },
     { name = "django-components", specifier = ">=0.146.0" },
+    { name = "django-viewcomponent", specifier = ">=0" },
 ]
 
 [[package]]

@@ -1,0 +1,19 @@
+<dj-extends parent='www/base.html' />
+
+<dj-block name='content'>
+  <h3>django-bird</h3>
+
+  <pre>
+&lt;!-- templates/bird/button.html --&gt;
+&lt;button {% verbatim %}{{ attrs }}{% endverbatim %}&gt;
+  {% verbatim %}{{ slot }}{% endverbatim %}
+&lt;/button&gt;</pre>
+
+<pre>&lt;dj-bird template='button' class='btn'&gt;
+  Click me!
+&lt;/dj-bird&gt;</pre>
+
+  <dj-bird template='button' class='btn'>
+    Click me!
+  </dj-bird>
+</dj-block name='content'>

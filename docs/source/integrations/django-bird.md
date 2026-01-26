@@ -40,7 +40,7 @@ TEMPLATES = [
                 )
             ],
             "builtins": [
-                "django_bird.templatetags.django_bird",  # this is not required, but is useful for `django-bird` and is added by the library's auto settings
+                "django_bird.templatetags.django_bird",  # optional for `django-bird`
             ],
         },
     },

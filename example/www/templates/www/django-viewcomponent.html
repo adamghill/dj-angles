@@ -1,0 +1,25 @@
+<dj-extends parent='www/base.html' />
+{% load viewcomponent_tags %}
+
+<dj-block name='content'>
+  <h3>django-viewcomponent</h3>
+
+  <pre>
+&lt;!-- components/button/button.html --&gt;
+&lt;button&gt;{{ self.label }}&lt;/button&gt;</pre>
+
+  <pre># components/button/button.py
+from django_viewcomponent import component
+
+@component.register("button")
+class ButtonComponent(component.Component):
+    template_name = "button/button.html"
+
+    def __init__(self, **kwargs):
+        self.label = kwargs["label"]</pre>
+
+  <pre>&lt;dj-viewcomponent name="button" label="Click Me" /&gt;</pre>
+
+  <dj-viewcomponent name="viewcomponent_button" label="Click Me" />
+
+</dj-block>
