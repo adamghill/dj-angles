@@ -1,7 +1,5 @@
 from unittest.mock import patch
 
-from django.conf import settings
-
 from dj_angles.settings import get_template_loaders
 
 

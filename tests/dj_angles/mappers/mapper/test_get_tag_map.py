@@ -7,7 +7,7 @@ def test_default():
     expected = "default_mapper"
     actual = get_tag_map()
 
-    assert len(actual) == 27
+    assert len(actual) == 28
 
     # Check for optional mappers
     assert "partial" in actual.keys()
@@ -23,7 +23,7 @@ def test_none_default_mapper(settings):
 
     actual = get_tag_map()
 
-    assert len(actual) == 26
+    assert len(actual) == 27
 
     # Check for optional mappers
     assert "partial" in actual.keys()
