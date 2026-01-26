@@ -4,6 +4,8 @@ from typing import Any
 
 from django.conf import settings
 
+from dj_angles.modules import is_module_available
+
 
 def get_setting(setting_name: str, key_path: str = "", default: Any = None) -> Any:
     """Get a setting from the `ANGLES` dictionary in settings.
@@ -29,6 +31,38 @@ def get_setting(setting_name: str, key_path: str = "", default: Any = None) -> A
         return data[setting_name]
 
     return default
+
+
+def get_template_loaders(cached: bool | None = None) -> list[str] | list[tuple[str, list[str]]]:  # noqa: FBT001
+    """Get the correct template loaders based on the installed libraries.
+
+    Args:
+        cached: Whether to use the cached template loader.
+            If None, it defaults to (not settings.DEBUG).
+    """
+
+    if cached is None:
+        cached = not settings.DEBUG
+
+    loaders = [
+        "dj_angles.template_loader.Loader",
+        "django.template.loaders.filesystem.Loader",
+        "django.template.loaders.app_directories.Loader",
+    ]
+
+    if is_module_available("django_bird"):
+        loaders.insert(1, "django_bird.loader.BirdLoader")
+
+    if is_module_available("django_components"):
+        loaders.append("django_components.template_loader.Loader")
+
+    if is_module_available("django_viewcomponent"):
+        loaders.insert(0, "django_viewcomponent.loaders.ComponentLoader")
+
+    if cached:
+        return [("django.template.loaders.cached.Loader", loaders)]
+
+    return loaders
 
 
 def get_tag_regex():
