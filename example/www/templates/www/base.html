@@ -23,12 +23,15 @@
         <li>
           <a class="{% if request.path == "/include" %}current{% endif %}" href="/include">include</a>
           <a class="{% if request.path == "/slots" %}current{% endif %}" href="/slots">slots</a>
-          <a class="{% if request.path == "/error-boundaries" %}current{% endif %}"
-            href="/error-boundaries">error-boundaries</a>
-          <a class="{% if request.path == "/bird" %}current{% endif %}" href="/bird">django-bird</a>
-          <a class="{% if request.path == "/django-components" %}current{% endif %}"
-            href="/django-components">django-components</a>
-          <a class="{% if request.path == "/partials" %}current{% endif %}" href="/partials">partials</a>
+          <a class="{% if request.path == "/error-boundaries" %}current{% endif %}" href="/error-boundaries">error-boundaries</a>
+        </li>
+      </ul>
+      <ul>
+        <li>
+          <a class="{% if request.path == "/template-partials" %}current{% endif %}" href="/template-partials">template partials</a>
+          <a class="{% if request.path == "/django-components" %}current{% endif %}" href="/django-components">django-components</a>
+          <a class="{% if request.path == "/django-bird" %}current{% endif %}" href="/django-bird">django-bird</a>
+          <a class="{% if request.path == "/django-viewcomponent" %}current{% endif %}" href="/django-viewcomponent">django-viewcomponent</a>
         </li>
       </ul>
     </nav>

@@ -13,6 +13,11 @@ logger = logging.getLogger(__name__)
 
 
 def map_bird(tag: "Tag") -> str:
+    """Map `dj-angles` tags to `django-bird` syntax.
+
+    Transforms `<dj-bird name="calendar">` to `{% bird 'calendar' %}`.
+    """
+
     if tag.is_end:
         return "{% endbird %}"
 
@@ -36,6 +41,11 @@ def map_bird(tag: "Tag") -> str:
 
 
 def map_partial(tag: "Tag") -> str:
+    """Map `dj-angles` tags to `django-components` syntax.
+
+    Transforms `<dj-component name="calendar">` to `{% component 'calendar' %}`.
+    """
+
     if tag.is_self_closing:
         name = tag.pop_attribute_value_or_first_key("name")
         name = dequotify(name)
@@ -46,10 +56,11 @@ def map_partial(tag: "Tag") -> str:
 
 
 def map_component(tag: "Tag") -> str:
-    """Map dj-angles tags to django-components syntax.
+    """Map `dj-angles` tags to `django-components` syntax.
 
-    Transforms <dj-component name="calendar"> to {% component 'calendar' %}.
+    Transforms `<dj-component name="calendar">` to `{% component 'calendar' %}`.
     """
+
     if tag.is_end:
         return "{% endcomponent %}"
 
@@ -69,3 +80,32 @@ def map_component(tag: "Tag") -> str:
         django_template_tag = f"{django_template_tag} /"
 
     return f"{django_template_tag} %}}"
+
+
+def map_viewcomponent(tag: "Tag") -> str:
+    """Map `dj-angles` tags to `django-viewcomponent` syntax.
+
+    Transforms `<dj-viewcomponent name="button">` to `{% component 'button' %}{% endcomponent %}`.
+    """
+
+    if tag.is_end:
+        return "{% endcomponent %}"
+
+    try:
+        component_name = tag.pop_attribute_value_or_first_key("name")
+    except MissingAttributeError as err:
+        raise MissingAttributeError("dj-viewcomponent requires a 'name' attribute") from err
+
+    component_name = dequotify(component_name)
+
+    django_template_tag = f"{{% component '{component_name}'"
+
+    if tag.attributes:
+        django_template_tag = f"{django_template_tag} {tag.attributes}"
+
+    django_template_tag = f"{django_template_tag} %}}"
+
+    if tag.is_self_closing:
+        return f"{django_template_tag}\n{{% endcomponent %}}"
+
+    return django_template_tag

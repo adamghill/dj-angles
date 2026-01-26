@@ -9,6 +9,7 @@ dependencies = [
     "django>=6",
     "django-bird>=0.1.0",
     "django-components>=0.146.0",
+    "django-viewcomponent>=0",
 ]
 
 [tool.uv.sources]

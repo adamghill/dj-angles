@@ -1,16 +1,11 @@
 <dj-extends parent='www/base.html' />
+{% load component_tags %}
 
 <dj-block name='content'>
-  <h3>Django Components</h3>
-
-  <p>
-    Demonstrate how <code>dj-angles</code> integrates with <code>django-components</code>.
-  </p>
-
-  <h4>Button Component</h4>
+  <h3>django-components</h3>
 
   <pre>
-&lt;!-- example/www/components/button.html --&gt;
+&lt;!-- components/button.html --&gt;
 &lt;div class="button-component"&gt;
   &lt;button&gt;
     {{ label }}
@@ -30,9 +25,8 @@
   }
 &lt;/style&gt;</pre>
 
-  <pre># example/www/components/button.py
+  <pre># components/button.py
 from django_components import Component, register
-
 
 @register("button")
 class Button(Component):
@@ -45,6 +39,6 @@ class Button(Component):
 
   <pre>&lt;dj-component name="button" label="Click Me" /&gt;</pre>
 
-  <dj-component name="button" label="Click Me" />
+  <dj-component name="component_button" label="Click Me" />
 
 </dj-block>

@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 
+from dj_angles import get_template_loaders
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -41,8 +43,10 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "www",
+    "dj_angles",
     "django_bird",
     "django_components",
+    "django_viewcomponent",
 ]
 
 MIDDLEWARE = [
@@ -78,7 +82,6 @@ TEMPLATES = [
         "OPTIONS": {
             "builtins": [
                 "django_bird.templatetags.django_bird",
-                "django_components.templatetags.component_tags",
             ],
             "context_processors": [
                 "django.template.context_processors.debug",
@@ -86,18 +89,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
             ],
-            "loaders": [
-                (
-                    "django.template.loaders.cached.Loader",
-                    [
-                        "dj_angles.template_loader.Loader",  # `dj-angles`
-                        "django_bird.loader.BirdLoader",  # `dj-bird`
-                        "django.template.loaders.filesystem.Loader",
-                        "django.template.loaders.app_directories.Loader",
-                        "django_components.template_loader.Loader",  # `dj-components`
-                    ],
-                )
-            ],
+            "loaders": get_template_loaders(),
         },
     },
 ]
