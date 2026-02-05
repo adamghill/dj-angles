@@ -164,6 +164,9 @@ components = [
 template-partials = [
     { name = "django-template-partials" },
 ]
+viewcomponent = [
+    { name = "django-viewcomponent" },
+]
 
 [package.dev-dependencies]
 dev = [
@@ -195,9 +198,10 @@ requires-dist = [
     { name = "django-bird", marker = "extra == 'bird'", specifier = ">=0" },
     { name = "django-components", marker = "extra == 'components'", specifier = ">=0" },
     { name = "django-template-partials", marker = "extra == 'template-partials'", specifier = ">=0" },
+    { name = "django-viewcomponent", marker = "extra == 'viewcomponent'", specifier = ">=0" },
     { name = "minestrone", specifier = ">=0.9.0" },
 ]
-provides-extras = ["bird", "template-partials", "components"]
+provides-extras = ["bird", "template-partials", "components", "viewcomponent"]
 
 [package.metadata.requires-dev]
 dev = [
