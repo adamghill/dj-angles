@@ -5,7 +5,7 @@ from typing import Optional
 import django
 from django.utils.module_loading import import_string
 
-from dj_angles.mappers.angles import map_call, map_form, map_model
+from dj_angles.mappers.angles import map_call, map_form, map_model, map_view
 from dj_angles.mappers.django import map_autoescape, map_block, map_css, map_extends, map_image
 from dj_angles.mappers.include import map_include
 from dj_angles.modules import is_module_available
@@ -33,6 +33,7 @@ TAG_NAME_TO_DJANGO_TEMPLATE_TAG_MAP: dict[str | None, Callable | str] = {
     "css": map_css,
     "model": map_model,
     "call": map_call,
+    "view": map_view,
     "form": map_form,
     "error-boundary": lambda tag: "",  # noqa: ARG005  # the inner_html gets handled in `regex_replacer`
 }

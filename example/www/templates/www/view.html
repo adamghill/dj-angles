@@ -1,0 +1,19 @@
+<dj-extends parent='www/base.html' />
+
+<dj-block name='content'>
+  <h3>view</h3>
+
+  <pre>
+
+  </pre>
+
+  <dj-view name='www.views.view_include' />
+  <dj-view name='www.views.view_include' as='view_include' />
+
+  {{view_include|safe}}
+
+  {% view 'www.views.view_include' %}
+
+  <dj-view name='www:view_include' />
+
+</dj-block name='content'>

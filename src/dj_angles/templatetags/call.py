@@ -10,6 +10,51 @@ from dj_angles.tokenizer import yield_tokens
 logger = logging.getLogger(__name__)
 
 
+def get_tag_args(token, tag_name: str, min_args: int = 1) -> tuple[ParsedFunction, list[str], str | None]:
+    """
+    Parses the token to get the arguments for a tag.
+
+    Args:
+        token: The token to parse.
+        tag_name: The name of the tag.
+        min_args: The minimum number of arguments required.
+
+    Returns:
+        tuple[ParsedFunction, list[str], str | None]: The parsed function, the remaining arguments,
+            and the context variable name.
+    """
+
+    contents = list(yield_tokens(token.contents, " ", handle_quotes=True, handle_parenthesis=True))
+
+    # The first content is always the name of the tag, so pop it off
+    contents.pop(0)
+
+    if len(contents) < min_args:
+        raise TemplateSyntaxError(f"{tag_name} template tag requires at least {min_args} argument")
+
+    parsed_function = ParsedFunction(contents[0])
+
+    # Collect the rest of the template tag arguments, including context variable if present
+    context_variable_name = None
+    template_tag_arguments = contents[1:]
+
+    args = []
+
+    for idx, arg in enumerate(template_tag_arguments):
+        if arg == "as":
+            if len(template_tag_arguments) < idx + 2:
+                raise TemplateSyntaxError("Missing variable name after 'as'")
+            elif len(template_tag_arguments) > idx + 2:
+                raise TemplateSyntaxError("Too many arguments after 'as'")
+
+            context_variable_name = template_tag_arguments[idx + 1]
+            break
+        else:
+            args.append(arg)
+
+    return (parsed_function, args, context_variable_name)
+
+
 def resolve(context, arg):
     """
     Resolves a template variable based on the context if it's a `TemplateVariable`. Otherwise,
@@ -168,7 +213,8 @@ class CallNode(Node):
 
 
 def do_call(parser, token) -> CallNode:  # noqa: ARG001
-    """Parses the token to get all the pieces needed to call the function.
+    """
+    Parses the token to get all the pieces needed to call the function.
 
     Args:
         parser: The template parser.
@@ -184,28 +230,7 @@ def do_call(parser, token) -> CallNode:  # noqa: ARG001
         - "call model.some_function('hello', 2) as output_variable"
         - "call model.some_function(arg1, arg2) as output_variable"
     """
-    contents = list(yield_tokens(token.contents, " ", handle_quotes=True, handle_parenthesis=True))
 
-    # The first content is always the name of the tag, so pop it off
-    contents.pop(0)
-
-    if len(contents) < 1:
-        raise TemplateSyntaxError("call template tag requires at least 1 argument")
-
-    parsed_function = ParsedFunction(contents[0])
-
-    # Collect the rest of the template tag arguments, including context variable if present
-    context_variable_name = None
-    template_tag_arguments = contents[1:]
-
-    for idx, arg in enumerate(template_tag_arguments):
-        if arg == "as":
-            if len(template_tag_arguments) < idx + 2:
-                raise TemplateSyntaxError("Missing variable name after 'as'")
-            elif len(template_tag_arguments) > idx + 2:
-                raise TemplateSyntaxError("Too many arguments after 'as'")
-
-            context_variable_name = template_tag_arguments[idx + 1]
-            break
+    (parsed_function, _, context_variable_name) = get_tag_args(token, "call")
 
     return CallNode(parsed_function, context_variable_name)

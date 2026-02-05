@@ -7,7 +7,7 @@ Understanding the concept of mappers is not required for basic uses of `dj-angle
 ## Basic flow
 
 `dj-angles` is built on the basic flow of:
-1. parse template HTML with regex
+1. parse template HTML
 2. look up a mapper for any matches found
 3. call mapper appropriately
 

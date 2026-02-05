@@ -143,3 +143,26 @@ def map_form(tag: "Tag") -> str:
         html = f"{html}{{% csrf_token %}}"
 
     return html
+
+
+def map_view(tag: "Tag", template_tag_name: str = "view") -> str:
+    """Mapper function for the dj-angles call template tag.
+
+    Args:
+        param tag: The tag to map.
+        param template_tag_name: The name of the template tag to use. Defaults to "call".
+    """
+
+    if tag.is_end:
+        return ""
+
+    name = dequotify(tag.pop_attribute_value_or_first_key("name"))
+    context_template_variable_attr = tag.attributes.get("as")
+
+    if context_template_variable_attr is not None:
+        if hasattr(context_template_variable_attr, "value") and context_template_variable_attr.value:
+            context_template_variable = dequotify(context_template_variable_attr.value)
+
+            return f"{{% {template_tag_name} {name} as {context_template_variable} %}}"
+
+    return f"{{% {template_tag_name} {name} %}}"

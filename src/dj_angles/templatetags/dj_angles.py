@@ -5,6 +5,7 @@ from django import template
 from dj_angles.templatetags.call import do_call
 from dj_angles.templatetags.model import do_model
 from dj_angles.templatetags.template import do_template
+from dj_angles.templatetags.view import do_view
 
 register = template.Library()
 
@@ -23,3 +24,4 @@ def dj_angles_scripts(*, ajax_form: bool = True):
 register.tag("call", do_call)
 register.tag("model", do_model)
 register.tag("template", do_template)
+register.tag("view", do_view)

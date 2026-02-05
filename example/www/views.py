@@ -13,3 +13,7 @@ def view(request):
         raise Http404()
 
     return render(request, f"www/{template_name}.html")
+
+
+def view_include(request):
+    return render(request, "www/view-include.html")

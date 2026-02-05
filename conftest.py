@@ -57,6 +57,7 @@ def pytest_configure():
         ANGLES={
             "IS_IN_UNIT_TEST": True,
         },
+        ROOT_URLCONF="tests.urls",
     )
 
 
