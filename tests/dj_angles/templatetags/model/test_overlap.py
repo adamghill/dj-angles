@@ -1,7 +1,6 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
-from django.template import Context, Template
 
 from dj_angles.templatetags.model import get_models
 

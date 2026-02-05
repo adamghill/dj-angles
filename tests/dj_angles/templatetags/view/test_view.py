@@ -4,8 +4,6 @@ from django.template import Context, Template
 from django.test import override_settings
 from django.views import View
 
-from dj_angles.templatetags.view import do_view
-
 
 def simple_view(request):
     return HttpResponse("Simple View")
@@ -20,12 +18,12 @@ def view_with_kwargs(request, arg1=None):
 
 
 class ClassView(View):
-    def get(self, request):
+    def get(self, request):  # noqa: ARG002
         return HttpResponse("Class View")
 
 
 class ClassViewWithArg(View):
-    def get(self, request, arg1):
+    def get(self, request, arg1):  # noqa: ARG002
         return HttpResponse(f"Class Arg: {arg1}")
 
 
