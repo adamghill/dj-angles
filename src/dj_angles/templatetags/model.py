@@ -17,9 +17,22 @@ def get_models() -> dict:
     models = {}
 
     for app_config in apps.get_app_configs():
+        app_label = app_config.label
+
+        if app_label not in models:
+            models[app_label] = {}
+
         for model in app_config.get_models():
-            # TODO: What if model names overlap?
-            models[model.__name__] = model
+            model_name = model.__name__
+
+            if model_name in models:
+                if isinstance(models[model_name], dict):
+                    logger.warning("Model name collision with app label: %s", model_name)
+                else:
+                    logger.warning("Model name collision: %s. Using %s.", model_name, app_label)
+
+            models[model_name] = model
+            models[app_label][model_name] = model
 
     return models
 
