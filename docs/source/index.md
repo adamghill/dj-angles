@@ -7,8 +7,8 @@
 - Since it looks like HTML, syntax highlighting mostly "just works"
 - Wraps components in a custom HTML element for easier debugging and targeted CSS styling
 - Support for the [Shadow DOM](https://dj-angles.adamghill.com/en/latest/components/#css-scoping) to encapsulate component styles
-- Lightweight way to submit forms via AJAX and swap in the resulting HTML
 - Error boundaries to catch and display template errors
+- Lightweight way to submit forms via AJAX and swap in the resulting HTML
 
 ### Third-party package integrations
 
@@ -90,6 +90,8 @@
 ```
 
 ```html
+<!-- third-party-component-libraries.html -->
+
 <!-- django-components -->
 <dj-component name="button">Click me</dj-component>  <!-- {% component "button" %}Click me{% endcomponent %} -->
 
@@ -111,6 +113,17 @@
 <!-- inline-expressions.html -->
 {{ request.user.username or request.user.email }}  <!-- {% if request.user.username %}{{ request.user.username }}{% else %}{{ request.user.email }}{% endif %} -->
 {{ request.user.username if request.user.is_authenticated else "Unknown" }}  <!-- {% if request.user.is_authenticated %}{{ request.user.username }}{% else %}Unknown{% endif %} -->
+```
+
+```html
+<!-- error-boundaries.html -->
+<dj-block name="content" error-boundary>
+  <dj-include template="missing-template.html" />
+</dj-block>
+
+<dj-error-boundary>
+  <dj-include template="missing-template.html" />
+</dj-error-boundary>
 ```
 
 ```html

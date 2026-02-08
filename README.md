@@ -17,8 +17,8 @@
 - Since it looks like HTML, syntax highlighting mostly "just works"
 - Wraps components in a custom HTML element for easier debugging and targeted CSS styling
 - Support for the [Shadow DOM](https://dj-angles.adamghill.com/en/latest/components/#css-scoping) to encapsulate component styles
-- Lightweight way to submit forms via AJAX and swap in the resulting HTML
 - Error boundaries to catch and display template errors
+- Lightweight way to submit forms via AJAX and swap in the resulting HTML
 
 ### Third-party package integrations
 
@@ -33,7 +33,7 @@
 
 - [`call`](https://dj-angles.adamghill.com/en/latest/template-tags/call/): call functions in a template
 - [`model`](https://dj-angles.adamghill.com/en/latest/template-tags/model/): call a model in a template
-- [`template`](https://dj-angles.adamghill.com/en/latest/template-tags/template/): inline template
+- [`template`](https://dj-angles.adamghill.com/en/latest/template-tags/template/): lightweight inline template
 - [`view`](https://dj-angles.adamghill.com/en/latest/template-tags/view/): render a view in a template
 
 ### Filters
@@ -44,18 +44,18 @@
 
 ```html
 <!-- base.html -->
-<dj-block name='content'>  <!-- {% block content %} -->
+<dj-block name="content">  <!-- {% block content %} -->
 </dj-block>  <!-- {% endblock content %} -->
 ```
 
 ```html
 <!-- template-tags.html -->
-<dj-extends parent='base.html' />  <!-- {% extends 'base.html' %} -->
+<dj-extends parent="base.html" />  <!-- {% extends "base.html" %} -->
 
-<dj-block name='content'>  <!-- {% block content %} -->
+<dj-block name="content">  <!-- {% block content %} -->
   <!-- components -->
-  <dj-some-partial />  <!-- {% include 'test-partial.html' %} -->
-  <dj-include template='test-partial.html' />  <!-- {% include 'test-partial.html' %} -->
+  <dj-some-partial />  <!-- {% include "test-partial.html" %} -->
+  <dj-include template="test-partial.html" />  <!-- {% include "test-partial.html" %} -->
 
   <dj-verbatim>  <!-- {% verbatim %} -->
     This is verbatim: {% include %}
@@ -81,38 +81,65 @@
 
 ```html
 <!-- static-helpers.html -->
-<dj-image src='img/django.jpg' />  <!-- <img src="{% static 'img/django.jpg' %}" /> -->
-<dj-css href='css/styles.css' />  <!-- <link href="{% static 'css/styles.css' %}" rel="stylesheet" /> -->
+<dj-image src="img/django.jpg" />  <!-- <img src="{% static 'img/django.jpg' %}" /> -->
+<dj-css href="css/styles.css" />  <!-- <link href="{% static 'css/styles.css' %}" rel="stylesheet" /> -->
 ```
 
 ```html
 <!-- call-code-from-template.html -->
-<dj-call code='slugify("Hello Goodbye")' as='variable_name' />  <!-- {% call slugify("Hello Goodbye") as variable_name %} -->
-<dj-model code='Book.objects.filter(id=1)' as='book' />  <!-- {% model Book.objects.filter(id=1) as book %} -->
-<dj-view name='some-view' />  <!-- {% view 'some-view' %} -->
+<dj-call code="slugify('Hello Goodbye')" as="variable_name" />  <!-- {% call slugify("Hello Goodbye") as variable_name %} -->
+<dj-model code="Book.objects.filter(id=1)" as="book" />  <!-- {% model Book.objects.filter(id=1) as book %} -->
+<dj-view name="some-view" />  <!-- {% view "some-view" %} -->
+```
+
+```html
+<!-- django-compressor.html -->
+<dj-compress css> <!-- {% compress css %} -->
+  <style>.critical { color: red; }</style>
+</dj-compress> <!-- {% endcompress %} -->
+```
+
+```html
+<!-- third-party-component-libraries.html -->
+
+<!-- django-components -->
+<dj-component name="button">Click me</dj-component>  <!-- {% component "button" %}Click me{% endcomponent %} -->
+
+<!-- django-viewcomponent -->
+<dj-viewcomponent name="button">Click me</dj-viewcomponent>  <!-- {% viewcomponent "button" %}Click me{% endviewcomponent %} -->
+
+<!-- django-bird -->
+<dj-bird template="button" class="btn">Click me</dj-bird>  <!-- {% bird "button" class="btn" %}Click me{% endbird %} -->
+
+<!-- django-template-partials -->
+<dj-partial name="sidebar">  <!-- {% partialdef sidebar %} -->
+  <p>Sidebar content</p>
+</dj-partial>  <!-- {% endpartialdef %} -->
+
+<dj-partial name="sidebar" />  <!-- {% partial sidebar %} -->
 ```
 
 ```html
 <!-- inline-expressions.html -->
 {{ request.user.username or request.user.email }}  <!-- {% if request.user.username %}{{ request.user.username }}{% else %}{{ request.user.email }}{% endif %} -->
-{{ request.user.username if request.user.is_authenticated else 'Unknown' }}  <!-- {% if request.user.is_authenticated %}{{ request.user.username }}{% else %}Unknown{% endif %} -->
+{{ request.user.username if request.user.is_authenticated else "Unknown" }}  <!-- {% if request.user.is_authenticated %}{{ request.user.username }}{% else %}Unknown{% endif %} -->
 ```
 
 ```html
 <!-- error-boundaries.html -->
-<dj-block name='content' error-boundary>
-  <dj-include template='missing-template.html' />
+<dj-block name="content" error-boundary>
+  <dj-include template="missing-template.html" />
 </dj-block>
 
 <dj-error-boundary>
-  <dj-include template='missing-template.html' />
+  <dj-include template="missing-template.html" />
 </dj-error-boundary>
 ```
 
 ```html
 <!-- ajax-form-submission.html -->
-<dj-form action='/submit' method='POST' swap='outerHTML' ajax csrf> <!-- <ajax-form><form action='/submit' method='POST'>{% csrf_token %} -->
-  <button type='submit'>Submit</button>
+<dj-form action="/submit" method="POST" swap="outerHTML" ajax csrf> <!-- <ajax-form><form action="/submit" method="POST">{% csrf_token %} -->
+  <button type="submit">Submit</button>
 </dj-form><!-- </form></ajax-form> -->
 ```
 
@@ -129,48 +156,9 @@
 </div>  <!-- </div>{% endif %} -->
 ```
 
-```html
-<!-- django-compressor -->
-<dj-compress css>
-  <style>.critical { color: red; }</style>
-</dj-compress>
-```
-
-```html
-<!-- django-components -->
-<dj-component name="calendar" date="2025-01-22" />
-```
-
-```html
-<!-- django-viewcomponent -->
-<dj-viewcomponent name="button">Click me</dj-viewcomponent>
-```
-
-```html
-<!-- django-bird -->
-<dj-bird template='button' class='btn'>Click me</dj-bird>
-```
-
-```html
-<!-- django-template-partials -->
-<dj-partial name="sidebar" />
-```
-
 ## 📖 Documentation
 
 To learn how to install and use `dj-angles` see the complete documentation at https://dj-angles.adamghill.com/.
-
-## 🧩 Django Component Libraries
-
-There are a growing number of component libraries for Django. A non-complete list:
-
-- [Slippers](https://mitchel.me/slippers/): Build reusable components in Django without writing a single line of Python.
-- [django-components](https://django-components.github.io/django-components/): Create simple reusable template components in Django.
-- [django-template-partials](https://github.com/carltongibson/django-template-partials): Reusable named inline partials for the Django Template Language.
-- [django-bird](https://django-bird.readthedocs.io): High-flying components for perfectionists with deadlines.
-- [django-cotton](https://django-cotton.com): Enabling Modern UI Composition in Django.
-- [django-viewcomponent](https://github.com/rails-inspire-django/django-viewcomponent): Build reusable components in Django, inspired by Rails ViewComponent.
-- [django-unicorn](https://www.django-unicorn.com): The magical reactive component framework for Django ✨.
 
 ## ✨ Inspiration
 
