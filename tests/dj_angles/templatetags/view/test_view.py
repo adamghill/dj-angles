@@ -89,3 +89,28 @@ def test_named_view_arg(context):
     template = Template("{% load dj_angles %} {% view 'named_view_args' 'FoundIt' %}")
     rendered = template.render(context)
     assert "Named View Arg: FoundIt" in rendered
+
+
+def test_tag_fbv_kwargs_parentheses(context):
+    template = Template(
+        "{% load dj_angles %} {% view tests.dj_angles.templatetags.view.test_view.view_with_kwargs(arg1='Testing') %}"
+    )
+    rendered = template.render(context)
+    assert "Kwarg: Testing" in rendered
+
+
+def test_tag_fbv_kwargs_standard(context):
+    template = Template(
+        "{% load dj_angles %} {% view 'tests.dj_angles.templatetags.view.test_view.view_with_kwargs' arg1='Testing' %}"
+    )
+    rendered = template.render(context)
+    assert "Kwarg: Testing" in rendered
+
+
+def test_tag_fbv_kwargs_template_variable(context):
+    context["val"] = "FromContext"
+    template = Template(
+        "{% load dj_angles %} {% view 'tests.dj_angles.templatetags.view.test_view.view_with_kwargs' arg1=val %}"
+    )
+    rendered = template.render(context)
+    assert "Kwarg: FromContext" in rendered

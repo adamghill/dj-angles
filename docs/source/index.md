@@ -20,11 +20,13 @@
 
 ### Template tags
 
-- [`call`](https://dj-angles.adamghill.com/en/latest/template-tags/call/) and [`model`](https://dj-angles.adamghill.com/en/latest/template-tags/model/) to call functions directly from a template instead of creating custom template tags
+- [`call`](https://dj-angles.adamghill.com/en/latest/template-tags/call/): call functions in a template
+- [`model`](https://dj-angles.adamghill.com/en/latest/template-tags/model/): call a model in a template
+- [`view`](https://dj-angles.adamghill.com/en/latest/template-tags/view/): render a view in a template
 
 ### Filters
 
-- [`dateformat`](https://dj-angles.adamghill.com/en/latest/filters/dateformat/) filter to use Python [`strftime`](https://strftime.org) formats instead of PHP for formatting dates
+- [`dateformat`](https://dj-angles.adamghill.com/en/latest/filters/dateformat/): use Python [`strftime`](https://strftime.org) format for formatting dates as a string
 
 ## 💥 Examples
 
@@ -75,6 +77,7 @@
 <!-- call-code-from-template.html -->
 <dj-call code='slugify("Hello Goodbye")' as='variable_name' />  <!-- {% call slugify("Hello Goodbye") as variable_name %} -->
 <dj-model code='Book.objects.filter(id=1)' as='book' />  <!-- {% model Book.objects.filter(id=1) as book %} -->
+<dj-view name='some-view' />  <!-- {% view 'some-view' %} -->
 ```
 
 ```html
@@ -137,6 +140,7 @@ filters/dateformat
 
 template-tags/call
 template-tags/model
+template-tags/view
 template-tags/template
 ```
 

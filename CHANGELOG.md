@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.26.0
+
+- Add `get_template_loaders` for easier `TEMPLATES` configuration in `settings.py`.
+- Add `django-viewcomponent` integration.
+- Add `view` template tag.
+- Add support for calling models by app label, e.g. `{% model 'app_label.Model' %}`.
+- Skip over comment tags when parsing templates.
+
 ## 0.25.0
 
 - Add error boundaries.

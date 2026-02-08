@@ -10,8 +10,6 @@ Make sure to [install `dj_angles`](../installation.md#template-tags) and include
 
 Let's say you have a `Book` model and you want to list all of the books, but add an icon if the book has been read by the current user.
 
-### Models
-
 ```python
 # models.py
 from django.db import models
@@ -30,100 +28,6 @@ class Reader(models.Model):
     book = models.ForeignKey('Book', related_name='readers', on_delete=models.CASCADE)
 ```
 
-### Template
-
-There are a few different ways to show an icon if a book has been read.
-
-```{note}
-All of these examples probably result in n+1 queries 🤪, but the code is kept simple just as an example.
-```
-
-#### Add an attribute to the model in the view
-
-This feels a little clunky and adds an implicit attribute to the model which is not very discoverable.
-
-```python
-# views.py
-from django.shortcuts import render
-from book.models import Book
-
-def index(request):
-    books = Book.objects.all()
-
-    # Loop over all books and add an attribute
-    for book in books:
-        book.current_user_read = book.is_read(request.user)
-
-    return render(request, 'index.html', {'books': books})
-```
-
-```html
-<!-- index.html -->
-{% for book in books %}
-<div>
-  {{ book.title }}
-
-  {% if book.current_user_read %}
-  ✅
-  {% else %}
-  ❌
-  {% endif %}
-</div>
-{% endfor %}
-```
-
-#### Make a custom template tag
-
-This encapsulates template logic in Python code so it can be tested. However, it requires extra code for every use case and can feel like additional work especially for "pass-through" template tags which just call a function.
-
-```python
-# views.py
-from django.shortcuts import render
-from book.models import Book
-
-def index(request):
-    books = Book.objects.all()
-
-    return render(request, 'index.html', {'books': books})
-```
-
-```python
-# templatetags/book_tags.py
-from django import template
-
-register = template.Library()
-
-@register.simple_tag(takes_context=True)
-def current_user_read(context, book):
-    request = context.get("request")
-
-    if request and not request.user.is_anonymous:
-        return book.is_read(request.user)
-
-    return False
-```
-
-```html
-<!-- index.html -->
-{% load book_tags %}
-
-{% for book in books %}
-<div>
-  {{ book.title }}
-
-  {% if current_user_read book %}
-  ✅
-  {% else %}
-  ❌
-  {% endif %}
-</div>
-{% endfor %}
-```
-
-#### Use the `call` template tag
-
-This is basically like a custom template tag, but without creating it every time.
-
 ```python
 # views.py
 from django.shortcuts import render
@@ -141,9 +45,9 @@ def index(request):
 <div>
   {{ book.title }}
 
-  {% call book.is_read(request.user) as current_user_read %}
+  {% call book.is_read(request.user) as is_read_by_current_user %}
 
-  {% if current_user_read %}
+  {% if is_read_by_current_user %}
   ✅
   {% else %}
   ❌
@@ -163,7 +67,7 @@ The template tag function argument tries to look as similar to normal Python cod
 {{ slug }} <!-- hello-goodbye -->
 ```
 
-The `call` template tag can only call functions that are available in the context. So, the `slugify` function needs to be added to the context in the view.
+The `call` template tag only has access to functions that are available in the context. So, the `slugify` function needs to be added to the context in the view.
 
 ```python
 # views.py
@@ -174,7 +78,7 @@ def index(request):
     return render(request, 'index.html', {'slugify': slugify})
 ```
 
-If an "as" is not used, a stringified result of the function will be output directly in the template.
+If `as` is not used, a stringified result of the function will be output directly in the template.
 
 ```html
 <!-- index.html -->
@@ -361,10 +265,6 @@ def index(request):
 ## How does this work?
 
 The `call` template tag is a [custom template tag](https://docs.djangoproject.com/en/stable/howto/custom-template-tags/#advanced-custom-template-tags) which parses the first argument into Python AST and then evaluates it. After evaluation, the result is stored in the context with the name specified.
-
-```{note}
-If your first thought is "parsing a string into the AST is probably slow", then you might be right. However, usually network latency and database performance will be the actual bottleneck for most applications. However, as always, it is up to each individual to decide if the potential performance implications are worth the trade-off of having less custom code.
-```
 
 ## Other approaches
 

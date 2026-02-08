@@ -109,20 +109,30 @@ def do_view(parser, token) -> ViewNode:  # noqa: ARG001
     (parsed_function, args, context_variable_name) = get_tag_args(token, "view")
 
     extra_args = []
+    extra_kwargs = {}
 
     for arg in args:
         # Parse the argument (literals, variables, etc)
         try:
-            tree = ast.parse(arg, mode="eval")
+            # Wrap the argument in a function call to easily parse both args and kwargs using AST
+            tree = ast.parse(f"f({arg})", mode="eval")
+            call = tree.body
 
-            # eval_value handles AST nodes and converts names to TemplateVariable
-            value = eval_value(tree.body)
-            extra_args.append(value)
+            if isinstance(call, ast.Call):
+                if call.args:
+                    # eval_value handles AST nodes and converts names to TemplateVariable
+                    value = eval_value(call.args[0])
+                    extra_args.append(value)
+                elif call.keywords:
+                    kw = call.keywords[0]
+                    value = eval_value(kw.value)
+                    extra_kwargs[kw.arg] = value
         except SyntaxError as e:
             raise TemplateSyntaxError(f"Could not parse argument: {arg}") from e
 
-    # Append extra args to the last portion of the parsed function
+    # Append extra args and kwargs to the last portion of the parsed function
     if parsed_function.portions:
         parsed_function.portions[-1].args.extend(extra_args)
+        parsed_function.portions[-1].kwargs.update(extra_kwargs)
 
     return ViewNode(parsed_function, context_variable_name)
