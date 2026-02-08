@@ -70,29 +70,27 @@ Then, use it in templates with `dj-angles` syntax:
 
 ```html
 <!-- Input -->
-<dj-component name="calendar" date="2025-01-22">
-</dj-component>
+<dj-component name="calendar" date="2025-01-22"></dj-component>
 
 <!-- Transformed to -->
-{% component 'calendar' date="2025-01-22" %}
-{% endcomponent %}
+{% component "calendar" date="2025-01-22" %}{% endcomponent %}
 ```
 
 ## Self-Closing Tags
 
 ```html
-<dj-component name="icon" type="star" />
+<dj-component name="calendar" date="2025-01-22" />
 ```
 
 Transforms to:
 
 ```html
-{% component 'icon' type="star" / %}
+{% component "calendar" date="2025-01-22" / %}
 ```
 
 ## With Slots
 
-Django-components supports slots for nested content:
+`django-components` supports slots for nested content:
 
 ```html
 <dj-component name="card">

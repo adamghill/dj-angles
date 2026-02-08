@@ -59,6 +59,9 @@ class TagMap(UserDict):
             "django_viewcomponent", "viewcomponent", "dj_angles.mappers.thirdparty.map_viewcomponent"
         )
 
+        # Add compress if `django-compressor` is installed
+        self.add_module_mapper("compressor", "compress", "dj_angles.mappers.thirdparty.map_compress")
+
         # Add partialdef if `django-template-partial` is installed or Django >= 6.0
         if is_module_available("template_partials") or django.VERSION >= (6, 0):
             self.data.update({"partial": "dj_angles.mappers.map_partial"})

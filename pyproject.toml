@@ -80,6 +80,9 @@ components = [
 viewcomponent = [
   "django-viewcomponent >= 0",
 ]
+compressor = [
+  "django-compressor >= 0",
+]
 
 [tool.ruff]
 src = ["src"]

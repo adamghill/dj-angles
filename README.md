@@ -20,9 +20,10 @@
 - Lightweight way to submit forms via AJAX and swap in the resulting HTML
 - Error boundaries to catch and display template errors
 
-### Component library integrations
+### Third-party package integrations
 
 - Support for Django 6.0 [template partials](https://docs.djangoproject.com/en/stable/ref/templates/language/#template-partials)
+- [django-compressor](https://django-compressor.readthedocs.io)
 - [django-components](https://django-components.github.io/django-components/)
 - [django-viewcomponent](https://github.com/rails-inspire-django/django-viewcomponent)
 - [django-bird](https://django-bird.readthedocs.io)
@@ -126,6 +127,33 @@
 <div dj-else>  <!-- {% else %}<div> -->
   Else
 </div>  <!-- </div>{% endif %} -->
+```
+
+```html
+<!-- django-compressor -->
+<dj-compress css>
+  <style>.critical { color: red; }</style>
+</dj-compress>
+```
+
+```html
+<!-- django-components -->
+<dj-component name="calendar" date="2025-01-22" />
+```
+
+```html
+<!-- django-viewcomponent -->
+<dj-viewcomponent name="button">Click me</dj-viewcomponent>
+```
+
+```html
+<!-- django-bird -->
+<dj-bird template='button' class='btn'>Click me</dj-bird>
+```
+
+```html
+<!-- django-template-partials -->
+<dj-partial name="sidebar" />
 ```
 
 ## 📖 Documentation

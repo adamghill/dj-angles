@@ -10,9 +10,10 @@
 - Lightweight way to submit forms via AJAX and swap in the resulting HTML
 - Error boundaries to catch and display template errors
 
-### Component library integrations
+### Third-party package integrations
 
 - Support for Django 6.0 [template partials](https://docs.djangoproject.com/en/stable/ref/templates/language/#template-partials)
+- [django-compressor](https://django-compressor.readthedocs.io)
 - [django-components](https://django-components.github.io/django-components/)
 - [django-viewcomponent](https://github.com/rails-inspire-django/django-viewcomponent)
 - [django-bird](https://django-bird.readthedocs.io)
@@ -33,18 +34,18 @@
 
 ```html
 <!-- base.html -->
-<dj-block name='content'>  <!-- {% block content %} -->
+<dj-block name="content">  <!-- {% block content %} -->
 </dj-block>  <!-- {% endblock content %} -->
 ```
 
 ```html
 <!-- template-tags.html -->
-<dj-extends parent='base.html' />  <!-- {% extends 'base.html' %} -->
+<dj-extends parent="base.html" />  <!-- {% extends "base.html" %} -->
 
-<dj-block name='content'>  <!-- {% block content %} -->
+<dj-block name="content">  <!-- {% block content %} -->
   <!-- components -->
-  <dj-some-partial />  <!-- {% include 'test-partial.html' %} -->
-  <dj-include template='test-partial.html' />  <!-- {% include 'test-partial.html' %} -->
+  <dj-some-partial />  <!-- {% include "test-partial.html" %} -->
+  <dj-include template="test-partial.html" />  <!-- {% include "test-partial.html" %} -->
 
   <dj-verbatim>  <!-- {% verbatim %} -->
     This is verbatim: {% include %}
@@ -70,27 +71,52 @@
 
 ```html
 <!-- static-helpers.html -->
-<dj-image src='img/django.jpg' />  <!-- <img src="{% static 'img/django.jpg' %}" /> -->
-<dj-css href='css/styles.css' />  <!-- <link href="{% static 'css/styles.css' %}" rel="stylesheet" /> -->
+<dj-image src="img/django.jpg" />  <!-- <img src="{% static 'img/django.jpg' %}" /> -->
+<dj-css href="css/styles.css" />  <!-- <link href="{% static 'css/styles.css' %}" rel="stylesheet" /> -->
 ```
 
 ```html
 <!-- call-code-from-template.html -->
-<dj-call code='slugify("Hello Goodbye")' as='variable_name' />  <!-- {% call slugify("Hello Goodbye") as variable_name %} -->
-<dj-model code='Book.objects.filter(id=1)' as='book' />  <!-- {% model Book.objects.filter(id=1) as book %} -->
-<dj-view name='some-view' />  <!-- {% view 'some-view' %} -->
+<dj-call code="slugify('Hello Goodbye')" as="variable_name" />  <!-- {% call slugify("Hello Goodbye") as variable_name %} -->
+<dj-model code="Book.objects.filter(id=1)" as="book" />  <!-- {% model Book.objects.filter(id=1) as book %} -->
+<dj-view name="some-view" />  <!-- {% view "some-view" %} -->
+```
+
+```html
+<!-- django-compressor.html -->
+<dj-compress css> <!-- {% compress css %} -->
+  <style>.critical { color: red; }</style>
+</dj-compress> <!-- {% endcompress %} -->
+```
+
+```html
+<!-- django-components -->
+<dj-component name="button">Click me</dj-component>  <!-- {% component "button" %}Click me{% endcomponent %} -->
+
+<!-- django-viewcomponent -->
+<dj-viewcomponent name="button">Click me</dj-viewcomponent>  <!-- {% viewcomponent "button" %}Click me{% endviewcomponent %} -->
+
+<!-- django-bird -->
+<dj-bird template="button" class="btn">Click me</dj-bird>  <!-- {% bird "button" class="btn" %}Click me{% endbird %} -->
+
+<!-- django-template-partials -->
+<dj-partial name="sidebar">  <!-- {% partialdef sidebar %} -->
+  <p>Sidebar content</p>
+</dj-partial>  <!-- {% endpartialdef %} -->
+
+<dj-partial name="sidebar" />  <!-- {% partial sidebar %} -->
 ```
 
 ```html
 <!-- inline-expressions.html -->
 {{ request.user.username or request.user.email }}  <!-- {% if request.user.username %}{{ request.user.username }}{% else %}{{ request.user.email }}{% endif %} -->
-{{ request.user.username if request.user.is_authenticated else 'Unknown' }}  <!-- {% if request.user.is_authenticated %}{{ request.user.username }}{% else %}Unknown{% endif %} -->
+{{ request.user.username if request.user.is_authenticated else "Unknown" }}  <!-- {% if request.user.is_authenticated %}{{ request.user.username }}{% else %}Unknown{% endif %} -->
 ```
 
 ```html
 <!-- ajax-form-submission.html -->
-<dj-form action='/submit' method='POST' swap='outerHTML' ajax csrf> <!-- <ajax-form><form action='/submit' method='POST'>{% csrf_token %} -->
-  <button type='submit'>Submit</button>
+<dj-form action="/submit" method="POST" swap="outerHTML" ajax csrf> <!-- <ajax-form><form action="/submit" method="POST">{% csrf_token %} -->
+  <button type="submit">Submit</button>
 </dj-form><!-- </form></ajax-form> -->
 ```
 
@@ -167,6 +193,7 @@ middlewares/request-ajax
 :maxdepth: 2
 :hidden:
 
+integrations/django-compressor
 integrations/django-components
 integrations/django-template-partials
 integrations/django-viewcomponent
