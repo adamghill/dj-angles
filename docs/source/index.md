@@ -22,6 +22,7 @@
 
 - [`call`](https://dj-angles.adamghill.com/en/latest/template-tags/call/): call functions in a template
 - [`model`](https://dj-angles.adamghill.com/en/latest/template-tags/model/): call a model in a template
+- [`template`](https://dj-angles.adamghill.com/en/latest/template-tags/template/): inline template
 - [`view`](https://dj-angles.adamghill.com/en/latest/template-tags/view/): render a view in a template
 
 ### Filters
