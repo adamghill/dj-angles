@@ -10,6 +10,7 @@
 - 📖 Complete documentation: https://dj-angles.adamghill.com/
 - 📦 Package: https://pypi.org/project/dj-angles/
 
+<!-- readme-features-start -->
 ## ⭐ Features
 
 - Use HTML-like elements in Django templates, e.g. `<dj-some-partial />` instead of `{% include 'some-partial.html' %}`
@@ -40,6 +41,9 @@
 
 - [`dateformat`](https://dj-angles.adamghill.com/en/latest/filters/dateformat/): use Python [`strftime`](https://strftime.org) format for formatting dates as a string
 
+<!-- readme-features-end -->
+
+<!-- readme-examples-start -->
 ## 💥 Examples
 
 ```html
@@ -155,15 +159,18 @@
   Else
 </div>  <!-- </div>{% endif %} -->
 ```
+<!-- readme-examples-end -->
 
 ## 📖 Documentation
 
 To learn how to install and use `dj-angles` see the complete documentation at https://dj-angles.adamghill.com/.
 
+<!-- readme-inspiration-start -->
 ## ✨ Inspiration
 
 - [Web Components](https://web.dev/learn/html/template)
 - [django-cotton](https://django-cotton.com) by [wrabit](https://github.com/wrabit)
+<!-- readme-inspiration-end -->
 
 ## 🙌 Contributors
 
