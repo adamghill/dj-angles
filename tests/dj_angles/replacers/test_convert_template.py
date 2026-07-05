@@ -900,3 +900,12 @@ def test_value_self_closing_element():
     actual = convert_template(template)
 
     assert actual == expected
+
+
+def test_for_with_value():
+    expected = "{% for item in items %}<div>{{ item|upper }}</div>{% endfor %}"
+
+    template = '<div dj-for="item in items" dj-value="item|upper" />'
+    actual = convert_template(template)
+
+    assert actual == expected

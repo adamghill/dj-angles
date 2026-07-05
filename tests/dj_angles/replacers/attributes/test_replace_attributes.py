@@ -47,10 +47,6 @@ Params = namedtuple(
             original='<div dj-if="condition">content</div>',
             replacement="{% if condition %}<div>content</div>{% endif %}",
         ),
-        Params(
-            original="<div dj-if=condition>content</div>",
-            replacement="{% if condition %}<div>content</div>{% endif %}",
-        ),
         # dj-endif
         Params(
             original="<div dj-if='c'>content</div dj-endif>",
@@ -74,6 +70,16 @@ Params = namedtuple(
 def test_attributes(original, replacement):
     actual = replace_conditionals(original)
     assert actual == replacement
+
+
+def test_unquoted_if_raises():
+    with pytest.raises(AssertionError, match="dj-if attribute value must be quoted"):
+        replace_conditionals("<div dj-if=condition>content</div>")
+
+
+def test_unquoted_elif_raises():
+    with pytest.raises(AssertionError, match="dj-elif attribute value must be quoted"):
+        replace_conditionals("<div dj-if='c1'>1</div><div dj-elif=c2>2</div>")
 
 
 def test_orphaned_else():

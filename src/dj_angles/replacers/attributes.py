@@ -84,16 +84,18 @@ class ConditionalElement(Element):
 def _conditional_attr_pattern(prefix: str) -> str:
     """Build and cache the conditional attribute regex pattern for a given prefix."""
     return (
-        rf'\s({prefix}(?:if|elif|else|endif|fi))(?:=(?:"(?P<v1>[^"]*)"|'
-        r"'(?P<v2>[^']*)'"
-        r"|(?P<v3>[^\s>]+)))?"
+        rf'\s({prefix}(?:if|elif|else|endif|fi))(?:=(?:"(?P<double_quote>[^"]*)"|'
+        r"'(?P<single_quote>[^']*)'"
+        r"|(?P<unquoted>[^\s>]+)))?"
     )
 
 
 @cache
 def _value_attr_pattern(prefix: str) -> str:
     """Build and cache the value attribute regex pattern for a given prefix."""
-    return rf"\s({prefix}value)(?:=(?:\"(?P<v1>[^\"]*)\"|\'(?P<v2>[^\']*)\' |(?P<v3>[^\s>]+)))?"
+    return (
+        rf"\s({prefix}value)(?:=(?:\"(?P<double_quote>[^\"]*)\"|\'(?P<single_quote>[^\']*)\' |(?P<unquoted>[^\s>]+)))?"
+    )
 
 
 def replace_conditionals(html: str) -> str:
@@ -127,7 +129,7 @@ def _find_conditional_elements(html: str, prefix: str) -> list[ConditionalElemen
 
     # Pattern: handle double and single quotes separately for embedded quotes
     # Group 1: attribute name (prefix + type)
-    # Named groups v1/v2/v3 used for value to robustly handle capturing groups in prefix
+    # Named groups double_quote/single_quote/unquoted used for value to robustly handle capturing groups in prefix
     attr_pattern = _conditional_attr_pattern(prefix)
 
     elements = []
@@ -149,8 +151,11 @@ def _find_conditional_elements(html: str, prefix: str) -> list[ConditionalElemen
         else:
             continue
 
-        # Value is in named groups v1 (double), v2 (single), or v3 (unquoted)
-        condition = match.group("v1") or match.group("v2") or match.group("v3") or ""
+        condition = match.group("double_quote") or match.group("single_quote") or match.group("unquoted") or ""
+
+        if attr_type in ("if", "elif") and match.group("unquoted"):
+            attr_name = match.group(1)
+            raise AssertionError(f"{attr_name} attribute value must be quoted")
 
         element = _find_element(html, match, attr_type)
 
@@ -368,6 +373,178 @@ def _remove_attribute(tag: str, attr_match: re.Match, tag_start: int) -> str:
     return new_tag
 
 
+@cache
+def _for_attr_pattern(prefix: str) -> str:
+    """Build and cache the for-loop attribute regex pattern for a given prefix."""
+    return (
+        rf'\s({prefix}(?:for|empty|endfor))(?:=(?:"(?P<double_quote>[^"]*)"|'
+        r"'(?P<single_quote>[^']*)'"
+        r"|(?P<unquoted>[^\s>]+)))?"
+    )
+
+
+@dataclass
+class ForElement(Element):
+    """Represents an element with a dj-for/dj-empty/dj-endfor attribute."""
+
+    empty_sibling: Optional["ForElement"] = None
+    """The linked dj-empty element, if any."""
+
+
+def replace_loops(html: str) -> str:
+    """Convert dj-for/dj-empty/dj-endfor attributes to Django template tags.
+
+    Args:
+        html: The HTML string to process.
+
+    Returns:
+        HTML with Django template tags for for-loops.
+    """
+
+    prefix = get_setting("initial_attribute_regex", default=r"(dj-)")
+    attr_pattern = _for_attr_pattern(prefix)
+
+    elements: list[ForElement] = []
+
+    for match in re.finditer(attr_pattern, html):
+        full_attr = match.group(1)
+
+        if full_attr.endswith("endfor"):
+            attr_type = "endfor"
+        elif full_attr.endswith("empty"):
+            attr_type = "empty"
+        elif full_attr.endswith("for"):
+            attr_type = "for"
+        else:
+            continue
+
+        expression = match.group("double_quote") or match.group("single_quote") or match.group("unquoted") or ""
+
+        if attr_type == "for" and not expression:
+            attr_name = match.group(1)
+            raise AssertionError(f"{attr_name} attribute must have a value")
+
+        if attr_type == "for" and match.group("unquoted"):
+            attr_name = match.group(1)
+            raise AssertionError(f"{attr_name} attribute value must be quoted")
+
+        element = _find_element(html, match, attr_type)
+        for_elem = ForElement(
+            tag_name=element.tag_name,
+            tag_start=element.tag_start,
+            tag_end=element.tag_end,
+            full_end=element.full_end,
+            original_tag=element.original_tag,
+            original_full=element.original_full,
+            attr_match=match,
+            type=attr_type,
+            value=expression,
+        )
+        elements.append(for_elem)
+
+    if not elements:
+        return html
+
+    elements.sort(key=lambda e: e.tag_start)
+
+    # Link dj-empty siblings to their dj-for
+    _link_for_chains(elements)
+
+    edits: list[AtomicEdit] = []
+
+    for elem in elements:
+        is_closing_tag = elem.original_tag.startswith("</")
+
+        if elem.type == "for":
+            # Insert {% for expr %} before the opening tag
+            edits.append(AtomicEdit(position=elem.tag_start, content=f"{{% for {elem.value} %}}"))
+
+            # Remove the dj-for attribute from the tag
+            cleaned_tag = elem.remove_attribute()
+            cleaned_tag = re.sub(r"\s*/>$", ">", cleaned_tag)
+            edits.append(
+                AtomicEdit(position=elem.tag_start, content=cleaned_tag, is_insert=False, end_position=elem.tag_end)
+            )
+
+            # If self-closing (no closing tag in original_full), add the closing tag + endfor
+            original_was_self_closing = (
+                elem.original_tag.rstrip().endswith("/>") or elem.tag_name.lower() in VOID_ELEMENTS
+            )
+            if original_was_self_closing:
+                closing = f"</{elem.tag_name}>"
+                if elem.empty_sibling is None:
+                    edits.append(AtomicEdit(position=elem.tag_end, content=f"{closing}{{% endfor %}}"))
+                else:
+                    edits.append(AtomicEdit(position=elem.tag_end, content=closing))
+            # Non-self-closing: endfor goes after full_end, unless there's an explicit dj-endfor sibling
+            elif elem.empty_sibling is None:
+                # Check whether there's an explicit dj-endfor on this element's closing tag
+                # (its tag_start falls within this element's range)
+                has_explicit_endfor = any(
+                    e.type == "endfor" and elem.tag_start < e.tag_start < elem.full_end
+                    for e in elements
+                    if e is not elem
+                )
+                if not has_explicit_endfor:
+                    edits.append(AtomicEdit(position=elem.full_end, content="{% endfor %}"))
+
+        elif elem.type == "empty":
+            # Insert {% empty %} before the element, remove the attribute
+            edits.append(AtomicEdit(position=elem.tag_start, content="{% empty %}"))
+            cleaned_tag = elem.remove_attribute()
+            cleaned_tag = re.sub(r"\s*/>$", ">", cleaned_tag)
+            edits.append(
+                AtomicEdit(position=elem.tag_start, content=cleaned_tag, is_insert=False, end_position=elem.tag_end)
+            )
+            # Insert {% endfor %} after this element's full extent
+            edits.append(AtomicEdit(position=elem.full_end, content="{% endfor %}"))
+
+        elif elem.type == "endfor":
+            if is_closing_tag:
+                # Strip the dj-endfor attribute from the closing tag and append {% endfor %}
+                cleaned_tag = elem.remove_attribute()
+                edits.append(
+                    AtomicEdit(
+                        position=elem.tag_start,
+                        content=cleaned_tag,
+                        is_insert=False,
+                        end_position=elem.tag_end,
+                    )
+                )
+                edits.append(AtomicEdit(position=elem.tag_end, content="{% endfor %}"))
+            else:
+                # Opening tag with dj-endfor — just emit {% endfor %} before it and clean the tag
+                edits.append(AtomicEdit(position=elem.tag_start, content="{% endfor %}"))
+                cleaned_tag = elem.remove_attribute()
+                edits.append(
+                    AtomicEdit(position=elem.tag_start, content=cleaned_tag, is_insert=False, end_position=elem.tag_end)
+                )
+
+    return apply_edits(html, edits)
+
+
+def _link_for_chains(elements: list[ForElement]) -> None:
+    """Link dj-empty elements to their preceding dj-for sibling."""
+
+    for i, elem in enumerate(elements):
+        if elem.type != "empty":
+            continue
+
+        # Find the nearest preceding dj-for that hasn't already been linked
+        for candidate in reversed(elements[:i]):
+            if candidate.type != "for":
+                continue
+            if candidate.empty_sibling is not None:
+                continue
+            # Must end before this empty starts (siblings, not parent-child)
+            if candidate.full_end <= elem.tag_start:
+                candidate.empty_sibling = elem
+                break
+        else:
+            attr_name = elem.attr_match.group(1)
+            raise AssertionError(f"Invalid use of {attr_name} attribute without a preceding dj-for")
+
+
 def replace_values(html: str) -> str:
     """Convert `dj-value` attributes to Django variable output.
 
@@ -384,16 +561,24 @@ def replace_values(html: str) -> str:
 
     prefix = get_setting("initial_attribute_regex", default=r"(dj-)")
 
-    attr_pattern = rf"\s({prefix}value)(?:=(?:\"(?P<v1>[^\"]*)\"|" + r"'(?P<v2>[^']*)'" + r"|(?P<v3>[^\s>]+)))?"
+    attr_pattern = (
+        rf"\s({prefix}value)(?:=(?:\"(?P<double_quote>[^\"]*)\"|"
+        r"'(?P<single_quote>[^']*)'"
+        r"|(?P<unquoted>[^\s>]+)))?"
+    )
 
     elements: list[Element] = []
 
     for match in re.finditer(attr_pattern, html):
-        condition = match.group("v1") or match.group("v2") or match.group("v3") or ""
+        condition = match.group("double_quote") or match.group("single_quote") or match.group("unquoted") or ""
 
         if not condition:
             attr_name = match.group(1)
             raise AssertionError(f"{attr_name} attribute must have a value")
+
+        if match.group("unquoted"):
+            attr_name = match.group(1)
+            raise AssertionError(f"{attr_name} attribute value must be quoted")
 
         element = _find_element(html, match, "value")
 
