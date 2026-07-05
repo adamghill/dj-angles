@@ -4,6 +4,7 @@
 
 - Add `django-compressor` integration.
 - Add `dj-value` attribute for rendering Django variables as an element's inner content.
+- Small performance optimizations.
 
 ## 0.26.0
 
