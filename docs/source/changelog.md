@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.27.0-dev
+
+- Add `dj-value` attribute for rendering Django variables as an element's inner content.
+
 ## 0.26.0
 
 - Add `get_template_loaders` for easier `TEMPLATES` configuration in `settings.py`.

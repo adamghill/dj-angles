@@ -159,6 +159,12 @@
   Else
 </div>  <!-- </div>{% endif %} -->
 ```
+
+```html
+<!-- value-attribute.html -->
+<div dj-value="request.user">  <!-- <div>{{ request.user }}</div> -->
+</div>
+```
 <!-- readme-examples-end -->
 
 ## 📖 Documentation

@@ -846,3 +846,57 @@ def test_if_nested_same_tag_bug():
     actual = convert_template(template)
 
     assert actual == expected
+
+
+def test_value_simple():
+    expected = "<div>{{ request.user }}</div>"
+
+    template = '<div dj-value="request.user"></div>'
+    actual = convert_template(template)
+
+    assert actual == expected
+
+
+def test_value_replaces_content():
+    expected = "<div>{{ request.user }}</div>"
+
+    template = '<div dj-value="request.user">fallback</div>'
+    actual = convert_template(template)
+
+    assert actual == expected
+
+
+def test_value_with_filter():
+    expected = "<div>{{ request.user|upper }}</div>"
+
+    template = '<div dj-value="request.user|upper"></div>'
+    actual = convert_template(template)
+
+    assert actual == expected
+
+
+def test_value_with_if():
+    expected = "{% if is_authenticated %}<div>{{ request.user }}</div>{% endif %}"
+
+    template = '<div dj-if="is_authenticated" dj-value="request.user"></div>'
+    actual = convert_template(template)
+
+    assert actual == expected
+
+
+def test_value_void_element():
+    expected = "<input>{{ request.user }}</input>"
+
+    template = '<input dj-value="request.user">'
+    actual = convert_template(template)
+
+    assert actual == expected
+
+
+def test_value_self_closing_element():
+    expected = "<img>{{ request.user }}</img>"
+
+    template = '<img dj-value="request.user" />'
+    actual = convert_template(template)
+
+    assert actual == expected

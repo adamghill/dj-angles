@@ -1,6 +1,6 @@
 import logging
 
-from dj_angles.replacers.attributes import replace_attributes
+from dj_angles.replacers.attributes import replace_attributes, replace_values
 from dj_angles.replacers.comments import mask_comments
 from dj_angles.replacers.tags import replace_tags
 from dj_angles.replacers.variables import replace_variables
@@ -31,10 +31,13 @@ def convert_template(html: str, *, origin=None) -> str:
     # 2. Replace variables, e.g. `{{ foo or bar }}`
     html = replace_variables(html)
 
-    # 3. Replace tags, e.g. `<dj-include />`
+    # 3. Replace value attributes, e.g. `<div dj-value="request.user">`
+    html = replace_values(html)
+
+    # 4. Replace tags, e.g. `<dj-include />`
     html = replace_tags(html, origin=origin)
 
-    # 4. Unmask comments
+    # 5. Unmask comments
     for i, comment in enumerate(comments):
         html = html.replace(f"__DJ_ANGLES_COMMENT_{i}__", comment)
 

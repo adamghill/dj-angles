@@ -281,3 +281,101 @@ def _remove_attribute(tag: str, attr_match: re.Match, tag_start: int) -> str:
     new_tag = re.sub(r"\s{2,}", " ", new_tag)
 
     return new_tag
+
+
+def replace_values(html: str) -> str:
+    """Convert `dj-value` attributes to Django variable output.
+
+    The attribute is removed from the opening tag, the element's inner content
+    is replaced with `{{ value }}`, and void/self-closing tags are turned into
+    paired tags so the value has a place to render.
+
+    Args:
+        html: The HTML string to process.
+
+    Returns:
+        HTML with `dj-value` attributes replaced by Django template variables.
+    """
+
+    prefix = get_setting("initial_attribute_regex", default=r"(dj-)")
+
+    attr_pattern = rf"\s({prefix}value)(?:=(?:\"(?P<v1>[^\"]*)\"|" + r"'(?P<v2>[^']*)'" + r"|(?P<v3>[^\s>]+)))?"
+
+    elements = []
+
+    for match in re.finditer(attr_pattern, html):
+        condition = match.group("v1") or match.group("v2") or match.group("v3") or ""
+
+        if not condition:
+            attr_name = match.group(1)
+            raise AssertionError(f"{attr_name} attribute must have a value")
+
+        # Find the start of the containing tag
+        tag_start = html.rfind("<", 0, match.start())
+
+        # Find the end of the opening tag
+        tag_end = html.find(">", match.end()) + 1
+
+        # Find the element's full extent (including closing tag)
+        full_end = _find_element_end(html, tag_start, tag_end)
+
+        original_tag = html[tag_start:tag_end]
+        original_full = html[tag_start:full_end]
+
+        # dj-value is only valid on opening tags
+        if original_tag.startswith("</"):
+            attr_name = match.group(1)
+            raise AssertionError(f"Invalid use of {attr_name} attribute on closing tag")
+
+        elements.append(
+            {
+                "match": match,
+                "tag_start": tag_start,
+                "tag_end": tag_end,
+                "full_end": full_end,
+                "original_tag": original_tag,
+                "original_full": original_full,
+                "condition": condition,
+            }
+        )
+
+    # Sort by position so outermost elements are processed first
+    elements.sort(key=lambda e: e["tag_start"])
+
+    edits: list[AtomicEdit] = []
+
+    for elem in elements:
+        # Skip elements that are nested inside another dj-value element
+        if any(
+            other["tag_start"] <= elem["tag_start"] and other["full_end"] >= elem["full_end"]
+            for other in elements
+            if other is not elem
+        ):
+            continue
+
+        # Remove the dj-value attribute from the opening tag
+        cleaned_tag = _remove_attribute(elem["original_tag"], elem["match"], elem["tag_start"])
+
+        # Turn self-closing tags into regular tags so they can have inner content
+        cleaned_tag = re.sub(r"\s*/>$", ">", cleaned_tag)
+
+        # Get the tag name
+        tag_match = re.match(r"<(\w+)", cleaned_tag)
+        tag_name = tag_match.group(1) if tag_match else ""
+
+        # Find the existing closing tag, or generate one
+        closing_tag_matches = list(re.finditer(rf"</{tag_name}\s*>", elem["original_full"], re.IGNORECASE))
+        closing_tag = closing_tag_matches[-1].group(0) if closing_tag_matches else f"</{tag_name}>"
+
+        replacement = f"{cleaned_tag}{{{{ {elem['condition']} }}}}{closing_tag}"
+
+        edits.append(
+            AtomicEdit(
+                position=elem["tag_start"],
+                content=replacement,
+                is_insert=False,
+                end_position=elem["full_end"],
+            )
+        )
+
+    return apply_edits(html, edits)
