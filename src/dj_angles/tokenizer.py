@@ -35,6 +35,9 @@ def yield_tokens(
             yield token
             token = ""
         else:
+            # Note: benchmarked list-accumulator + "".join() as an alternative;
+            # list.append() overhead outweighs the benefit for the short strings
+            # typical of tag attributes, making this concat marginally faster.
             token += c
 
     if token:

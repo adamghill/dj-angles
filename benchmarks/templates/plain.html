@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Plain Template</title>
+</head>
+<body>
+  <header>
+    <h1>Hello, world!</h1>
+  </header>
+  <main>
+    <p>This is a plain Django template with no dj-angles tags.</p>
+    {% if user.is_authenticated %}
+      <p>Welcome back, {{ user.username }}!</p>
+    {% else %}
+      <p>Please log in.</p>
+    {% endif %}
+    {% for i in items %}
+      <li>{{ i }}</li>
+    {% endfor %}
+  </main>
+  <footer>
+    <p>Footer content</p>
+  </footer>
+</body>
+</html>

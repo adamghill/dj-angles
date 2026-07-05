@@ -8,6 +8,7 @@
 
 import re
 from dataclasses import dataclass
+from functools import cache
 from typing import Optional
 
 from dj_angles.htmls import VOID_ELEMENTS
@@ -79,6 +80,22 @@ class ConditionalElement(Element):
         return self.value
 
 
+@cache
+def _conditional_attr_pattern(prefix: str) -> str:
+    """Build and cache the conditional attribute regex pattern for a given prefix."""
+    return (
+        rf'\s({prefix}(?:if|elif|else|endif|fi))(?:=(?:"(?P<v1>[^"]*)"|'
+        r"'(?P<v2>[^']*)'"
+        r"|(?P<v3>[^\s>]+)))?"
+    )
+
+
+@cache
+def _value_attr_pattern(prefix: str) -> str:
+    """Build and cache the value attribute regex pattern for a given prefix."""
+    return rf"\s({prefix}value)(?:=(?:\"(?P<v1>[^\"]*)\"|\'(?P<v2>[^\']*)\' |(?P<v3>[^\s>]+)))?"
+
+
 def replace_conditionals(html: str) -> str:
     """Convert dj-if/elif/else attributes to Django template tags.
 
@@ -111,9 +128,7 @@ def _find_conditional_elements(html: str, prefix: str) -> list[ConditionalElemen
     # Pattern: handle double and single quotes separately for embedded quotes
     # Group 1: attribute name (prefix + type)
     # Named groups v1/v2/v3 used for value to robustly handle capturing groups in prefix
-    attr_pattern = (
-        rf'\s({prefix}(?:if|elif|else|endif|fi))(?:=(?:"(?P<v1>[^"]*)"|' + r"'(?P<v2>[^']*)'" + r"|(?P<v3>[^\s>]+)))?"
-    )
+    attr_pattern = _conditional_attr_pattern(prefix)
 
     elements = []
 

@@ -128,6 +128,8 @@ class Attributes(Sequence):
     def pop(self, index: SupportsIndex) -> Attribute:
         """Remove and return the last attribute."""
 
+        # Note: benchmarked next(iter()) for index=0 as an alternative; the
+        # gain was too marginal to justify losing generality.
         key = list(self._attributes.keys())[index]
         return self._attributes.pop(key)
 
@@ -166,6 +168,8 @@ class Attributes(Sequence):
         self._attributes[_attribute.key] = _attribute
 
     def __getitem__(self, index):
+        # Note: benchmarked next(iter(values())) for index=0 as an alternative;
+        # the gain was too marginal to justify losing generality.
         return list(self._attributes.values())[index]
 
     def __iter__(self):
@@ -175,9 +179,4 @@ class Attributes(Sequence):
         return len(self._attributes)
 
     def __str__(self):
-        s = ""
-
-        for attribute in self._attributes.values():
-            s = f"{s} {attribute}"
-
-        return s.strip()
+        return " ".join(str(a) for a in self._attributes.values())

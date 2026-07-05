@@ -47,6 +47,7 @@ dev = [
     "pytest < 9",
     "pytest-django >= 0",
     "pytest-cov >= 0",
+    "pytest-benchmark >= 4",
     "ty >= 0",
     "sphinx-autobuild >= 2021.3.14",
     "coverage[toml] >= 6",
@@ -147,6 +148,8 @@ ban-relative-imports = "all"
 [tool.ruff.lint.per-file-ignores]
 # Tests can use magic values, assertions, and relative imports
 "tests/**/*" = ["PLR2004", "S101", "TID252", "ARG001"]
+# Benchmarks can use assertions and boolean positional args
+"benchmarks/**/*" = ["S101", "FBT001", "FBT002", "TID252"]
 
 [tool.pytest]
 addopts = [
