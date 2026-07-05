@@ -2,7 +2,7 @@ from collections import namedtuple
 
 import pytest
 
-from dj_angles.replacers.attributes import replace_attributes
+from dj_angles.replacers.attributes import replace_conditionals
 
 # Structure to store parameterize data
 Params = namedtuple(
@@ -72,13 +72,13 @@ Params = namedtuple(
     ),
 )
 def test_attributes(original, replacement):
-    actual = replace_attributes(original)
+    actual = replace_conditionals(original)
     assert actual == replacement
 
 
 def test_orphaned_else():
     with pytest.raises(AssertionError, match="Invalid use of dj-else attribute"):
-        replace_attributes("<div dj-else>orphaned</div>")
+        replace_conditionals("<div dj-else>orphaned</div>")
 
     with pytest.raises(AssertionError, match="Invalid use of dj-elif attribute"):
-        replace_attributes("<div dj-elif='c'>orphaned</div>")
+        replace_conditionals("<div dj-elif='c'>orphaned</div>")
