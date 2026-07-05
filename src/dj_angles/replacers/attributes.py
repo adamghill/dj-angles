@@ -16,21 +16,67 @@ from dj_angles.settings import get_setting
 
 
 @dataclass
-class ConditionalElement:
-    """Represents an element with a dj-if/elif/else attribute."""
+class Element:
+    """Represents an HTML element with a dj-* attribute."""
 
-    type: str  # 'if', 'elif', 'else'
-    condition: str  # The condition value (empty for else)
-    start_pos: int  # Position of '<' in original HTML
-    end_pos: int  # Position after '>' of opening tag
-    full_end_pos: int  # Position after closing tag (full element)
-    original_tag: str  # The original opening tag
-    original_full: str  # The full original element with content
-    attr_match: re.Match  # The regex match for the attribute
+    tag_name: str
+    """Name of the HTML tag, e.g. ``div`` or ``img``."""
+
+    tag_start: int
+    """Position of the ``<`` that starts the opening tag in the original HTML."""
+
+    tag_end: int
+    """Position just after the ``>`` that ends the opening tag."""
+
+    full_end: int
+    """Position just after the element's closing tag, or ``tag_end`` for void/self-closing tags."""
+
+    original_tag: str
+    """The original opening tag string, including the dj-* attribute."""
+
+    original_full: str
+    """The full original element, from the opening tag through the closing tag."""
+
+    attr_match: re.Match
+    """Regex match for the dj-* attribute that triggered this element's discovery."""
+
+    type: str
+    """The dj-* attribute type, e.g. ``if``, ``elif``, ``else``, or ``value``."""
+
+    value: str = ""
+    """The value of the dj-* attribute, e.g. the condition for ``dj-if`` or the variable for ``dj-value``."""
+
+    @property
+    def is_closing(self) -> bool:
+        """Whether the element is a closing tag."""
+        return self.original_tag.startswith("</")
+
+    def remove_attribute(self) -> str:
+        """Remove the dj-* attribute from the opening tag."""
+        return _remove_attribute(self.original_tag, self.attr_match, self.tag_start)
+
+    def contains(self, other: "Element") -> bool:
+        """Whether this element fully contains another element."""
+        return self.tag_start <= other.tag_start and other.full_end <= self.full_end
+
+    def closing_tag(self) -> str:
+        """Return the existing closing tag or generate one."""
+        matches = list(re.finditer(rf"</{self.tag_name}\s*>", self.original_full, re.IGNORECASE))
+        return matches[-1].group(0) if matches else f"</{self.tag_name}>"
+
+
+@dataclass
+class ConditionalElement(Element):
+    """Represents an element with a dj-if/elif/else attribute."""
 
     # Chain linking (assigned during processing)
     chain_id: int = -1
     next_in_chain: Optional["ConditionalElement"] = None
+
+    @property
+    def condition(self) -> str:
+        """The condition value of the attribute (empty for else)."""
+        return self.value
 
 
 def replace_attributes(html: str) -> str:
@@ -91,30 +137,24 @@ def _find_conditional_elements(html: str, prefix: str) -> list[ConditionalElemen
         # Value is in named groups v1 (double), v2 (single), or v3 (unquoted)
         condition = match.group("v1") or match.group("v2") or match.group("v3") or ""
 
-        # Find the start of the containing tag
-        tag_start = html.rfind("<", 0, match.start())
-
-        # Find the end of the opening tag
-        tag_end = html.find(">", match.end()) + 1
-
-        # Find the element's full extent (including closing tag)
-        full_end = _find_element_end(html, tag_start, tag_end)
+        element = _find_element(html, match, attr_type)
 
         elements.append(
             ConditionalElement(
-                type=attr_type,
-                condition=condition,
-                start_pos=tag_start,
-                end_pos=tag_end,
-                full_end_pos=full_end,
-                original_tag=html[tag_start:tag_end],
-                original_full=html[tag_start:full_end],
+                tag_name=element.tag_name,
+                tag_start=element.tag_start,
+                tag_end=element.tag_end,
+                full_end=element.full_end,
+                original_tag=element.original_tag,
+                original_full=element.original_full,
                 attr_match=match,
+                type=attr_type,
+                value=condition,
             )
         )
 
     # Sort by position
-    elements.sort(key=lambda e: e.start_pos)
+    elements.sort(key=lambda e: e.tag_start)
 
     return elements
 
@@ -157,6 +197,36 @@ def _find_element_end(html: str, tag_start: int, tag_end: int) -> int:
         pos = m.end()
 
     return pos
+
+
+def _find_element(html: str, match: re.Match, attr_type: str) -> Element:
+    """Find the HTML element containing a dj-* attribute match."""
+
+    # Find the start of the containing tag
+    tag_start = html.rfind("<", 0, match.start())
+
+    # Find the end of the opening tag
+    tag_end = html.find(">", match.end()) + 1
+
+    # Find the element's full extent (including closing tag)
+    full_end = _find_element_end(html, tag_start, tag_end)
+
+    original_tag = html[tag_start:tag_end]
+    original_full = html[tag_start:full_end]
+
+    tag_match = re.match(r"</?(\w+)", original_tag)
+    tag_name = tag_match.group(1) if tag_match else ""
+
+    return Element(
+        tag_name=tag_name,
+        tag_start=tag_start,
+        tag_end=tag_end,
+        full_end=full_end,
+        original_tag=original_tag,
+        original_full=original_full,
+        attr_match=match,
+        type=attr_type,
+    )
 
 
 def _link_chains(elements: list[ConditionalElement]) -> None:
@@ -202,7 +272,7 @@ def _find_preceding_sibling(
 
         # Key check: candidate's full element must END before this starts
         # This means they're siblings, not parent-child
-        if candidate.full_end_pos <= elem.start_pos:
+        if candidate.full_end <= elem.tag_start:
             # Additional check: candidate must not be inside another element
             # that our else is OUTSIDE of (meaning different hierarchy levels)
             is_nested_inside_other = False
@@ -212,7 +282,7 @@ def _find_preceding_sibling(
                     continue
 
                 # If candidate is inside 'other', and elem is outside 'other'
-                if other.start_pos < candidate.start_pos < other.full_end_pos and elem.start_pos >= other.full_end_pos:
+                if other.tag_start < candidate.tag_start < other.full_end and elem.tag_start >= other.full_end:
                     is_nested_inside_other = True
 
                     break
@@ -251,18 +321,18 @@ def _apply_atomic_edits(elements: list[ConditionalElement], html: str) -> str:
             continue
 
         if start_tag:
-            edits.append(AtomicEdit(position=elem.start_pos, content=start_tag))
+            edits.append(AtomicEdit(position=elem.tag_start, content=start_tag))
 
         # 2. Remove the attribute (replace with cleaned tag)
-        new_tag = _remove_attribute(elem.original_tag, elem.attr_match, elem.start_pos)
-        edits.append(AtomicEdit(position=elem.start_pos, content=new_tag, is_insert=False, end_position=elem.end_pos))
+        new_tag = _remove_attribute(elem.original_tag, elem.attr_match, elem.tag_start)
+        edits.append(AtomicEdit(position=elem.tag_start, content=new_tag, is_insert=False, end_position=elem.tag_end))
 
         # 3. Insert endif if needed
         # Logic: If no next element in chain, AND it's a structural tag (if/elif/else), add endif.
         should_add_endif = elem.next_in_chain is None and elem.type in ("if", "elif", "else")
 
         if should_add_endif:
-            edits.append(AtomicEdit(position=elem.full_end_pos, content="{% endif %}"))
+            edits.append(AtomicEdit(position=elem.full_end, content="{% endif %}"))
 
     return apply_edits(html, edits)
 
@@ -301,7 +371,7 @@ def replace_values(html: str) -> str:
 
     attr_pattern = rf"\s({prefix}value)(?:=(?:\"(?P<v1>[^\"]*)\"|" + r"'(?P<v2>[^']*)'" + r"|(?P<v3>[^\s>]+)))?"
 
-    elements = []
+    elements: list[Element] = []
 
     for match in re.finditer(attr_pattern, html):
         condition = match.group("v1") or match.group("v2") or match.group("v3") or ""
@@ -310,71 +380,40 @@ def replace_values(html: str) -> str:
             attr_name = match.group(1)
             raise AssertionError(f"{attr_name} attribute must have a value")
 
-        # Find the start of the containing tag
-        tag_start = html.rfind("<", 0, match.start())
-
-        # Find the end of the opening tag
-        tag_end = html.find(">", match.end()) + 1
-
-        # Find the element's full extent (including closing tag)
-        full_end = _find_element_end(html, tag_start, tag_end)
-
-        original_tag = html[tag_start:tag_end]
-        original_full = html[tag_start:full_end]
+        element = _find_element(html, match, "value")
 
         # dj-value is only valid on opening tags
-        if original_tag.startswith("</"):
+        if element.is_closing:
             attr_name = match.group(1)
             raise AssertionError(f"Invalid use of {attr_name} attribute on closing tag")
 
-        elements.append(
-            {
-                "match": match,
-                "tag_start": tag_start,
-                "tag_end": tag_end,
-                "full_end": full_end,
-                "original_tag": original_tag,
-                "original_full": original_full,
-                "condition": condition,
-            }
-        )
+        element.value = condition
+        elements.append(element)
 
     # Sort by position so outermost elements are processed first
-    elements.sort(key=lambda e: e["tag_start"])
+    elements.sort(key=lambda e: e.tag_start)
 
     edits: list[AtomicEdit] = []
 
     for elem in elements:
         # Skip elements that are nested inside another dj-value element
-        if any(
-            other["tag_start"] <= elem["tag_start"] and other["full_end"] >= elem["full_end"]
-            for other in elements
-            if other is not elem
-        ):
+        if any(other.contains(elem) for other in elements if other is not elem):
             continue
 
         # Remove the dj-value attribute from the opening tag
-        cleaned_tag = _remove_attribute(elem["original_tag"], elem["match"], elem["tag_start"])
+        cleaned_tag = elem.remove_attribute()
 
         # Turn self-closing tags into regular tags so they can have inner content
         cleaned_tag = re.sub(r"\s*/>$", ">", cleaned_tag)
 
-        # Get the tag name
-        tag_match = re.match(r"<(\w+)", cleaned_tag)
-        tag_name = tag_match.group(1) if tag_match else ""
-
-        # Find the existing closing tag, or generate one
-        closing_tag_matches = list(re.finditer(rf"</{tag_name}\s*>", elem["original_full"], re.IGNORECASE))
-        closing_tag = closing_tag_matches[-1].group(0) if closing_tag_matches else f"</{tag_name}>"
-
-        replacement = f"{cleaned_tag}{{{{ {elem['condition']} }}}}{closing_tag}"
+        replacement = f"{cleaned_tag}{{{{ {elem.value} }}}}{elem.closing_tag()}"
 
         edits.append(
             AtomicEdit(
-                position=elem["tag_start"],
+                position=elem.tag_start,
                 content=replacement,
                 is_insert=False,
-                end_position=elem["full_end"],
+                end_position=elem.full_end,
             )
         )
 
