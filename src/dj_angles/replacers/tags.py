@@ -43,6 +43,8 @@ def replace_tags(html: str, *, origin: Origin | None = None, raise_for_missing_s
     tag_map = get_tag_map()
 
     map_explicit_tags_only = get_setting("map_explicit_tags_only", default=False)
+    slots_enabled = get_setting("slots_enabled", default=False)
+    initial_tag_regex = get_setting("initial_tag_regex", default=r"(dj-)")
 
     matches_to_skip = 0
 
@@ -84,14 +86,13 @@ def replace_tags(html: str, *, origin: Origin | None = None, raise_for_missing_s
             not tag.is_self_closing
             and not tag.is_end
             and (
-                (get_setting("slots_enabled", default=False) and (tag.django_template_tag is None or tag.is_include))
+                (slots_enabled and (tag.django_template_tag is None or tag.is_include))
                 or getattr(tag, "is_error_boundary", False)
             )
         ):
             end_of_include_tag = match.end()
 
             # Find the next closing tag
-            initial_tag_regex = get_setting("initial_tag_regex", default=r"(dj-)")
 
             if getattr(tag, "is_error_boundary", False):
                 closing_tag_pattern = rf"</{initial_tag_regex}{tag.tag_name}"

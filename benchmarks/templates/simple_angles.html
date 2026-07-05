@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Simple dj-angles Template</title>
+</head>
+<body>
+  <header>
+    <h1>Hello, world!</h1>
+  </header>
+  <main>
+    <p>This template uses basic dj-angles tags.</p>
+    <p dj-if="user.is_authenticated">Welcome back, {{ user.username }}!</p>
+    <p dj-else>Please log in.</p>
+    <ul>
+      {% for i in items %}<li>{{ i }}</li>{% endfor %}
+    </ul>
+  </main>
+  <footer>
+    <p>Footer content</p>
+  </footer>
+</body>
+</html>

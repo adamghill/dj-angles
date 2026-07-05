@@ -156,6 +156,11 @@ class CaseConverter:
         logger.debug(f"input_buffer = {self._input_buffer.getvalue()}")
 
         # Previous character (pc) and current character (cc)
+        # Note: benchmarked replacing StringIO.read(1) with direct string
+        # iteration. Not implemented because
+        # BoundaryHandler.handle() receives input_buffer and calls read(1) to
+        # consume the next character (peek-ahead); changing this would require
+        # updating the entire BoundaryHandler interface.
         pc = None
         cc = self._input_buffer.read(1)
 

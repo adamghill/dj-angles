@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Complex dj-angles Template</title>
+</head>
+<body>
+  <dj-block name="content">
+    <header>
+      <h1>{{ title }}</h1>
+      <nav>
+        {% for link in nav_links %}<a href="{{ link.url }}">{{ link.label }}</a>{% endfor %}
+      </nav>
+    </header>
+
+    <main>
+      <section dj-if="show_banner" class="banner">
+        <p>{{ banner_text }}</p>
+      </section>
+
+      {% for section in sections %}
+      <article>
+        <h2>{{ section.title }}</h2>
+        <div dj-if="section.is_published">
+          <p>{{ section.body }}</p>
+          {% for tag in section.tags %}<span class="tag">{{ tag }}</span>{% endfor %}
+        </div>
+        <p dj-else><em>Draft</em></p>
+      </article>
+      {% endfor %}
+
+      <aside dj-if="user.is_authenticated">
+        <h3>User Panel</h3>
+        <p>Welcome, {{ user.username }}</p>
+        <a dj-if="user.is_staff" href="/admin/">Admin</a>
+      </aside>
+    </main>
+
+    <footer>
+      {% for item in footer_items %}<span>{{ item }}</span>{% endfor %}
+    </footer>
+  </dj-block name="content">
+</body>
+</html>
