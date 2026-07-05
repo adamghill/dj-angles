@@ -157,6 +157,7 @@ addopts = [
     "--failed-first",
     "-p no:warnings",
     "--no-migrations",
+    "--ignore=benchmarks",
 ]
 testpaths = [
     "tests"

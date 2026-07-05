@@ -11,6 +11,10 @@ _default:
 fetch:
   curl https://raw.githubusercontent.com/adamghill/dotfiles/master/just/justfile > adamghill.justfile
 
+# Run coverage on the code
+coverage *ARGS='':
+  -uv run --all-extras pytest --cov=. --ignore=benchmarks {{ ARGS }}
+
 serve:
   uv run python3 example/manage.py runserver 0:8789
 
