@@ -64,3 +64,43 @@ The `dj-angles` approach is shown first and then the equivalent Django Template 
 </div>
 {% endif %}
 ```
+
+## `value`
+
+```html
+<div dj-value="request.user"></div>
+```
+
+```html
+<div>{{ request.user }}</div>
+```
+
+`dj-value` replaces the element's inner content with the value wrapped in `{{ }}`. It can be combined with `dj-if` to conditionally render a value:
+
+```html
+<div dj-if="is_authenticated" dj-value="request.user"></div>
+```
+
+```html
+{% if is_authenticated %}<div>{{ request.user }}</div>{% endif %}
+```
+
+Filters and expressions are passed through as-is:
+
+```html
+<div dj-value="user.name|upper"></div>
+```
+
+```html
+<div>{{ user.name|upper }}</div>
+```
+
+Void and self-closing tags are turned into paired tags so the value has a place to render:
+
+```html
+<img dj-value="avatar.url" />
+```
+
+```html
+<img>{{ avatar.url }}</img>
+```
