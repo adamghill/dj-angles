@@ -79,7 +79,7 @@ class ConditionalElement(Element):
         return self.value
 
 
-def replace_attributes(html: str) -> str:
+def replace_conditionals(html: str) -> str:
     """Convert dj-if/elif/else attributes to Django template tags.
 
     Args:
