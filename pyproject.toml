@@ -44,7 +44,7 @@ Changelog = "https://dj-angles.adamghill.com/en/latest/changelog.html"
 
 [dependency-groups]
 dev = [
-    "pytest < 9",
+    "pytest >= 9",
     "pytest-django >= 0",
     "pytest-cov >= 0",
     "pytest-benchmark >= 4",
