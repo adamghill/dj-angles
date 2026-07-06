@@ -1,13 +1,13 @@
 import re
 
-from dj_angles.replacers.attributes import _find_element
+from dj_angles.replacers.attributes.elements import Element
 
 
 def test_find_element_basic():
     html = '<div dj-value="x">content</div>'
     match = re.search(r"dj-value=\"x\"", html)
 
-    element = _find_element(html, match, "value")
+    element = Element.from_match(html, match, "value")
 
     assert element.tag_name == "div"
     assert element.tag_start == 0
@@ -22,7 +22,7 @@ def test_find_element_self_closing():
     html = '<img dj-value="x" />'
     match = re.search(r"dj-value=\"x\"", html)
 
-    element = _find_element(html, match, "value")
+    element = Element.from_match(html, match, "value")
 
     assert element.tag_name == "img"
     assert element.original_tag == '<img dj-value="x" />'
@@ -34,7 +34,7 @@ def test_find_element_void():
     html = '<input dj-value="x">'
     match = re.search(r"dj-value=\"x\"", html)
 
-    element = _find_element(html, match, "value")
+    element = Element.from_match(html, match, "value")
 
     assert element.tag_name == "input"
     assert element.original_tag == '<input dj-value="x">'
@@ -45,7 +45,7 @@ def test_find_element_closing_tag():
     html = '</div dj-value="x">'
     match = re.search(r"dj-value=\"x\"", html)
 
-    element = _find_element(html, match, "value")
+    element = Element.from_match(html, match, "value")
 
     assert element.tag_name == "div"
     assert element.is_closing is True
@@ -55,8 +55,8 @@ def test_find_element_nested():
     html = '<div dj-value="outer"><span dj-value="inner"></span></div>'
     matches = list(re.finditer(r"dj-value=\"[^\"]+\"", html))
 
-    outer = _find_element(html, matches[0], "value")
-    inner = _find_element(html, matches[1], "value")
+    outer = Element.from_match(html, matches[0], "value")
+    inner = Element.from_match(html, matches[1], "value")
 
     assert outer.contains(inner) is True
     assert inner.contains(outer) is False
@@ -66,7 +66,7 @@ def test_element_remove_attribute():
     html = '<div class="foo" dj-value="x">content</div>'
     match = re.search(r"dj-value=\"x\"", html)
 
-    element = _find_element(html, match, "value")
+    element = Element.from_match(html, match, "value")
 
     assert element.remove_attribute() == '<div class="foo">'
 
@@ -75,7 +75,7 @@ def test_element_closing_tag():
     html = '<div dj-value="x">content</div>'
     match = re.search(r"dj-value=\"x\"", html)
 
-    element = _find_element(html, match, "value")
+    element = Element.from_match(html, match, "value")
 
     assert element.closing_tag() == "</div>"
 
@@ -84,7 +84,7 @@ def test_element_closing_tag_generated():
     html = '<img dj-value="x" />'
     match = re.search(r"dj-value=\"x\"", html)
 
-    element = _find_element(html, match, "value")
+    element = Element.from_match(html, match, "value")
 
     assert element.closing_tag() == "</img>"
 
@@ -93,7 +93,7 @@ def test_element_type_and_value_fields():
     html = '<div dj-value="x">content</div>'
     match = re.search(r"dj-value=\"x\"", html)
 
-    element = _find_element(html, match, "value")
+    element = Element.from_match(html, match, "value")
     element.value = "x"
 
     assert element.type == "value"

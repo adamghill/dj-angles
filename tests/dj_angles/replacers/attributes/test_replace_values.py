@@ -23,10 +23,6 @@ Params = namedtuple(
             replacement="<div>{{ request.user }}</div>",
         ),
         Params(
-            original="<div dj-value=request.user></div>",
-            replacement="<div>{{ request.user }}</div>",
-        ),
-        Params(
             original="<div dj-value='x'>fallback</div>",
             replacement="<div>{{ x }}</div>",
         ),
@@ -69,6 +65,11 @@ def test_empty_value_raises():
 def test_missing_value_raises():
     with pytest.raises(AssertionError, match="dj-value attribute must have a value"):
         replace_values("<div dj-value></div>")
+
+
+def test_unquoted_value_raises():
+    with pytest.raises(AssertionError, match="dj-value attribute value must be quoted"):
+        replace_values("<div dj-value=x></div>")
 
 
 def test_closing_tag_raises():

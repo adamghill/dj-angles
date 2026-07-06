@@ -30,7 +30,6 @@ def replace_variables(html: str) -> str:
     variable_pattern = r"""\{\{((?:[^'\"{}]+|'[^']*'|"[^"]*")*?)\}\}"""
 
     for match in re.finditer(variable_pattern, html):
-        original = match.group(0)
         content = match.group(1).strip()
 
         # Parse the content into tokens, respecting quotes

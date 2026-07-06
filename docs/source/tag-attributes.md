@@ -65,6 +65,65 @@ The `dj-angles` approach is shown first and then the equivalent Django Template 
 {% endif %}
 ```
 
+## [`for`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#for)
+
+```html
+<li dj-for="i in items">{{ i }}</li>
+```
+
+```html
+{% for i in items %}<li>{{ i }}</li>{% endfor %}
+```
+
+Self-closing tags are automatically paired so the loop has an element to render:
+
+```html
+<li dj-for="i in items" dj-value="i" />
+```
+
+```html
+{% for i in items %}<li>{{ i }}</li>{% endfor %}
+```
+
+Nested loops work as expected:
+
+```html
+<tr dj-for="row in rows">
+  <td dj-for="cell in row">{{ cell }}</td>
+</tr>
+```
+
+```html
+{% for row in rows %}<tr>{% for cell in row %}<td>{{ cell }}</td>{% endfor %}</tr>{% endfor %}
+```
+
+Django's `forloop` variables (`forloop.counter`, `forloop.first`, etc.) work without any special handling.
+
+### `dj-empty`
+
+Use a sibling element with `dj-empty` to render content when the loop has no items — equivalent to Django's [`{% empty %}`](https://docs.djangoproject.com/en/stable/ref/templates/builtins/#for-empty):
+
+```html
+<li dj-for="i in items">{{ i }}</li>
+<li dj-empty>No items.</li>
+```
+
+```html
+{% for i in items %}<li>{{ i }}</li>{% empty %}<li>No items.</li>{% endfor %}
+```
+
+### `dj-endfor`
+
+An explicit `dj-endfor` on the closing tag can be used instead of relying on automatic `{% endfor %}` insertion:
+
+```html
+<li dj-for="i in items">{{ i }}</li dj-endfor>
+```
+
+```html
+{% for i in items %}<li>{{ i }}</li>{% endfor %}
+```
+
 ## `value`
 
 ```html
