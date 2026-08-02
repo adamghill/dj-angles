@@ -161,6 +161,15 @@
 ```
 
 ```html
+<!-- loops.html -->
+<li dj-for="i in items">  <!-- {% for i in items %}<li> -->
+  {{ i }}
+</li>  <!-- </li>{% endfor %} -->
+
+<li dj-for="i in items" dj-value="i" />  <!-- {% for i in items %}<li>{{ i }}</li>{% endfor %} -->
+```
+
+```html
 <!-- value-attribute.html -->
 <div dj-value="request.user">  <!-- <div>{{ request.user }}</div> -->
 </div>
