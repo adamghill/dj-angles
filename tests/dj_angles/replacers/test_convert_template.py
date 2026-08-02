@@ -909,3 +909,23 @@ def test_for_with_value():
     actual = convert_template(template)
 
     assert actual == expected
+
+
+@pytest.mark.parametrize(
+    "forloop_var",
+    (
+        "forloop.counter",
+        "forloop.counter0",
+        "forloop.revcounter",
+        "forloop.revcounter0",
+        "forloop.first",
+        "forloop.last",
+        "forloop.length",
+    ),
+)
+def test_for_with_forloop_value(forloop_var):
+    original = f"<li dj-for='i in items' dj-value='{forloop_var}'></li>"
+    expected = f"{{% for i in items %}}<li>{{{{ {forloop_var} }}}}</li>{{% endfor %}}"
+    actual = convert_template(original)
+
+    assert actual == expected

@@ -97,7 +97,15 @@ Nested loops work as expected:
 {% for row in rows %}<tr>{% for cell in row %}<td>{{ cell }}</td>{% endfor %}</tr>{% endfor %}
 ```
 
-Django's `forloop` variables (`forloop.counter`, `forloop.first`, etc.) work without any special handling.
+Django's `forloop` variables (`forloop.counter`, `forloop.first`, etc.) work without any special handling:
+
+```html
+<li dj-for="row in rows" dj-value="forloop.counter"></li>
+```
+
+```html
+{% for row in rows %}<li>{{ forloop.counter }}</li>{% endfor %}
+```
 
 ### `dj-empty`
 

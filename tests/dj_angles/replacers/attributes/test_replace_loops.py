@@ -94,6 +94,37 @@ def test_with_value_double():
     assert result.endswith("{% endfor %}")
 
 
+@pytest.mark.parametrize(
+    "forloop_var",
+    (
+        "forloop.counter",
+        "forloop.counter0",
+        "forloop.revcounter",
+        "forloop.revcounter0",
+        "forloop.first",
+        "forloop.last",
+        "forloop.length",
+    ),
+)
+def test_forloop_variables(forloop_var):
+    original = f"<li dj-for='i in items'>{{{{ {forloop_var} }}}}</li>"
+    expected = f"{{% for i in items %}}<li>{{{{ {forloop_var} }}}}</li>{{% endfor %}}"
+    actual = replace_loops(original)
+    assert actual == expected
+
+
+def test_forloop_parentloop():
+    original = "<tr dj-for='row in rows'><td dj-for='cell in row'>{{ forloop.parentloop.counter }}</td></tr>"
+    expected = (
+        "{% for row in rows %}<tr>"
+        "{% for cell in row %}<td>{{ forloop.parentloop.counter }}</td>"
+        "{% endfor %}</tr>"
+        "{% endfor %}"
+    )
+    actual = replace_loops(original)
+    assert actual == expected
+
+
 def test_no_loops_is_noop():
     original = "<div><p>Hello</p></div>"
     assert replace_loops(original) == original
